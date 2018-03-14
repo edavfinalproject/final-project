@@ -29,9 +29,18 @@ Describe how the data was collected, how you accessed it, and any other notewort
 Data is from the world bank....
 
 ```{r}
-##Todo Tidy the data
+##TODO Tidy the data
 
 # Required libraries
+needed_packages <- c("data.table", "tidyverse")
+
+for (p in needed_packages) {
+     if (!(p %in% installed.packages())){
+          install.packages(p)
+     }
+}
+
+
 library(data.table)
 library(tidyverse)
 
