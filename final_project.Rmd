@@ -200,8 +200,31 @@ Provide a detailed, well-organized description of your findings, including textu
 
 
 #### Distribution
-- Bar chart of population and energy use by country
-- Mosaic plot of energy vs population 
+Overall distribution of popualtion and energy. 
+
+
+```{r}
+# Who are the big players?
+# Histogram of population in latest year. Group all coutnries after top 100. Could also present in mosiac plot.
+energy_2010=energy_country_year[energy_country_year$YEAR == "2010", ]
+energy_2010$ENERGY_USE=as.numeric(energy_2010$ENERGY_USE)
+energy_2010$YEAR=as.numeric(energy_2010$YEAR)
+energy_2010 <- energy_2010[with(energy_2010, order(energy_2010$ENERGY_USE)),]
+ggplot(energy_2010, aes(x=COUNTRY_CODE, y=ENERGY_USE)) + geom_bar(stat='sum') + labs(title="Population by Country", x="Country", y="Energy use (Btu?)")
+
+
+# Histogram of energy in latest year.
+
+# Repeat two above with mosaic plot
+
+```
+
+- Binned Hisgram of 
+  - Energy use and energy use per capita for latest year
+  - Population and population growth rate for latest year
+  - Population and energy groth rate acorss years for select countries
+  
+
 
 #### Is there a relationship?
 - Scatter of energy per capita vs population pet capita
@@ -209,15 +232,15 @@ Provide a detailed, well-organized description of your findings, including textu
 - Energy per capita vs population
 - Could add diagonal line for all above
 - alluvial diagram staring with total population and going to energy.
+- Population growth rate on y axis and energy use per capita on x axis. The size of the population is the size of the circle on the graph
+- Alpha bending and contour lines
+
 
 
 #### Trends over time
 - X axis is year. Y axis is energy use. Line thickness is population.
+- Use D3 to animate how trends change over time. Essentially show the same graph but iterate over the year. Could do something similar to ted talk. Population growth rate on y axis and energy use per capita on x axis. The size of the population is the size of the circle on the graph
 
-#### GDP, happinesss/quality of life score (if time/interest)
-
-Hey guys I have been slowly adding notes and making an outline in an rmd file in GitHub. Feel free to keep adding Donny the time it's crunch time we have a lot of ideas. Also let me know if you are having any GitHub issues 
-  
   
 ```{r}
 # Scatter plot of energy use and growth rate by country-year
@@ -248,11 +271,11 @@ ggplot(pop_elec_year %>% filter(POP_GROWTH_RATE >= 5),
     geom_point()
 
 # Counts of countries by region and income group
-ggplot(pop_meta %>% filter(IncomeGroup != ""), aes(Region)) +
-    geom_bar() + coord_flip()
+#ggplot(pop_meta %>% filter(IncomeGroup != ""), aes(Region)) +
+ #   geom_bar() + coord_flip()
 
-ggplot(pop_meta %>% filter(IncomeGroup != ""), aes(IncomeGroup)) +
-    geom_bar() + coord_flip()
+#ggplot(pop_meta %>% filter(IncomeGroup != ""), aes(IncomeGroup)) +
+ #   geom_bar() + coord_flip()
 
 
 # Population growth rate over time by geographic region
