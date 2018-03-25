@@ -190,6 +190,8 @@ elec_access_country_year <- elec_access_df %>%
 
 Provide a detailed, well-organized description of data quality, including textual description, graphs, and code.
 
+* For some years, total production by region is much higher than %100
+
  
 
 ### Main Analysis (Exploratory Data Analysis)
@@ -281,22 +283,29 @@ ggplot(elec_access_year_world %>% filter(YEAR >= 1990),
 ```{r}
 
 world_prod_coal <- elec_prod_coal %>%
-     filter(COUNTRY_CODE == "WLD")
+     filter(COUNTRY_CODE %in% c("SSH", "SAS", "NAC", "MEA", 
+                               "LCN", "ECS", "EAS", "WLD"))
 
 world_prod_hydro <- elec_prod_hydro %>%
-     filter(COUNTRY_CODE == "WLD")
+     filter(COUNTRY_CODE %in% c("SSH", "SAS", "NAC", "MEA", 
+                               "LCN", "ECS", "EAS", "WLD"))
 
 world_prod_natural_gas <- elec_prod_natural_gas %>%
-     filter(COUNTRY_CODE == "WLD")
+     filter(COUNTRY_CODE %in% c("SSH", "SAS", "NAC", "MEA", 
+                               "LCN", "ECS", "EAS", "WLD"))
 
 world_prod_nuclear <- elec_prod_nuclear %>%
-     filter(COUNTRY_CODE == "WLD")
+     filter(COUNTRY_CODE %in% c("SSH", "SAS", "NAC", "MEA", 
+                               "LCN", "ECS", "EAS", "WLD"))
 
 world_prod_oil <- elec_prod_oil %>%
-     filter(COUNTRY_CODE == "WLD")
+     filter(COUNTRY_CODE %in% c("SSH", "SAS", "NAC", "MEA", 
+                               "LCN", "ECS", "EAS", "WLD"))
 
 world_prod_renewable <- elec_prod_renewable %>%
-     filter(COUNTRY_CODE == "WLD")
+     filter(COUNTRY_CODE %in% c("SSH", "SAS", "NAC", "MEA", 
+                               "LCN", "ECS", "EAS", "WLD"))
+
 
 world_prod_total <- rbind(world_prod_coal, world_prod_hydro, 
                           world_prod_natural_gas, world_prod_nuclear,
@@ -307,13 +316,26 @@ world_prod_total <- world_prod_total %>%
             -INDICATOR_NAME, -INDICATOR_CODE) %>%
      mutate(VALUE = as.numeric(VALUE)) %>%
      mutate(YEAR = as.integer(YEAR)) %>%
+     left_join(y = pop_meta) %>%
      drop_na()
 
 # world_prod_total <- na.rm(world_prod_total)
 
 
-ggplot(world_prod_total, aes(YEAR, VALUE, color = INDICATOR_CODE)) +
+ggplot(world_prod_total %>% filter(COUNTRY_CODE == "WLD"),
+       aes(YEAR, VALUE, color = INDICATOR_CODE)) +
      geom_line()
+
+ggplot(world_prod_total,
+       aes(YEAR, VALUE, color = INDICATOR_CODE)) +
+     geom_line() + facet_wrap(facets = "COUNTRY_NAME")
+
+
+# Data issue - for some years, total production by region is way above %100
+world_prod_total %>% 
+     group_by(COUNTRY_CODE, YEAR) %>% 
+     summarize(total = sum(VALUE)) %>%
+     arrange(-total)
 
 ```
 
