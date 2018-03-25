@@ -16,11 +16,11 @@ Explain why you chose this topic, and the questions you are interested in studyi
 
 List team members and a description of how each contributed to the project.
 
-- How do we think about the realtionship between energy use and population
-  - If no visible correlation, what does that mean? Is it simply that there are other stronger factors we do not know about?
-- Do all countries follow the same path of energy and population growth?
-- Is population growth the biggest threat to sustainable energy consumption?
-- Visualize populaiton growth vs energy growth of various countries
+* How do we think about the realtionship between energy use and population
+* If no visible correlation, what does that mean? Is it simply that there are other stronger factors we do not know about?
+* Do all countries follow the same path of energy and population growth?
+* Is population growth the biggest threat to sustainable energy consumption?
+* Visualize populaiton growth vs energy growth of various countries
 
 ### Description of Data
 
@@ -49,9 +49,9 @@ Data sources used:
 * Population growth (annual %)
 * Population growth (annual %)
 
-```{r}
-### Download, unzip, and read in data stored as CSV files
 
+```{r, results = hide}
+### Download, unzip, and read in data stored as CSV files
 
 #TODO Tidy the data
 
@@ -59,9 +59,24 @@ Data sources used:
 pop_zip <- "http://api.worldbank.org/v2/en/indicator/SP.POP.GROW?downloadformat=csv"
 energy_zip <- "http://api.worldbank.org/v2/en/indicator/EG.USE.PCAP.KG.OE?downloadformat=csv"
 electricity_access_zip <- "http://api.worldbank.org/v2/en/indicator/EG.ELC.ACCS.ZS?downloadformat=csv"
+renewable_consumption_zip <- "http://api.worldbank.org/v2/en/indicator/EG.FEC.RNEW.ZS?downloadformat=csv"
+renewable_energy_output_zip <- "http://api.worldbank.org/v2/en/indicator/EG.ELC.RNEW.ZS?downloadformat=csv"
+
+elec_prod_renewable_zip <- "http://api.worldbank.org/v2/en/indicator/EG.ELC.RNWX.ZS?downloadformat=csv"
+elec_prod_coal_zip <- "http://api.worldbank.org/v2/en/indicator/EG.ELC.COAL.ZS?downloadformat=csv"
+elec_prod_nuclear_zip <- "http://api.worldbank.org/v2/en/indicator/EG.ELC.NUCL.ZS?downloadformat=csv"
+elec_prod_oil_zip <- "http://api.worldbank.org/v2/en/indicator/EG.ELC.PETR.ZS?downloadformat=csv"
+elec_prod_hydro_zip <- "http://api.worldbank.org/v2/en/indicator/EG.ELC.HYRO.ZS?downloadformat=csv"
+elec_prod_natural_gas_zip <- "http://api.worldbank.org/v2/en/indicator/EG.ELC.NGAS.ZS?downloadformat=csv"
+
+
 
 # Download and unzip data sources
-zip_list <- c(pop_zip, energy_zip, electricity_access_zip)
+zip_list <- c(pop_zip, energy_zip, electricity_access_zip,
+              renewable_consumption_zip, renewable_energy_output_zip,
+              elec_prod_renewable_zip, elec_prod_coal_zip,
+              elec_prod_nuclear_zip, elec_prod_oil_zip,
+              elec_prod_hydro_zip, elec_prod_natural_gas_zip)
 
 for (i in zip_list){
     
@@ -77,22 +92,26 @@ for (i in zip_list){
         unzip(tf, files = file_name, exdir = td, overwrite = TRUE)
         file_path <- file.path(td, file_name)
         csv <- fread(file_path)
+        new_header <- str_to_upper(gsub(pattern = " ", replacement = "_", x = names(csv)))
+        setnames(csv, new_header)
         assign(file_name, csv)
         
     }
     
 }
+```
 
+```{r}
 # Simplify data.frame names
 
 pop_df <-  API_SP.POP.GROW_DS2_en_csv_v2.csv
 rm(API_SP.POP.GROW_DS2_en_csv_v2.csv)
 
-energy_df <- API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv
-rm(API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv)
-
 pop_meta <- Metadata_Country_API_SP.POP.GROW_DS2_en_csv_v2.csv
 rm(Metadata_Country_API_SP.POP.GROW_DS2_en_csv_v2.csv)
+
+energy_df <- API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv
+rm(API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv)
 
 energy_meta <- Metadata_Country_API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv
 rm(Metadata_Country_API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv)
@@ -104,27 +123,46 @@ elec_access_meta <- Metadata_Country_API_EG.ELC.ACCS.ZS_DS2_en_csv_v2.csv
 rm(Metadata_Country_API_EG.ELC.ACCS.ZS_DS2_en_csv_v2.csv)
 
 
-setnames(pop_df, old = c("Country Name", "Country Code", "Indicator Name", "Indicator Code"), 
-         new = c("COUNTRY_NAME", "COUNTRY_CODE", "INDICATOR_NAME", "INDICATOR_CODE"))
-setnames(energy_df, old = c("Country Name", "Country Code", "Indicator Name", "Indicator Code"), 
-         new = c("COUNTRY_NAME", "COUNTRY_CODE", "INDICATOR_NAME", "INDICATOR_CODE"))
-setnames(pop_meta, old = c("Country Code"), 
-         new = c("COUNTRY_CODE"))
-setnames(energy_meta, old = c("Country Code"), 
-         new = c("COUNTRY_CODE"))
+# Energy Production Data
+elec_prod_coal <- API_EG.ELC.COAL.ZS_DS2_en_csv_v2.csv
+rm(API_EG.ELC.COAL.ZS_DS2_en_csv_v2.csv)
 
-setnames(elec_access_df, 
-         old = c("Country Name", "Country Code", 
-                                 "Indicator Name", "Indicator Code"), 
-         new = c("COUNTRY_NAME", "COUNTRY_CODE", 
-                 "INDICATOR_NAME", "INDICATOR_CODE"))
+elec_prod_hydro <- API_EG.ELC.HYRO.ZS_DS2_en_csv_v2.csv
+rm(API_EG.ELC.HYRO.ZS_DS2_en_csv_v2.csv)
 
-setnames(elec_access_meta, old = c("Country Code"), 
-         new = c("COUNTRY_CODE"))
+elec_prod_natural_gas <- API_EG.ELC.NGAS.ZS_DS2_en_csv_v2.csv
+rm(API_EG.ELC.NGAS.ZS_DS2_en_csv_v2.csv)
+
+elec_prod_nuclear <- API_EG.ELC.NUCL.ZS_DS2_en_csv_v2.csv
+rm(API_EG.ELC.NUCL.ZS_DS2_en_csv_v2.csv)
+
+elec_prod_oil <- API_EG.ELC.PETR.ZS_DS2_en_csv_v2.csv
+rm(API_EG.ELC.PETR.ZS_DS2_en_csv_v2.csv)
+
+elec_prod_renewable <- API_EG.ELC.RNEW.ZS_DS2_en_csv_v2.csv
+rm(API_EG.ELC.RNEW.ZS_DS2_en_csv_v2.csv)
 
 
-pop_meta <- select(pop_meta, names(pop_meta)[1:3])
-pop_df <- select(pop_df, -V63)
+
+
+
+
+# elec_prod_renewable_zip <- "http://api.worldbank.org/v2/en/indicator/EG.ELC.RNWX.ZS?downloadformat=csv"
+# elec_prod_coal_zip <- "http://api.worldbank.org/v2/en/indicator/EG.ELC.COAL.ZS?downloadformat=csv"
+# elec_prod_nuclear_zip <- "http://api.worldbank.org/v2/en/indicator/EG.ELC.NUCL.ZS?downloadformat=csv"
+# elec_prod_oil_zip <- "http://api.worldbank.org/v2/en/indicator/EG.ELC.PETR.ZS?downloadformat=csv"
+# elec_prod_hydro_zip <- "http://api.worldbank.org/v2/en/indicator/EG.ELC.HYRO.ZS?downloadformat=csv"
+# elec_prod_natural_gas_zip <- "http://api.worldbank.org/v2/en/indicator/EG.ELC.NGAS.ZS?downloadformat=csv"
+
+```
+
+
+
+```{r}
+
+pop_meta <- pop_meta[, .(COUNTRY_CODE, REGION, INCOMEGROUP)]
+
+pop_df <- pop_df[,!"V63"]
 
 
 pop_country_year <- pop_df %>%
@@ -225,7 +263,7 @@ pop_year_world <- pop_country_year %>%
 
 
 ggplot(pop_year_world, 
-       aes(YEAR, POP_GROWTH_RATE, color = Region)) + geom_line()
+       aes(YEAR, POP_GROWTH_RATE, color = COUNTRY_CODE)) + geom_line()
 
 elec_access_year_world <- elec_access_country_year %>%
     filter(COUNTRY_CODE %in% c("SSH", "SAS", "NAC", "MEA", 
@@ -239,6 +277,48 @@ ggplot(elec_access_year_world %>% filter(YEAR >= 1990),
        aes(YEAR, ELECTRICITY_ACCESS, color = COUNTRY_CODE)) + geom_line()
 
 ```
+
+```{r}
+
+world_prod_coal <- elec_prod_coal %>%
+     filter(COUNTRY_CODE == "WLD")
+
+world_prod_hydro <- elec_prod_hydro %>%
+     filter(COUNTRY_CODE == "WLD")
+
+world_prod_natural_gas <- elec_prod_natural_gas %>%
+     filter(COUNTRY_CODE == "WLD")
+
+world_prod_nuclear <- elec_prod_nuclear %>%
+     filter(COUNTRY_CODE == "WLD")
+
+world_prod_oil <- elec_prod_oil %>%
+     filter(COUNTRY_CODE == "WLD")
+
+world_prod_renewable <- elec_prod_renewable %>%
+     filter(COUNTRY_CODE == "WLD")
+
+world_prod_total <- rbind(world_prod_coal, world_prod_hydro, 
+                          world_prod_natural_gas, world_prod_nuclear,
+                          world_prod_oil, world_prod_renewable)
+
+world_prod_total <- world_prod_total %>%
+     gather(key = "YEAR", value = "VALUE", -COUNTRY_NAME, -COUNTRY_CODE,
+            -INDICATOR_NAME, -INDICATOR_CODE) %>%
+     mutate(VALUE = as.numeric(VALUE)) %>%
+     mutate(YEAR = as.integer(YEAR)) %>%
+     drop_na()
+
+# world_prod_total <- na.rm(world_prod_total)
+
+
+ggplot(world_prod_total, aes(YEAR, VALUE, color = INDICATOR_CODE)) +
+     geom_line()
+
+```
+
+
+
 
 ### Executive Summary (Presentation-style)
 
