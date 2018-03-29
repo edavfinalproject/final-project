@@ -50,7 +50,7 @@ Data sources used:
 * Population growth (annual %)
 
 
-```{r, results = hide}
+```{r, results = "hide"}
 ### Download, unzip, and read in data stored as CSV files
 
 #TODO Tidy the data
