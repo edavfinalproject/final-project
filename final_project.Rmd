@@ -16,11 +16,11 @@ Explain why you chose this topic, and the questions you are interested in studyi
 
 List team members and a description of how each contributed to the project.
 
-* How do we think about the realtionship between energy use and population
+* How do we think about the relationship between energy use and population
 * If no visible correlation, what does that mean? Is it simply that there are other stronger factors we do not know about?
 * Do all countries follow the same path of energy and population growth?
 * Is population growth the biggest threat to sustainable energy consumption?
-* Visualize populaiton growth vs energy growth of various countries
+* Visualize population growth vs energy growth of various countries
 
 ### Description of Data
 
@@ -200,7 +200,7 @@ Provide a detailed, well-organized description of your findings, including textu
 
 
 #### Distribution
-Overall distribution of popualtion and energy. 
+Overall distribution of population and energy. 
 
 
 ```{r}
@@ -219,10 +219,10 @@ ggplot(energy_2010, aes(x=COUNTRY_CODE, y=ENERGY_USE)) + geom_bar(stat='sum') + 
 
 ```
 
-- Binned Hisgram of 
+- Binned Histogram of 
   - Energy use and energy use per capita for latest year
   - Population and population growth rate for latest year
-  - Population and energy groth rate acorss years for select countries
+  - Population and energy growth rate across years for select countries
   
 
 
