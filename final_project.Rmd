@@ -28,6 +28,8 @@ Describe how the data was collected, how you accessed it, and any other notewort
 
 Data is from the world bank....
 
+tidy data is a product in itself. Talk sboutfile size and how it organizes code and fits good in memory and simply provides the necessary work to analyze this. A good idea would be to make this into an r package. 
+
 
 ```{r}
 # Install and/or load required libraries
