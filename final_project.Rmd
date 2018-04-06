@@ -12,24 +12,24 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE,
 
 ### Introduction
 
-Explain why you chose this topic, and the questions you are interested in studying.
+The goal of our project is to explore the relationship between the world's energy consumption and population over time. Specifically, we are interested in exploring the interaction between these variables over time at a global, regional, and country level in order to making inferences about any correlation between these variables, so as to better understand the future. 
 
-List team members and a description of how each contributed to the project.
-
-* How do we think about the relationship between energy use and population
-* If no visible correlation, what does that mean? Is it simply that there are other stronger factors we do not know about?
-* Do all countries follow the same path of energy and population growth?
-* Is population growth the biggest threat to sustainable energy consumption?
-* Visualize population growth vs energy growth of various countries
+Our team includes:
+* David Schemitsch
+* Isaac Wainstein
+* Wyatt Ford
 
 ### Description of Data
 
-Describe how the data was collected, how you accessed it, and any other noteworthy features.
+Our project uses three datasets published by the World Bank:
 
-Data is from the world bank....
+* Population, total
+* Population growth (annual %)
+* Energy use (kg of oil equivalent per capita)
+
+Each of these datasets contain per country data from 1960 through 2016. The data was gathered and accessed using the World Bank's api, cleaned, and combined into one tidy dataframe.
 
 tidy data is a product in itself. Talk sboutfile size and how it organizes code and fits good in memory and simply provides the necessary work to analyze this. A good idea would be to make this into an r package. 
-
 
 ```{r}
 # Install and/or load required libraries
@@ -44,14 +44,6 @@ for (p in needed_packages) {
 library(data.table)
 library(tidyverse)
 ```
-
-Data sources used:
-
-* Access to electricity (% of population)
-* Population growth (annual %)
-* Population growth (annual %)
-
-
 ```{r, results = "hide"}
 ### Download, unzip, and read in data stored as CSV files
 
