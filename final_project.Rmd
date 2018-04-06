@@ -58,27 +58,12 @@ Data sources used:
 #TODO Tidy the data
 
 # Links for data sources
-pop_zip <- "http://api.worldbank.org/v2/en/indicator/SP.POP.GROW?downloadformat=csv"
+pop_growth_zip <- "http://api.worldbank.org/v2/en/indicator/SP.POP.GROW?downloadformat=csv"
+pop_zip <- "http://api.worldbank.org/v2/en/indicator/SP.POP.TOTL?downloadformat=csv"
 energy_zip <- "http://api.worldbank.org/v2/en/indicator/EG.USE.PCAP.KG.OE?downloadformat=csv"
-electricity_access_zip <- "http://api.worldbank.org/v2/en/indicator/EG.ELC.ACCS.ZS?downloadformat=csv"
-renewable_consumption_zip <- "http://api.worldbank.org/v2/en/indicator/EG.FEC.RNEW.ZS?downloadformat=csv"
-renewable_energy_output_zip <- "http://api.worldbank.org/v2/en/indicator/EG.ELC.RNEW.ZS?downloadformat=csv"
-
-elec_prod_renewable_zip <- "http://api.worldbank.org/v2/en/indicator/EG.ELC.RNWX.ZS?downloadformat=csv"
-elec_prod_coal_zip <- "http://api.worldbank.org/v2/en/indicator/EG.ELC.COAL.ZS?downloadformat=csv"
-elec_prod_nuclear_zip <- "http://api.worldbank.org/v2/en/indicator/EG.ELC.NUCL.ZS?downloadformat=csv"
-elec_prod_oil_zip <- "http://api.worldbank.org/v2/en/indicator/EG.ELC.PETR.ZS?downloadformat=csv"
-elec_prod_hydro_zip <- "http://api.worldbank.org/v2/en/indicator/EG.ELC.HYRO.ZS?downloadformat=csv"
-elec_prod_natural_gas_zip <- "http://api.worldbank.org/v2/en/indicator/EG.ELC.NGAS.ZS?downloadformat=csv"
-
-
 
 # Download and unzip data sources
-zip_list <- c(pop_zip, energy_zip, electricity_access_zip,
-              renewable_consumption_zip, renewable_energy_output_zip,
-              elec_prod_renewable_zip, elec_prod_coal_zip,
-              elec_prod_nuclear_zip, elec_prod_oil_zip,
-              elec_prod_hydro_zip, elec_prod_natural_gas_zip)
+zip_list <- c(pop_growth_zip, pop_zip, energy_zip)
 
 for (i in zip_list){
     
@@ -106,55 +91,23 @@ for (i in zip_list){
 ```{r}
 # Simplify data.frame names
 
-pop_df <-  API_SP.POP.GROW_DS2_en_csv_v2.csv
+pop_growth_df <-  API_SP.POP.GROW_DS2_en_csv_v2.csv
 rm(API_SP.POP.GROW_DS2_en_csv_v2.csv)
 
-pop_meta <- Metadata_Country_API_SP.POP.GROW_DS2_en_csv_v2.csv
+pop_growth_meta <- Metadata_Country_API_SP.POP.GROW_DS2_en_csv_v2.csv
+rm(Metadata_Country_API_SP.POP.GROW_DS2_en_csv_v2.csv)
+
+pop_df <- API_SP.POP.TOTL_DS2_en_csv_v2.csv
+rm(API_SP.POP.GROW_DS2_en_csv_v2.csv)
+
+pop_meta <- Metadata_Country_API_SP.POP.TOTL_DS2_en_csv_v2.csv
 rm(Metadata_Country_API_SP.POP.GROW_DS2_en_csv_v2.csv)
 
 energy_df <- API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv
 rm(API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv)
 
-energy_meta <- Metadata_Country_API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv
-rm(Metadata_Country_API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv)
-
-elec_access_df <- API_EG.ELC.ACCS.ZS_DS2_en_csv_v2.csv
-rm(API_EG.ELC.ACCS.ZS_DS2_en_csv_v2.csv)
-
-elec_access_meta <- Metadata_Country_API_EG.ELC.ACCS.ZS_DS2_en_csv_v2.csv
-rm(Metadata_Country_API_EG.ELC.ACCS.ZS_DS2_en_csv_v2.csv)
-
-
-# Energy Production Data
-elec_prod_coal <- API_EG.ELC.COAL.ZS_DS2_en_csv_v2.csv
-rm(API_EG.ELC.COAL.ZS_DS2_en_csv_v2.csv)
-
-elec_prod_hydro <- API_EG.ELC.HYRO.ZS_DS2_en_csv_v2.csv
-rm(API_EG.ELC.HYRO.ZS_DS2_en_csv_v2.csv)
-
-elec_prod_natural_gas <- API_EG.ELC.NGAS.ZS_DS2_en_csv_v2.csv
-rm(API_EG.ELC.NGAS.ZS_DS2_en_csv_v2.csv)
-
-elec_prod_nuclear <- API_EG.ELC.NUCL.ZS_DS2_en_csv_v2.csv
-rm(API_EG.ELC.NUCL.ZS_DS2_en_csv_v2.csv)
-
-elec_prod_oil <- API_EG.ELC.PETR.ZS_DS2_en_csv_v2.csv
-rm(API_EG.ELC.PETR.ZS_DS2_en_csv_v2.csv)
-
-elec_prod_renewable <- API_EG.ELC.RNEW.ZS_DS2_en_csv_v2.csv
-rm(API_EG.ELC.RNEW.ZS_DS2_en_csv_v2.csv)
-
-
-
-
-
-
-# elec_prod_renewable_zip <- "http://api.worldbank.org/v2/en/indicator/EG.ELC.RNWX.ZS?downloadformat=csv"
-# elec_prod_coal_zip <- "http://api.worldbank.org/v2/en/indicator/EG.ELC.COAL.ZS?downloadformat=csv"
-# elec_prod_nuclear_zip <- "http://api.worldbank.org/v2/en/indicator/EG.ELC.NUCL.ZS?downloadformat=csv"
-# elec_prod_oil_zip <- "http://api.worldbank.org/v2/en/indicator/EG.ELC.PETR.ZS?downloadformat=csv"
-# elec_prod_hydro_zip <- "http://api.worldbank.org/v2/en/indicator/EG.ELC.HYRO.ZS?downloadformat=csv"
-# elec_prod_natural_gas_zip <- "http://api.worldbank.org/v2/en/indicator/EG.ELC.NGAS.ZS?downloadformat=csv"
+energy_df_meta <- Metadata_Country_API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv
+rm(API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv)
 
 ```
 
