@@ -93,22 +93,23 @@ for (i in zip_list){
 
 pop_growth_df <-  API_SP.POP.GROW_DS2_en_csv_v2.csv
 rm(API_SP.POP.GROW_DS2_en_csv_v2.csv)
-
 pop_growth_meta <- Metadata_Country_API_SP.POP.GROW_DS2_en_csv_v2.csv
 rm(Metadata_Country_API_SP.POP.GROW_DS2_en_csv_v2.csv)
+pop_growth_merged <- merge(pop_growth_df, subset(pop_growth_meta, select=-c(4,5,6)), by = "COUNTRY_CODE")
 
 pop_df <- API_SP.POP.TOTL_DS2_en_csv_v2.csv
 rm(API_SP.POP.GROW_DS2_en_csv_v2.csv)
-
 pop_meta <- Metadata_Country_API_SP.POP.TOTL_DS2_en_csv_v2.csv
 rm(Metadata_Country_API_SP.POP.GROW_DS2_en_csv_v2.csv)
+pop_merged <- merge(pop_df, subset(pop_meta, select=-c(4,5,6)), by = "COUNTRY_CODE")
 
 energy_df <- API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv
 rm(API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv)
-
 energy_df_meta <- Metadata_Country_API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv
 rm(API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv)
+energy_merged <- merge(energy_df, subset(energy_df_meta, select=-c(4,5,6)), by = "COUNTRY_CODE")
 
+tidy_pop_energy <- rbind(pop_growth_merged, pop_merged, energy_merged)
 ```
 
 
