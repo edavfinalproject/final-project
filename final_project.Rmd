@@ -220,6 +220,22 @@ navbarPage("Good Graphics",
                             )
                         )
                     )
+           ,
+           tabPanel("Growth Rate Scatter",
+                    sidebarLayout(
+                        sidebarPanel(
+                            sliderInput(inputId = "year",
+                                        label = "Year:", 
+                                        value = min(tidy_pop_energy$YEAR, na.rm = TRUE),
+                                        min = min(tidy_pop_energy$YEAR, na.rm = TRUE),
+                                        max = max(tidy_pop_energy$YEAR, na.rm = TRUE),
+                                        step = 1)
+                            ),
+                        mainPanel(
+                            plotOutput("ds_scatter")
+                            )
+                        )
+                    )
            )
   #   tabPanel("Distribution of Population and Energy",
   #       sidebarLayout(
@@ -309,6 +325,26 @@ output$ds_barplot <- renderPlot({
 
 ```
 
+```{r}
+# Growth rate scatter
+
+my_year <- reactive({input$year})
+
+
+tidy_subset <- reactive({tidy_pop_energy %>%
+    filter(INDICATOR_NAME == my_indicator() & YEAR == my_year())
+})
+
+output$ds_scatter <- renderPlot({
+    ggplot(data = tidy_subset(), aes(COUNTRY_CODE, VALUE)) +
+        geom_col()
+  
+ # ggplot(pop_energy_year, aes(POP_GROWTH_RATE, ENERGY_USE)) + 
+  #  geom_point()
+})
+
+
+```
 
 #### Distribution
 Overall distribution of population and energy. 
