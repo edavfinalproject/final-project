@@ -224,7 +224,7 @@ navbarPage("Good Graphics",
            tabPanel("Growth Rate Scatter",
                     sidebarLayout(
                         sidebarPanel(
-                            sliderInput(inputId = "year",
+                            sliderInput(inputId = "year_scatter",
                                         label = "Year:", 
                                         value = min(tidy_pop_energy$YEAR, na.rm = TRUE),
                                         min = min(tidy_pop_energy$YEAR, na.rm = TRUE),
@@ -336,15 +336,16 @@ scatter_data$pop_tot <- as.numeric(tidy_pop_energy$VALUE[tidy_pop_energy$INDICAT
 scatter_data$energy_tot <- as.numeric(tidy_pop_energy$VALUE[tidy_pop_energy$INDICATOR_CODE == icodes[3]])
 scatter_data <- scatter_data[complete.cases(scatter_data), ]
 
-my_year <- reactive({input$year})
+year_scatter <- reactive({input$year_scatter})
 
 tidy_subset <- reactive({scatter_data %>%
-    filter(YEAR == my_year())
+    filter(YEAR == year_scatter())
 })
 
 output$ds_scatter <- renderPlot({
-    ggplot(data = tidy_subset(), aes(pop_growth, energy_tot)) +
-        geom_point(size=pop_tot) + labs(title="Population Growth vs. Energy Use")
+    ggplot(data = tidy_subset(), aes(x=pop_growth, y=energy_tot, size=energy_tot, col=COUNTRY_NAME)) +
+        geom_point() + labs(title="Population Growth vs. Energy Use", x="Population growth (%)", y="Energy use") + 
+        theme(legend.position="none")
 }) 
 
 #ggplot(scatter_data, aes(pop_growth, energy_tot)) + geom_point(size=scatter_data$pop_tot) + labs(title="Population Growth vs. Energy Use")
