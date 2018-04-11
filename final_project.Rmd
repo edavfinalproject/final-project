@@ -328,21 +328,26 @@ output$ds_barplot <- renderPlot({
 ```{r}
 # Growth rate scatter
 
-tidy_pop_energy$VALUE2 = tidy_pop_energy$VALUE / 2# Delete this
+# Reform data
+icodes = unique(tidy_pop_energy$INDICATOR_CODE)
+scatter_data <- tidy_pop_energy[tidy_pop_energy$INDICATOR_CODE == icodes[1],]
+scatter_data$pop_growth <- as.numeric(tidy_pop_energy$VALUE[tidy_pop_energy$INDICATOR_CODE == icodes[1]])
+scatter_data$pop_tot <- as.numeric(tidy_pop_energy$VALUE[tidy_pop_energy$INDICATOR_CODE == icodes[2]])
+scatter_data$energy_tot <- as.numeric(tidy_pop_energy$VALUE[tidy_pop_energy$INDICATOR_CODE == icodes[3]])
+scatter_data <- scatter_data[complete.cases(scatter_data), ]
 
 my_year <- reactive({input$year})
 
-tidy_subset <- reactive({tidy_pop_energy %>%
+tidy_subset <- reactive({scatter_data %>%
     filter(YEAR == my_year())
 })
 
 output$ds_scatter <- renderPlot({
-    ggplot(data = tidy_subset(), aes(VALUE, VALUE2) +
-        geom_point())
+    ggplot(data = tidy_subset(), aes(pop_growth, energy_tot)) +
+        geom_point(size=pop_tot) + labs(title="Population Growth vs. Energy Use")
 }) 
 
-ggplot(tidy_pop_energy, aes(x=VALUE, y=VALUE2) +
-        geom_point())
+#ggplot(scatter_data, aes(pop_growth, energy_tot)) + geom_point(size=scatter_data$pop_tot) + labs(title="Population Growth vs. Energy Use")
 
 ```
 
