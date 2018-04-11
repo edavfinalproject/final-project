@@ -220,6 +220,22 @@ navbarPage("Good Graphics",
                             )
                         )
                     )
+           ,
+           tabPanel("Growth Rate Scatter",
+                    sidebarLayout(
+                        sidebarPanel(
+                            sliderInput(inputId = "year_scatter",
+                                        label = "Year:", 
+                                        value = min(tidy_pop_energy$YEAR, na.rm = TRUE),
+                                        min = min(tidy_pop_energy$YEAR, na.rm = TRUE),
+                                        max = max(tidy_pop_energy$YEAR, na.rm = TRUE),
+                                        step = 1)
+                            ),
+                        mainPanel(
+                            plotOutput("ds_scatter")
+                            )
+                        )
+                    )
            )
   #   tabPanel("Distribution of Population and Energy",
   #       sidebarLayout(
@@ -309,6 +325,32 @@ output$ds_barplot <- renderPlot({
 
 ```
 
+```{r}
+# Growth rate scatter
+
+# Reform data
+icodes = unique(tidy_pop_energy$INDICATOR_CODE)
+scatter_data <- tidy_pop_energy[tidy_pop_energy$INDICATOR_CODE == icodes[1],]
+scatter_data$pop_growth <- as.numeric(tidy_pop_energy$VALUE[tidy_pop_energy$INDICATOR_CODE == icodes[1]])
+scatter_data$pop_tot <- as.numeric(tidy_pop_energy$VALUE[tidy_pop_energy$INDICATOR_CODE == icodes[2]])
+scatter_data$energy_tot <- as.numeric(tidy_pop_energy$VALUE[tidy_pop_energy$INDICATOR_CODE == icodes[3]])
+scatter_data <- scatter_data[complete.cases(scatter_data), ]
+
+year_scatter <- reactive({input$year_scatter})
+
+tidy_subset <- reactive({scatter_data %>%
+    filter(YEAR == year_scatter())
+})
+
+output$ds_scatter <- renderPlot({
+    ggplot(data = tidy_subset(), aes(x=pop_growth, y=energy_tot, size=energy_tot, col=COUNTRY_NAME)) +
+        geom_point() + labs(title="Population Growth vs. Energy Use", x="Population growth (%)", y="Energy use") + 
+        theme(legend.position="none")
+}) 
+
+#ggplot(scatter_data, aes(pop_growth, energy_tot)) + geom_point(size=scatter_data$pop_tot) + labs(title="Population Growth vs. Energy Use")
+
+```
 
 #### Distribution
 Overall distribution of population and energy. 
