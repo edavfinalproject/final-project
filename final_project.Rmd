@@ -2,6 +2,7 @@
 title: "Final Project"
 author: "Names and Unis....."
 date:   "April 24, 2018"
+runtime: shiny
 output: html_document
 ---
 
@@ -9,6 +10,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE,
                       message = FALSE)
 ```
+
 
 ### Introduction
 
@@ -44,7 +46,9 @@ for (p in needed_packages) {
 library(data.table)
 library(tidyverse)
 ```
+
 ```{r, results = "hide"}
+
 ### Download, unzip, and read in data stored as CSV files
 
 #TODO Tidy the data
@@ -98,10 +102,18 @@ pop_merged <- merge(pop_df, subset(pop_meta, select=-c(4,5,6)), by = "COUNTRY_CO
 energy_df <- API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv
 rm(API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv)
 energy_df_meta <- Metadata_Country_API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv
-rm(API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv)
+# rm(API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv)
 energy_merged <- merge(energy_df, subset(energy_df_meta, select=-c(4,5,6)), by = "COUNTRY_CODE")
 
 tidy_pop_energy <- rbind(pop_growth_merged, pop_merged, energy_merged)
+
+tidy_pop_energy <- tidy_pop_energy %>% 
+    gather(key = "YEAR", value = "VALUE", -COUNTRY_CODE, -COUNTRY_NAME,
+           -INDICATOR_NAME, -INDICATOR_CODE, -REGION, -INCOMEGROUP) %>%
+    mutate(YEAR = as.numeric(YEAR)) %>%
+    mutate(VALUE = as.numeric(VALUE))
+
+
 ```
 
 
@@ -125,11 +137,11 @@ energy_country_year <- energy_df %>%
            -COUNTRY_CODE) %>%
     mutate(COUNTRY_YEAR = paste0(COUNTRY_CODE,"_",YEAR))
 
-elec_access_country_year <- elec_access_df %>%
-    select(-COUNTRY_NAME, -INDICATOR_NAME, -INDICATOR_CODE) %>%
-    gather(key = "YEAR", value = "ELECTRICITY_ACCESS", 
-           -COUNTRY_CODE) %>%
-    mutate(COUNTRY_YEAR = paste0(COUNTRY_CODE,"_",YEAR))
+# elec_access_country_year <- elec_access_df %>%
+#     select(-COUNTRY_NAME, -INDICATOR_NAME, -INDICATOR_CODE) %>%
+#     gather(key = "YEAR", value = "ELECTRICITY_ACCESS", 
+#            -COUNTRY_CODE) %>%
+#     mutate(COUNTRY_YEAR = paste0(COUNTRY_CODE,"_",YEAR))
 
 ```
 
@@ -168,8 +180,134 @@ Three rshiny tabs 1 per person
   - X is energy growth rate
   - Y is population growth rate
   - Size of circle is size of population
-  
 
+```{r}
+navbarPage("Good Graphics",
+           tabPanel("TEST",
+                    sidebarLayout(
+                        sidebarPanel(
+                            selectInput("n_breaks", label = "Number of bins:",
+                                        choices = c(10, 20, 35, 50), selected = 20),
+                            sliderInput("bw_adjust", label = "Bandwidth adjustment:",
+                                        min = 0.2, max = 2, value = 1, step = 0.2)
+                            ),
+                        mainPanel(
+                            plotOutput("hist")
+                            )
+                        )
+                    )
+           ,
+           tabPanel("Distribution of Population and Energy",
+                    sidebarLayout(
+                        sidebarPanel(
+                            radioButtons(label = "Indicator", inputId = "indicator",
+                                         choices = c("Population Growth" = "Population growth (annual %)",
+                                                     "Energy Use" = "Energy use (kg of oil equivalent per capita)",
+                                                     "Total Population" = "Population, total"),
+                                         selected = "Population growth (annual %)"),
+                             # c("Population Growth" = "Population growth (annual %)",
+                             #   "Energy Use" = "Energy use (kg of oil equivalent per capita)",
+                             #   "Total Population" = "Population, total")),
+                            sliderInput(inputId = "year",
+                                        label = "Year:", 
+                                        value = min(tidy_pop_energy$YEAR, na.rm = TRUE),
+                                        min = min(tidy_pop_energy$YEAR, na.rm = TRUE),
+                                        max = max(tidy_pop_energy$YEAR, na.rm = TRUE),
+                                        step = 1)
+                            ),
+                        mainPanel(
+                            plotOutput("ds_barplot")
+                            )
+                        )
+                    )
+           )
+  #   tabPanel("Distribution of Population and Energy",
+  #       sidebarLayout(
+  #           sidebarPanel(
+  #               selectInput("region", "Region:",
+  #                           choices=colnames(WorldPhones)),
+  #     hr(),
+  #     helpText("Data from AT&T (1961) The World's Telephones.")
+  #   ),
+  #   
+  #   # Create a spot for the barplot
+  #   mainPanel(
+  #     plotOutput("ds_barplot")  
+  #   )
+  #   
+  # )
+  #            
+  # )
+
+```
+
+
+
+### ...that build a histogram.
+
+
+
+```{r echo = FALSE}
+#
+
+output$hist <- renderPlot({
+  hist(faithful$eruptions, probability = TRUE, 
+       breaks = as.numeric(input$n_breaks),
+       xlab = "Duration (minutes)", 
+       main = "Geyser eruption duration")
+  
+  dens <- density(faithful$eruptions, adjust = input$bw_adjust)
+  lines(dens, col = "blue")
+})
+```
+
+```{r}
+# Render a barplot
+
+my_indicator <- reactive({input$indicator})
+my_year <- reactive({input$year})
+
+
+tidy_subset <- reactive({tidy_pop_energy %>%
+    filter(INDICATOR_NAME == my_indicator() & YEAR == my_year())
+})
+
+output$ds_barplot <- renderPlot({
+    ggplot(data = tidy_subset(), aes(COUNTRY_CODE, VALUE)) +
+        geom_col()
+})
+
+# output$ds_barplot <- renderPlot({
+#     
+#     barplot(tidy_pop_energy %>%
+#                 filter(INDICATOR_NAME == input$indicator & YEAR == input$year) %>%
+#                 select(COUNTRY_NAME, YEAR, VALUE), 
+#             main=input$value,
+#             ylab="Number of Telephones",
+#             xlab="Year")
+# })
+
+# output$phonePlot <- renderPlot({
+#     
+# # Render a barplot
+#     barplot(WorldPhones[,input$region]*1000, 
+#             main=input$region,
+#             ylab="Number of Telephones",
+#             xlab="Year")
+# })
+    
+# tidy_pop_energy %>%
+#     filter(INDICATOR_NAME == "Population growth (annual %)") %>%
+#     select(COUNTRY_NAME, YEAR, VALUE)
+# 
+# tidy_pop_energy %>%
+#     filter(INDICATOR_NAME == input$indicator & YEAR == input$year) %>%
+#     select(COUNTRY_NAME, YEAR, VALUE)
+
+
+
+
+```
 
 
 #### Distribution
@@ -183,6 +321,7 @@ energy_2010=energy_country_year[energy_country_year$YEAR == "2010", ]
 energy_2010$ENERGY_USE=as.numeric(energy_2010$ENERGY_USE)
 energy_2010$YEAR=as.numeric(energy_2010$YEAR)
 energy_2010 <- energy_2010[with(energy_2010, order(energy_2010$ENERGY_USE)),]
+
 ggplot(energy_2010, aes(x=COUNTRY_CODE, y=ENERGY_USE)) + geom_bar(stat='sum') + labs(title="Population by Country", x="Country", y="Energy use (Btu?)")
 
 
@@ -229,19 +368,19 @@ ggplot(pop_energy_year, aes(POP_GROWTH_RATE, ENERGY_USE)) +
 
 
 # Hard to tell what's going on without any subsetting.
-pop_elec_year <- 
-    left_join(pop_country_year, elec_access_country_year, by = "COUNTRY_YEAR") %>%
-    select(COUNTRY_YEAR, POP_GROWTH_RATE, ELECTRICITY_ACCESS) %>%
-    filter(POP_GROWTH_RATE != '' & ELECTRICITY_ACCESS != '') %>%
-    mutate(POP_GROWTH_RATE = as.numeric(POP_GROWTH_RATE)) %>%
-    mutate(ELECTRICITY_ACCESS = as.numeric(ELECTRICITY_ACCESS))
+# pop_elec_year <- 
+#     left_join(pop_country_year, elec_access_country_year, by = "COUNTRY_YEAR") %>%
+#     select(COUNTRY_YEAR, POP_GROWTH_RATE, ELECTRICITY_ACCESS) %>%
+#     filter(POP_GROWTH_RATE != '' & ELECTRICITY_ACCESS != '') %>%
+#     mutate(POP_GROWTH_RATE = as.numeric(POP_GROWTH_RATE)) %>%
+#     mutate(ELECTRICITY_ACCESS = as.numeric(ELECTRICITY_ACCESS))
 
-ggplot(pop_elec_year, aes(ELECTRICITY_ACCESS, POP_GROWTH_RATE)) + 
-    geom_point()
+# ggplot(pop_elec_year, aes(ELECTRICITY_ACCESS, POP_GROWTH_RATE)) + 
+#     geom_point()
 
-ggplot(pop_elec_year %>% filter(POP_GROWTH_RATE >= 5), 
-       aes(ELECTRICITY_ACCESS, POP_GROWTH_RATE)) + 
-    geom_point()
+# ggplot(pop_elec_year %>% filter(POP_GROWTH_RATE >= 5), 
+#        aes(ELECTRICITY_ACCESS, POP_GROWTH_RATE)) + 
+#     geom_point()
 
 # Counts of countries by region and income group
 #ggplot(pop_meta %>% filter(IncomeGroup != ""), aes(Region)) +
@@ -263,75 +402,77 @@ pop_year_world <- pop_country_year %>%
 ggplot(pop_year_world, 
        aes(YEAR, POP_GROWTH_RATE, color = COUNTRY_CODE)) + geom_line()
 
-elec_access_year_world <- elec_access_country_year %>%
-    filter(COUNTRY_CODE %in% c("SSH", "SAS", "NAC", "MEA", 
-                               "LCN", "ECS", "EAS")) %>%
-    mutate(YEAR = as.integer(YEAR)) %>%
-    mutate(ELECTRICITY_ACCESS = as.numeric(ELECTRICITY_ACCESS))
+# elec_access_year_world <- elec_access_country_year %>%
+#     filter(COUNTRY_CODE %in% c("SSH", "SAS", "NAC", "MEA", 
+#                                "LCN", "ECS", "EAS")) %>%
+#     mutate(YEAR = as.integer(YEAR)) %>%
+#     mutate(ELECTRICITY_ACCESS = as.numeric(ELECTRICITY_ACCESS))
 
 
 # No recorded values before 1990
-ggplot(elec_access_year_world %>% filter(YEAR >= 1990), 
-       aes(YEAR, ELECTRICITY_ACCESS, color = COUNTRY_CODE)) + geom_line()
+# ggplot(elec_access_year_world %>% filter(YEAR >= 1990), 
+#        aes(YEAR, ELECTRICITY_ACCESS, color = COUNTRY_CODE)) + geom_line()
 
 ```
 
+
+
 ```{r}
 
-world_prod_coal <- elec_prod_coal %>%
-     filter(COUNTRY_CODE %in% c("SSH", "SAS", "NAC", "MEA", 
-                               "LCN", "ECS", "EAS", "WLD"))
-
-world_prod_hydro <- elec_prod_hydro %>%
-     filter(COUNTRY_CODE %in% c("SSH", "SAS", "NAC", "MEA", 
-                               "LCN", "ECS", "EAS", "WLD"))
-
-world_prod_natural_gas <- elec_prod_natural_gas %>%
-     filter(COUNTRY_CODE %in% c("SSH", "SAS", "NAC", "MEA", 
-                               "LCN", "ECS", "EAS", "WLD"))
-
-world_prod_nuclear <- elec_prod_nuclear %>%
-     filter(COUNTRY_CODE %in% c("SSH", "SAS", "NAC", "MEA", 
-                               "LCN", "ECS", "EAS", "WLD"))
-
-world_prod_oil <- elec_prod_oil %>%
-     filter(COUNTRY_CODE %in% c("SSH", "SAS", "NAC", "MEA", 
-                               "LCN", "ECS", "EAS", "WLD"))
-
-world_prod_renewable <- elec_prod_renewable %>%
-     filter(COUNTRY_CODE %in% c("SSH", "SAS", "NAC", "MEA", 
-                               "LCN", "ECS", "EAS", "WLD"))
-
-
-world_prod_total <- rbind(world_prod_coal, world_prod_hydro, 
-                          world_prod_natural_gas, world_prod_nuclear,
-                          world_prod_oil, world_prod_renewable)
-
-world_prod_total <- world_prod_total %>%
-     gather(key = "YEAR", value = "VALUE", -COUNTRY_NAME, -COUNTRY_CODE,
-            -INDICATOR_NAME, -INDICATOR_CODE) %>%
-     mutate(VALUE = as.numeric(VALUE)) %>%
-     mutate(YEAR = as.integer(YEAR)) %>%
-     left_join(y = pop_meta) %>%
-     drop_na()
+# world_prod_coal <- elec_prod_coal %>%
+#      filter(COUNTRY_CODE %in% c("SSH", "SAS", "NAC", "MEA", 
+#                                "LCN", "ECS", "EAS", "WLD"))
+# 
+# world_prod_hydro <- elec_prod_hydro %>%
+#      filter(COUNTRY_CODE %in% c("SSH", "SAS", "NAC", "MEA", 
+#                                "LCN", "ECS", "EAS", "WLD"))
+# 
+# world_prod_natural_gas <- elec_prod_natural_gas %>%
+#      filter(COUNTRY_CODE %in% c("SSH", "SAS", "NAC", "MEA", 
+#                                "LCN", "ECS", "EAS", "WLD"))
+# 
+# world_prod_nuclear <- elec_prod_nuclear %>%
+#      filter(COUNTRY_CODE %in% c("SSH", "SAS", "NAC", "MEA", 
+#                                "LCN", "ECS", "EAS", "WLD"))
+# 
+# world_prod_oil <- elec_prod_oil %>%
+#      filter(COUNTRY_CODE %in% c("SSH", "SAS", "NAC", "MEA", 
+#                                "LCN", "ECS", "EAS", "WLD"))
+# 
+# world_prod_renewable <- elec_prod_renewable %>%
+#      filter(COUNTRY_CODE %in% c("SSH", "SAS", "NAC", "MEA", 
+#                                "LCN", "ECS", "EAS", "WLD"))
+# 
+# 
+# world_prod_total <- rbind(world_prod_coal, world_prod_hydro, 
+#                           world_prod_natural_gas, world_prod_nuclear,
+#                           world_prod_oil, world_prod_renewable)
+# 
+# world_prod_total <- world_prod_total %>%
+#      gather(key = "YEAR", value = "VALUE", -COUNTRY_NAME, -COUNTRY_CODE,
+#             -INDICATOR_NAME, -INDICATOR_CODE) %>%
+#      mutate(VALUE = as.numeric(VALUE)) %>%
+#      mutate(YEAR = as.integer(YEAR)) %>%
+#      left_join(y = pop_meta) %>%
+#      drop_na()
 
 # world_prod_total <- na.rm(world_prod_total)
 
 
-ggplot(world_prod_total %>% filter(COUNTRY_CODE == "WLD"),
-       aes(YEAR, VALUE, color = INDICATOR_CODE)) +
-     geom_line()
-
-ggplot(world_prod_total,
-       aes(YEAR, VALUE, color = INDICATOR_CODE)) +
-     geom_line() + facet_wrap(facets = "COUNTRY_NAME")
+# ggplot(world_prod_total %>% filter(COUNTRY_CODE == "WLD"),
+#        aes(YEAR, VALUE, color = INDICATOR_CODE)) +
+#      geom_line()
+# 
+# ggplot(world_prod_total,
+#        aes(YEAR, VALUE, color = INDICATOR_CODE)) +
+#      geom_line() + facet_wrap(facets = "COUNTRY_NAME")
 
 
 # Data issue - for some years, total production by region is way above %100
-world_prod_total %>% 
-     group_by(COUNTRY_CODE, YEAR) %>% 
-     summarize(total = sum(VALUE)) %>%
-     arrange(-total)
+# world_prod_total %>% 
+#      group_by(COUNTRY_CODE, YEAR) %>% 
+#      summarize(total = sum(VALUE)) %>%
+#      arrange(-total)
 
 ```
 
