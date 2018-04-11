@@ -328,21 +328,21 @@ output$ds_barplot <- renderPlot({
 ```{r}
 # Growth rate scatter
 
+tidy_pop_energy$VALUE2 = tidy_pop_energy$VALUE / 2# Delete this
+
 my_year <- reactive({input$year})
 
-
 tidy_subset <- reactive({tidy_pop_energy %>%
-    filter(INDICATOR_NAME == my_indicator() & YEAR == my_year())
+    filter(YEAR == my_year())
 })
 
 output$ds_scatter <- renderPlot({
-    ggplot(data = tidy_subset(), aes(COUNTRY_CODE, VALUE)) +
-        geom_col()
-  
- # ggplot(pop_energy_year, aes(POP_GROWTH_RATE, ENERGY_USE)) + 
-  #  geom_point()
-})
+    ggplot(data = tidy_subset(), aes(VALUE, VALUE2) +
+        geom_point())
+}) 
 
+ggplot(tidy_pop_energy, aes(x=VALUE, y=VALUE2) +
+        geom_point())
 
 ```
 
