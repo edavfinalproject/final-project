@@ -176,7 +176,18 @@ Three rshiny tabs 1 per person
 
 ```{r}
 navbarPage("Good Graphics",
-           tabPanel("Macroview"),
+           tabPanel("Macroview",
+                    sidebarLayout(
+                        sidebarPanel(
+                          selectInput("n_breaks", label = "Country:",
+                                      choices = tidy_pop_energy$COUNTRY_NAME, selected = "Aruba")
+                        ),
+                    mainPanel(
+                      plotOutput("countryhist")
+                      )
+                    )
+           )
+           ,
            tabPanel("TEST",
                     sidebarLayout(
                         sidebarPanel(
@@ -254,12 +265,23 @@ navbarPage("Good Graphics",
 
 
 ### ...that build a histogram.
+```{r}
+# U.S.A.!
+pop_growth <- filter(tidy_pop_energy, tidy_pop_energy$INDICATOR_NAME == "Population growth (annual %)")
+usa_growth <- filter(pop_growth, pop_growth$COUNTRY_NAME == "United States")
+ggplot(data=usa_growth, aes(x=usa_growth$YEAR, y=usa_growth$VALUE)) +
+  geom_line() +
+  geom_point()
 
+output$countryhist <- renderPlot({
+    ggplot(data=pop_growth, aes(x=pop_growth$YEAR, y=pop_growth$VALUE)) +
+        geom_line() +
+        geom_point()
+})
+```
 
 
 ```{r echo = FALSE}
-#
-
 output$hist <- renderPlot({
   hist(faithful$eruptions, probability = TRUE, 
        breaks = as.numeric(input$n_breaks),
