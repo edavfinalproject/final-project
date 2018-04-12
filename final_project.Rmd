@@ -120,6 +120,25 @@ not_country = c("Arab World", "Central Europe and the Baltics", "Early-demograph
 tidy_pop_energy <- filter(tidy_pop_energy, !COUNTRY_NAME %in% not_country)
 ```
 
+```{r}
+pop_meta <- pop_meta[, .(COUNTRY_CODE, REGION, INCOMEGROUP)]
+
+pop_df <- pop_df[,!"V63"]
+
+
+pop_country_year <- pop_df %>%
+    select(-COUNTRY_NAME, -INDICATOR_NAME, -INDICATOR_CODE) %>%
+    gather(key = "YEAR", value = "POP_GROWTH_RATE", 
+           -COUNTRY_CODE) %>%
+    mutate(COUNTRY_YEAR = paste0(COUNTRY_CODE,"_",YEAR))
+
+energy_country_year <- energy_df %>%
+    select(-COUNTRY_NAME, -INDICATOR_NAME, -INDICATOR_CODE) %>%
+    gather(key = "YEAR", value = "ENERGY_USE", 
+           -COUNTRY_CODE) %>%
+    mutate(COUNTRY_YEAR = paste0(COUNTRY_CODE,"_",YEAR))
+```
+
 ### Analysis of Data Quality
 
 Provide a detailed, well-organized description of data quality, including textual description, graphs, and code.
@@ -157,6 +176,7 @@ Three rshiny tabs 1 per person
 
 ```{r}
 navbarPage("Good Graphics",
+           tabPanel("Macroview"),
            tabPanel("TEST",
                     sidebarLayout(
                         sidebarPanel(
