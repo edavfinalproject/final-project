@@ -115,7 +115,7 @@ tidy_pop_energy <- tidy_pop_energy %>%
 
 # Filter out rows where the country is not actually a country.
 
-not_country = c("Arab World", "Central Europe and the Baltics", "Early-demographic dividend", "Europe & Central Asia (excluding high income)", "Euro area", "Fragile and conflict affected situations", "Heavily indebted poor countries (HIPC)", "IBRD only","IDA total", "Not classified", "Latin America & Caribbean (excluding high income)", "Latin America & Caribbean", "Low income", "Low & middle income", "Late-demographic dividend", "Middle income", "North America", "Post-demographic dividend", "Small states", "East Asia & Pacific (IDA & IBRD countries)", "Latin America & the Caribbean (IDA & IBRD countries)", "Middle East & North Africa (IDA & IBRD countries)", "South Asia (IDA & IBRD)", "World", "Upper middle income", "Sub-Saharan Africa (IDA & IBRD countries)", "Europe & Central Asia (IDA & IBRD countries)", "Sub-Saharan Africa", "Sub-Saharan Africa (excluding high income)", "Pacific island small states", "Pre-demographic dividend", "Other small states", "OECD members", "Middle East & North Africa (excluding high income)", "Middle East & North Africa", "Lower middle income", "Least developed countries: UN classification", "IDA only", "IDA blend", "IDA & IBRD total", "High income", "European Union", "Europe & Central Asia", "East Asia & Pacific", "East Asia & Pacific (excluding high income)", "Caribbean small states")
+not_country = c("Arab World", "Central Europe and the Baltics", "Early-demographic dividend", "Europe & Central Asia (excluding high income)", "Euro area", "Fragile and conflict affected situations", "Heavily indebted poor countries (HIPC)", "IBRD only","IDA total", "Not classified", "Latin America & Caribbean (excluding high income)", "Latin America & Caribbean", "Low income", "Low & middle income", "Late-demographic dividend", "Middle income", "North America", "Post-demographic dividend", "Small states", "East Asia & Pacific (IDA & IBRD countries)", "Latin America & the Caribbean (IDA & IBRD countries)", "Middle East & North Africa (IDA & IBRD countries)", "South Asia (IDA & IBRD)", "World", "Upper middle income", "Sub-Saharan Africa (IDA & IBRD countries)", "Europe & Central Asia (IDA & IBRD countries)", "Sub-Saharan Africa", "Sub-Saharan Africa (excluding high income)", "Pacific island small states", "Pre-demographic dividend", "Other small states", "OECD members", "Middle East & North Africa (excluding high income)", "Middle East & North Africa", "Lower middle income", "Least developed countries: UN classification", "IDA only", "IDA blend", "IDA & IBRD total", "High income", "European Union", "Europe & Central Asia", "East Asia & Pacific", "East Asia & Pacific (excluding high income)", "Caribbean small states", "South Asia")
 
 tidy_pop_energy <- filter(tidy_pop_energy, !COUNTRY_NAME %in% not_country)
 ```
@@ -344,11 +344,9 @@ output$ds_barplot <- renderPlot({
 
 
 #TODOs
-# Tool tip for country Name. Or just lable.
-# Better axis tick lables
-# Put time slider at bottom. Can you have it update quicker or there be a play button? Make figure bigger.
-# Legend for region name
-# Can you narrow in to look at small countries? Have dropdown option or just show box graphs?? First just manually do to see what it looks like and if its interesting.
+# Tool tip for country Name.
+# Add filter for max axis ranges so you can zoom in
+
 
 # Findings
 # There are two paths to very high energy growth. One is Done by the US Where energy per capita is high but population does not grow. The second is by china where the population grows considerable and then per capita energy growth goes up. THe vast majority of countries has smaller popualtion.
@@ -357,9 +355,9 @@ output$ds_barplot <- renderPlot({
 icodes = unique(tidy_pop_energy$INDICATOR_CODE)
 scatter_data <- tidy_pop_energy[tidy_pop_energy$INDICATOR_CODE == icodes[1],]
 scatter_data$pop_growth <- as.numeric(tidy_pop_energy$VALUE[tidy_pop_energy$INDICATOR_CODE == icodes[1]])
-scatter_data$pop_tot <- as.numeric(tidy_pop_energy$VALUE[tidy_pop_energy$INDICATOR_CODE == icodes[2]])
+scatter_data$pop_tot <- as.numeric(tidy_pop_energy$VALUE[tidy_pop_energy$INDICATOR_CODE == icodes[2]])/1000000
 scatter_data$energy_percap <- as.numeric(tidy_pop_energy$VALUE[tidy_pop_energy$INDICATOR_CODE == icodes[3]])
-scatter_data$energy_tot <- scatter_data$energy_percap * scatter_data$pop_tot
+scatter_data$energy_tot <- (scatter_data$energy_percap * scatter_data$pop_tot) / 100
 scatter_data <- scatter_data[complete.cases(scatter_data), ]
 
 # Most energy using countries 
@@ -377,10 +375,11 @@ tidy_subset <- reactive({scatter_data %>%
 })
 
 output$ds_scatter <- renderPlot({
-    ggplot(data = tidy_subset(), aes(x=pop_tot, y=energy_tot, size=pop_growth, col=REGION)) +
-        geom_point() + labs(title="Population vs. Energy Use", x="Population", y="Energy use") + 
-        theme(legend.position="none") + coord_cartesian(xlim=c(0, max(scatter_data$pop_tot)), 
-                                                          ylim=c(0, max(scatter_data$energy_tot)))
+    ggplot(data = tidy_subset(), aes(x=pop_tot, y=energy_tot, size=pop_tot, col=REGION)) +
+        geom_point(alpha=.7) + labs(title="Population vs. Energy Use", x="Population (millions)", y="Energy use (teragrams of oil equivelent)") + 
+        coord_cartesian(xlim=c(0, max(scatter_data$pop_tot)), ylim=c(0, max(scatter_data$energy_tot))) +
+        scale_x_continuous(labels = scales::comma) + scale_y_continuous(labels = scales::comma) +
+        geom_text(aes(label=COUNTRY_NAME),hjust=-0.5, vjust=0)
 }) 
 
 #ggplot(scatter_data, aes(pop_growth, energy_tot)) + geom_point(size=scatter_data$pop_tot) + labs(title="Population Growth vs. Energy Use")
