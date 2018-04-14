@@ -393,12 +393,12 @@ tidy_subset <- reactive({scatter_data %>%
 # Make plot
 output$ds_scatter <- renderPlot({
     ggplot(data = tidy_subset(), aes(x=pop_tot, y=energy_tot, col=REGION)) +
-        geom_point(size=20) + labs(title="Population vs. Energy Use", 
+        geom_point(size=5) + labs(title="Population vs. Energy Use", 
                             x="Population (millions)", 
                             y="Energy use (teragrams of oil equivelent)") + 
         coord_cartesian(xlim=c(0, pop_max()), ylim=c(0, energy_max())) +
         scale_x_continuous(labels = scales::comma) + scale_y_continuous(labels = scales::comma) +
-        geom_text(aes(label=COUNTRY_NAME),hjust=-0.1, vjust=0)
+        geom_text(aes(label=COUNTRY_NAME),hjust=-0.2, vjust=0)
 }) 
 
 #ggplot(scatter_data, aes(pop_growth, energy_tot)) + geom_point(size=scatter_data$pop_tot) + labs(title="Population Growth vs. Energy Use")
