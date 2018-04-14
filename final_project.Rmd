@@ -231,11 +231,23 @@ navbarPage("Good Graphics",
                         plotOutput("ds_scatter",  width = "100%"),
                         wellPanel(
                           sliderInput(inputId = "year_scatter",
-                                        label = "Year:", 
-                                        value = min(tidy_pop_energy$YEAR, na.rm = TRUE),
-                                        min = 1971,
-                                        max = 2012,
-                                        step = 1)
+                                      label = "Year:", 
+                                      value = min(tidy_pop_energy$YEAR, na.rm = TRUE),
+                                      min = 1971,
+                                      max = 2012,
+                                      step = 1),
+                          sliderInput(inputId = "pop_max",
+                                      label = "Max population:", 
+                                      value = 1500,
+                                      min = 0,
+                                      max = 1500,
+                                      step = 100),
+                          sliderInput(inputId = "energy_max",
+                                      label = "Max energy:", 
+                                      value = 30000,
+                                      min = 0,
+                                      max = 30000,
+                                      step = 2000)
                         )
                       )
            )
@@ -351,6 +363,8 @@ output$ds_barplot <- renderPlot({
 # Findings
 # There are two paths to very high energy growth. One is Done by the US Where energy per capita is high but population does not grow. The second is by china where the population grows considerable and then per capita energy growth goes up. THe vast majority of countries has smaller popualtion.
 
+# There are also examples, such as Germany, where over the whole range there is little change in population and energy use. Needless the country has certianly had advances in health, technology, education, andmore. WHich leads to the quesiton, what makes that country different from the rest?
+
 # Reform data
 icodes = unique(tidy_pop_energy$INDICATOR_CODE)
 scatter_data <- tidy_pop_energy[tidy_pop_energy$INDICATOR_CODE == icodes[1],]
@@ -366,20 +380,25 @@ energy2012[is.na(energy2012)] <- 0
 energy2012_total <- sum(energy2012)
 sum(sort(energy2012, decreasing=TRUE)[0:5])/energy2012_total # top 20
 
-# Calculate energy grwoth
-
+# Config sliders
 year_scatter <- reactive({input$year_scatter})
+pop_max <- reactive({input$pop_max})
+energy_max <- reactive({input$energy_max})
 
+# Config data
 tidy_subset <- reactive({scatter_data %>%
     filter(YEAR == year_scatter())
 })
 
+# Make plot
 output$ds_scatter <- renderPlot({
-    ggplot(data = tidy_subset(), aes(x=pop_tot, y=energy_tot, size=pop_tot, col=REGION)) +
-        geom_point(alpha=.7) + labs(title="Population vs. Energy Use", x="Population (millions)", y="Energy use (teragrams of oil equivelent)") + 
-        coord_cartesian(xlim=c(0, max(scatter_data$pop_tot)), ylim=c(0, max(scatter_data$energy_tot))) +
+    ggplot(data = tidy_subset(), aes(x=pop_tot, y=energy_tot, col=REGION)) +
+        geom_point(size=20) + labs(title="Population vs. Energy Use", 
+                            x="Population (millions)", 
+                            y="Energy use (teragrams of oil equivelent)") + 
+        coord_cartesian(xlim=c(0, pop_max()), ylim=c(0, energy_max())) +
         scale_x_continuous(labels = scales::comma) + scale_y_continuous(labels = scales::comma) +
-        geom_text(aes(label=COUNTRY_NAME),hjust=-0.5, vjust=0)
+        geom_text(aes(label=COUNTRY_NAME),hjust=-0.1, vjust=0)
 }) 
 
 #ggplot(scatter_data, aes(pop_growth, energy_tot)) + geom_point(size=scatter_data$pop_tot) + labs(title="Population Growth vs. Energy Use")
