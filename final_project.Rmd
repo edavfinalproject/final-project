@@ -115,7 +115,7 @@ tidy_pop_energy <- tidy_pop_energy %>%
 
 # Filter out rows where the country is not actually a country.
 
-not_country = c("Arab World", "Central Europe and the Baltics", "Early-demographic dividend", "Europe & Central Asia (excluding high income)", "Euro area", "Fragile and conflict affected situations", "Heavily indebted poor countries (HIPC)", "IBRD only","IDA total", "Not classified", "Latin America & Caribbean (excluding high income)", "Latin America & Caribbean", "Low income", "Low & middle income", "Late-demographic dividend", "Middle income", "North America", "Post-demographic dividend", "Small states", "East Asia & Pacific (IDA & IBRD countries)", "Latin America & the Caribbean (IDA & IBRD countries)", "Middle East & North Africa (IDA & IBRD countries)", "South Asia (IDA & IBRD)", "World", "Upper middle income", "Sub-Saharan Africa (IDA & IBRD countries)", "Europe & Central Asia (IDA & IBRD countries)", "Sub-Saharan Africa", "Sub-Saharan Africa (excluding high income)", "Pacific island small states", "Pre-demographic dividend", "Other small states", "OECD members", "Middle East & North Africa (excluding high income)", "Middle East & North Africa", "Lower middle income", "Least developed countries: UN classification", "IDA only", "IDA blend", "IDA & IBRD total", "High income", "European Union", "Europe & Central Asia", "East Asia & Pacific", "East Asia & Pacific (excluding high income)", "Caribbean small states")
+not_country = c("Arab World", "Central Europe and the Baltics", "Early-demographic dividend", "Europe & Central Asia (excluding high income)", "Euro area", "Fragile and conflict affected situations", "Heavily indebted poor countries (HIPC)", "IBRD only","IDA total", "Not classified", "Latin America & Caribbean (excluding high income)", "Latin America & Caribbean", "Low income", "Low & middle income", "Late-demographic dividend", "Middle income", "North America", "Post-demographic dividend", "Small states", "East Asia & Pacific (IDA & IBRD countries)", "Latin America & the Caribbean (IDA & IBRD countries)", "Middle East & North Africa (IDA & IBRD countries)", "South Asia (IDA & IBRD)", "World", "Upper middle income", "Sub-Saharan Africa (IDA & IBRD countries)", "Europe & Central Asia (IDA & IBRD countries)", "Sub-Saharan Africa", "Sub-Saharan Africa (excluding high income)", "Pacific island small states", "Pre-demographic dividend", "Other small states", "OECD members", "Middle East & North Africa (excluding high income)", "Middle East & North Africa", "Lower middle income", "Least developed countries: UN classification", "IDA only", "IDA blend", "IDA & IBRD total", "High income", "European Union", "Europe & Central Asia", "East Asia & Pacific", "East Asia & Pacific (excluding high income)", "Caribbean small states", "South Asia")
 
 tidy_pop_energy <- filter(tidy_pop_energy, !COUNTRY_NAME %in% not_country)
 ```
@@ -145,7 +145,7 @@ Provide a detailed, well-organized description of data quality, including textua
 
 * For some years, total production by region is much higher than %100
 
- 
+There is a lot of msising data before 1971 and after 2012.
 
 ### Main Analysis (Exploratory Data Analysis)
 
@@ -227,21 +227,31 @@ navbarPage("Good Graphics",
                     )
            ,
            tabPanel("Growth Rate Scatter",
-                    sidebarLayout(
-                        sidebarPanel(
-                            sliderInput(inputId = "year_scatter",
-                                        label = "Year:", 
-                                        value = min(tidy_pop_energy$YEAR, na.rm = TRUE),
-                                        min = min(tidy_pop_energy$YEAR, na.rm = TRUE),
-                                        max = max(tidy_pop_energy$YEAR, na.rm = TRUE),
-                                        step = 1)
-                            ),
-                        mainPanel(
-                            plotOutput("ds_scatter")
-                            )
+                      verticalLayout(
+                        plotOutput("ds_scatter",  width = "100%"),
+                        wellPanel(
+                          sliderInput(inputId = "year_scatter",
+                                      label = "Year:", 
+                                      value = min(tidy_pop_energy$YEAR, na.rm = TRUE),
+                                      min = 1971,
+                                      max = 2012,
+                                      step = 1),
+                          sliderInput(inputId = "pop_max",
+                                      label = "Max population:", 
+                                      value = 1500,
+                                      min = 0,
+                                      max = 1500,
+                                      step = 100),
+                          sliderInput(inputId = "energy_max",
+                                      label = "Max energy:", 
+                                      value = 30000,
+                                      min = 0,
+                                      max = 30000,
+                                      step = 2000)
                         )
-                    )
+                      )
            )
+)
   #   tabPanel("Distribution of Population and Energy",
   #       sidebarLayout(
   #           sidebarPanel(
@@ -344,24 +354,51 @@ output$ds_barplot <- renderPlot({
 ```{r}
 # Growth rate scatter
 
+
+#TODOs
+# Tool tip for country Name.
+# Add filter for max axis ranges so you can zoom in
+
+
+# Findings
+# There are two paths to very high energy growth. One is Done by the US Where energy per capita is high but population does not grow. The second is by china where the population grows considerable and then per capita energy growth goes up. THe vast majority of countries has smaller popualtion.
+
+# There are also examples, such as Germany, where over the whole range there is little change in population and energy use. Needless the country has certianly had advances in health, technology, education, andmore. WHich leads to the quesiton, what makes that country different from the rest?
+
 # Reform data
 icodes = unique(tidy_pop_energy$INDICATOR_CODE)
 scatter_data <- tidy_pop_energy[tidy_pop_energy$INDICATOR_CODE == icodes[1],]
 scatter_data$pop_growth <- as.numeric(tidy_pop_energy$VALUE[tidy_pop_energy$INDICATOR_CODE == icodes[1]])
-scatter_data$pop_tot <- as.numeric(tidy_pop_energy$VALUE[tidy_pop_energy$INDICATOR_CODE == icodes[2]])
-scatter_data$energy_tot <- as.numeric(tidy_pop_energy$VALUE[tidy_pop_energy$INDICATOR_CODE == icodes[3]])
+scatter_data$pop_tot <- as.numeric(tidy_pop_energy$VALUE[tidy_pop_energy$INDICATOR_CODE == icodes[2]])/1000000
+scatter_data$energy_percap <- as.numeric(tidy_pop_energy$VALUE[tidy_pop_energy$INDICATOR_CODE == icodes[3]])
+scatter_data$energy_tot <- (scatter_data$energy_percap * scatter_data$pop_tot) / 100
 scatter_data <- scatter_data[complete.cases(scatter_data), ]
 
-year_scatter <- reactive({input$year_scatter})
+# Most energy using countries 
+energy2012 <- scatter_data$energy_tot[scatter_data$YEAR == "2012"]
+energy2012[is.na(energy2012)] <- 0
+energy2012_total <- sum(energy2012)
+sum(sort(energy2012, decreasing=TRUE)[0:5])/energy2012_total # top 20
 
+# Config sliders
+year_scatter <- reactive({input$year_scatter})
+pop_max <- reactive({input$pop_max})
+energy_max <- reactive({input$energy_max})
+
+# Config data
 tidy_subset <- reactive({scatter_data %>%
     filter(YEAR == year_scatter())
 })
 
+# Make plot
 output$ds_scatter <- renderPlot({
-    ggplot(data = tidy_subset(), aes(x=pop_growth, y=energy_tot, size=energy_tot, col=COUNTRY_NAME)) +
-        geom_point() + labs(title="Population Growth vs. Energy Use", x="Population growth (%)", y="Energy use") + 
-        theme(legend.position="none")
+    ggplot(data = tidy_subset(), aes(x=pop_tot, y=energy_tot, col=REGION)) +
+        geom_point(size=5) + labs(title="Population vs. Energy Use", 
+                            x="Population (millions)", 
+                            y="Energy use (teragrams of oil equivelent)") + 
+        coord_cartesian(xlim=c(0, pop_max()), ylim=c(0, energy_max())) +
+        scale_x_continuous(labels = scales::comma) + scale_y_continuous(labels = scales::comma) +
+        geom_text(aes(label=COUNTRY_NAME),hjust=-0.2, vjust=0)
 }) 
 
 #ggplot(scatter_data, aes(pop_growth, energy_tot)) + geom_point(size=scatter_data$pop_tot) + labs(title="Population Growth vs. Energy Use")
