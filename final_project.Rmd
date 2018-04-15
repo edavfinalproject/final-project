@@ -210,15 +210,22 @@ navbarPage("Good Graphics",
                                                      "Energy Use" = "Energy use (kg of oil equivalent per capita)",
                                                      "Total Population" = "Population, total"),
                                          selected = "Population growth (annual %)"),
-                             # c("Population Growth" = "Population growth (annual %)",
-                             #   "Energy Use" = "Energy use (kg of oil equivalent per capita)",
-                             #   "Total Population" = "Population, total")),
+                            
                             sliderInput(inputId = "year",
                                         label = "Year:", 
                                         value = min(tidy_pop_energy$YEAR, na.rm = TRUE),
                                         min = min(tidy_pop_energy$YEAR, na.rm = TRUE),
                                         max = max(tidy_pop_energy$YEAR, na.rm = TRUE),
-                                        step = 1)
+                                        step = 1),
+                            
+                                  # Copy the line below to make a slider range 
+                              sliderInput(inputId = "rank_slider", 
+                                          label = "Slider Range", 
+                                          min = 0, max = 1, value = c(0, 1))
+                            
+                            
+                            
+                            
                             ),
                         mainPanel(
                             plotOutput("ds_barplot")
@@ -274,7 +281,6 @@ navbarPage("Good Graphics",
 
 
 
-### ...that build a histogram.
 ```{r}
 # U.S.A.!
 pop_growth <- filter(tidy_pop_energy, tidy_pop_energy$INDICATOR_NAME == "Population growth (annual %)")
@@ -309,45 +315,25 @@ output$hist <- renderPlot({
 my_indicator <- reactive({input$indicator})
 my_year <- reactive({input$year})
 
+rank_range <- reactive({input$rank_slider})
 
-tidy_subset <- reactive({tidy_pop_energy %>%
-    filter(INDICATOR_NAME == my_indicator() & YEAR == my_year())
+
+
+tidy_subset_barplot <- reactive({complete.cases(tidy_pop_energy) %>%
+          filter(INDICATOR_NAME == my_indicator() & YEAR == my_year()) %>%
+          arrange(VALUE) %>%
+          mutate(value_percent_rank = percent_rank(VALUE)) %>%
+          filter(value_percent_rank >= rank_range()[1] & 
+                      value_percent_rank <= rank_range()[2])
+
 })
+
+# total_countries <- reactive({length(unique(tidy_subset_barplot$COUNTRY_CODE))})
 
 output$ds_barplot <- renderPlot({
-    ggplot(data = tidy_subset(), aes(COUNTRY_CODE, VALUE)) +
-        geom_col()
+    ggplot(data = tidy_subset_barplot(), aes(x = reorder(COUNTRY_CODE, VALUE), y = VALUE)) +
+        geom_col() + xlab("Country") + ylab(my_indicator())
 })
-
-# output$ds_barplot <- renderPlot({
-#     
-#     barplot(tidy_pop_energy %>%
-#                 filter(INDICATOR_NAME == input$indicator & YEAR == input$year) %>%
-#                 select(COUNTRY_NAME, YEAR, VALUE), 
-#             main=input$value,
-#             ylab="Number of Telephones",
-#             xlab="Year")
-# })
-
-# output$phonePlot <- renderPlot({
-#     
-# # Render a barplot
-#     barplot(WorldPhones[,input$region]*1000, 
-#             main=input$region,
-#             ylab="Number of Telephones",
-#             xlab="Year")
-# })
-    
-# tidy_pop_energy %>%
-#     filter(INDICATOR_NAME == "Population growth (annual %)") %>%
-#     select(COUNTRY_NAME, YEAR, VALUE)
-# 
-# tidy_pop_energy %>%
-#     filter(INDICATOR_NAME == input$indicator & YEAR == input$year) %>%
-#     select(COUNTRY_NAME, YEAR, VALUE)
-
-
-
 
 ```
 
