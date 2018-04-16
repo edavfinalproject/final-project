@@ -151,13 +151,10 @@ There is a lot of msising data before 1971 and after 2012.
 
 Provide a detailed, well-organized description of your findings, including textual description, graphs, and code.  Your focus should be on both the results and the process. Include, as reasonable and relevant, approaches that didn't work, challenges, the data cleaning process, etc.
 
+As we started to determine what graph we should shown in this analysis, we quickly realized there were numerous insightful ways to show the data. Furthermore, there is no one chronological way to explain the data. Therefore, we chose to do R Shiny apps for our main analysis to allow the user to explore the data in many different ways. We present specific snapshots of the app in the Presentaiton section" to show insights that we found. Yet the shiny apps allow the user to discover their own conclusions as well.
 
-#### Latest
-- Hypothesis. Explore how relationship and energy and pop;ation has changed over time to make inferences about why this happened and what may happen in the future.
-
-Three rshiny tabs 1 per person
-
-1. One country at a time (Wyatt)
+We broke the data into there separate apps to explore these distinct aspects of the data. The three apps are listed below.
+1. One country at a time....
   - Dropdown to select country
   - Shows graph of population, population growth, energy and energy growth over time
   - Dropdown for line graph or histogram
@@ -342,14 +339,10 @@ output$ds_barplot <- renderPlot({
 
 
 #TODOs
-# Tool tip for country Name.
-# Add filter for max axis ranges so you can zoom in
+# Larger fonts
+# Play button
+# Button zoom in and out instead of slider.
 
-
-# Findings
-# There are two paths to very high energy growth. One is Done by the US Where energy per capita is high but population does not grow. The second is by china where the population grows considerable and then per capita energy growth goes up. THe vast majority of countries has smaller popualtion.
-
-# There are also examples, such as Germany, where over the whole range there is little change in population and energy use. Needless the country has certianly had advances in health, technology, education, andmore. WHich leads to the quesiton, what makes that country different from the rest?
 
 # Reform data
 icodes = unique(tidy_pop_energy$INDICATOR_CODE)
@@ -566,8 +559,30 @@ Note: "Presentation" here refers to the style of graph, that is, graphs that are
 
 Provide a short nontechnical summary of the most revealing findings of your analysis  written for a nontechnical audience. The length should be approximately two pages (if we were using pages...) Take extra care to clean up your graphs, ensuring that best practices for presentation are followed.
 
+#### Rshiny 1
+
+#### Rshiny 2
+
+#### Rshiny 3
+There are two paths to very high energy growth. One is Done by the US Where energy per capita is high but population does not grow. The second is by china where the population grows considerable and then per capita energy growth goes up. We can see this trend starting with other countries. For example, Egyps populaiton is growing yet the energy growth is not drastically growing. This begs the quesiton, what changed for china to slow down its population growth and change to energy growth?
+
+There are also examples, such as Germany, where over the whole range there is little change in population and energy use. Needless the country has certianly had advances in health, technology, education, andmore. WHich leads to the quesiton, what makes that country different from the rest?
+
+THree countries stand out from the rest. Why do these countries need to be different? Also over the 40 year span these countries are still the only ones separate. This leads me to believe that compounding (potentially capitalism) has influence.
+
  
 
 ### Conclusion
 
 Discuss limitations and future directions, lessons learned.
+
+#### Key findings
+List our most insightful findings
+
+#### Future work
+There are certainly other factors in the realtionship between population and energy use. These include economic, health, wealth, and many more. Including these factors in future anlayses would be benifitial.
+
+Create r package with dataset for others to contribute
+
+Create open source avenue for collaborators to share their explorations of the data.
+
