@@ -287,13 +287,14 @@ navbarPage("Good Graphics",
 tab1_countries <- reactive({input$tab1country})
 
 # attempt to make the graph
-tab1_pop_growth <- reactive({tidy_pop_energy %>% 
-    filter(tab1_pop_growth$INDICATOR_NAME == "Population growth (annual %)") %>%
-             filter(tab1_pop_growth$COUNTRY_NAME == tab1_countries())})
+tab1_pop_growth <- tidy_pop_energy %>% 
+    filter(tidy_pop_energy$INDICATOR_NAME == "Population growth (annual %)") 
+
+tab1_pop_growth_reactive <- reactive({filter(tab1_pop_growth, tab1_pop_growth$COUNTRY_NAME == tab1_countries())})
 
 # attempt to render
 output$countryhist <- renderPlot({
-    ggplot(data=tab1_pop_growth(), aes(x=tab1_pop_growth$YEAR, y=tab1_pop_growth$VALUE)) +
+    ggplot(data=tab1_pop_growth_reactive(), aes(x=tab1_pop_growth_reactive()$YEAR, y=tab1_pop_growth_reactive()$VALUE)) +
         geom_line() +
         geom_point()
 })
