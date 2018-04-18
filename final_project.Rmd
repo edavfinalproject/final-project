@@ -17,6 +17,7 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE,
 The goal of our project is to explore the relationship between the world's energy consumption and population over time. Specifically, we are interested in exploring the interaction between these variables over time at a global, regional, and country level in order to making inferences about any correlation between these variables, so as to better understand the future. 
 
 Our team includes:
+
 * David Schemitsch
 * Isaac Wainstein
 * Wyatt Ford
@@ -29,9 +30,9 @@ Our project uses three datasets published by the World Bank:
 * Population growth (annual %)
 * Energy use (kg of oil equivalent per capita)
 
-Each of these datasets contain per country data from 1960 through 2016. The data was gathered and accessed using the World Bank's api, cleaned, and combined into one tidy dataframe.
+Each of these datasets contain per country data from 1960 through 2016. The data was gathered and accessed using the World Bank's API, cleaned, and combined into one tidy dataframe.
 
-tidy data is a product in itself. Talk sboutfile size and how it organizes code and fits good in memory and simply provides the necessary work to analyze this. A good idea would be to make this into an r package. 
+tidy data is a product in itself. Talk about file size and how it organizes code and fits good in memory and simply provides the necessary work to analyze this. A good idea would be to make this into an r package. 
 
 ```{r}
 # Install and/or load required libraries
@@ -145,13 +146,13 @@ Provide a detailed, well-organized description of data quality, including textua
 
 * For some years, total production by region is much higher than %100
 
-There is a lot of msising data before 1971 and after 2012.
+There is a lot of missing data before 1971 and after 2012.
 
 ### Main Analysis (Exploratory Data Analysis)
 
 Provide a detailed, well-organized description of your findings, including textual description, graphs, and code.  Your focus should be on both the results and the process. Include, as reasonable and relevant, approaches that didn't work, challenges, the data cleaning process, etc.
 
-As we started to determine what graph we should shown in this analysis, we quickly realized there were numerous insightful ways to show the data. Furthermore, there is no one chronological way to explain the data. Therefore, we chose to do R Shiny apps for our main analysis to allow the user to explore the data in many different ways. We present specific snapshots of the app in the Presentaiton section" to show insights that we found. Yet the shiny apps allow the user to discover their own conclusions as well.
+As we started to determine what graph we should shown in this analysis, we quickly realized there were numerous insightful ways to show the data. Furthermore, there is no one chronological way to explain the data. Therefore, we chose to do R Shiny apps for our main analysis to allow the user to explore the data in many different ways. We present specific snapshots of the app in the Presentation section" to show insights that we found. Yet the shiny apps allow the user to discover their own conclusions as well.
 
 We broke the data into there separate apps to explore these distinct aspects of the data. The three apps are listed below.
 1. One country at a time....
@@ -564,11 +565,11 @@ Provide a short nontechnical summary of the most revealing findings of your anal
 #### Rshiny 2
 
 #### Rshiny 3
-There are two paths to very high energy growth. One is Done by the US Where energy per capita is high but population does not grow. The second is by china where the population grows considerable and then per capita energy growth goes up. We can see this trend starting with other countries. For example, Egyps populaiton is growing yet the energy growth is not drastically growing. This begs the quesiton, what changed for china to slow down its population growth and change to energy growth?
+There are two paths to very high energy growth. One is Done by the US Where energy per capita is high but population does not grow. The second is by china where the population grows considerable and then per capita energy growth goes up. We can see this trend starting with other countries. For example, Egypt population is growing yet the energy growth is not drastically growing. This begs the question, what changed for china to slow down its population growth and change to energy growth?
 
-There are also examples, such as Germany, where over the whole range there is little change in population and energy use. Needless the country has certianly had advances in health, technology, education, andmore. WHich leads to the quesiton, what makes that country different from the rest?
+There are also examples, such as Germany, where over the whole range there is little change in population and energy use. Needless the country has certainly had advances in health, technology, education, any more. Which leads to the question, what makes that country different from the rest?
 
-THree countries stand out from the rest. Why do these countries need to be different? Also over the 40 year span these countries are still the only ones separate. This leads me to believe that compounding (potentially capitalism) has influence.
+Three countries stand out from the rest. Why do these countries need to be different? Also over the 40 year span these countries are still the only ones separate. This leads me to believe that compounding (potentially capitalism) has influence.
 
  
 
@@ -580,7 +581,7 @@ Discuss limitations and future directions, lessons learned.
 List our most insightful findings
 
 #### Future work
-There are certainly other factors in the realtionship between population and energy use. These include economic, health, wealth, and many more. Including these factors in future anlayses would be benifitial.
+There are certainly other factors in the relationship between population and energy use. These include economic, health, wealth, and many more. Including these factors in future analyses would be beneficial.
 
 Create r package with dataset for others to contribute
 
