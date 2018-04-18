@@ -155,6 +155,7 @@ Provide a detailed, well-organized description of your findings, including textu
 As we started to determine what graph we should shown in this analysis, we quickly realized there were numerous insightful ways to show the data. Furthermore, there is no one chronological way to explain the data. Therefore, we chose to do R Shiny apps for our main analysis to allow the user to explore the data in many different ways. We present specific snapshots of the app in the Presentation section" to show insights that we found. Yet the shiny apps allow the user to discover their own conclusions as well.
 
 We broke the data into there separate apps to explore these distinct aspects of the data. The three apps are listed below.
+
 1. One country at a time....
   - Dropdown to select country
   - Shows graph of population, population growth, energy and energy growth over time
@@ -280,15 +281,16 @@ navbarPage("Good Graphics",
 
 
 ```{r}
-# U.S.A.!
-pop_growth <- filter(tidy_pop_energy, tidy_pop_energy$INDICATOR_NAME == "Population growth (annual %)")
-usa_growth <- filter(pop_growth, pop_growth$COUNTRY_NAME == "United States")
-ggplot(data=usa_growth, aes(x=usa_growth$YEAR, y=usa_growth$VALUE)) +
-  geom_line() +
-  geom_point()
+# Tab1 Code
+#slider
+tab1_countries <- reactive({input$n_breaks})
+
+tab1_pop_growth <- reactive({tidy_pop_energy %>% 
+    filter(tidy_pop_energy$INDICATOR_NAME == "Population growth (annual %)") %>%
+             filter(tidy_pop_energy$COUNTRY_NAME == tab1_countries())})
 
 output$countryhist <- renderPlot({
-    ggplot(data=pop_growth, aes(x=pop_growth$YEAR, y=pop_growth$VALUE)) +
+    ggplot(data=tab1_pop_growth(), aes(x=tab1_pop_growth()$YEAR, y=tab1_pop_growth()$VALUE)) +
         geom_line() +
         geom_point()
 })
