@@ -214,7 +214,7 @@ navbarPage("Good Graphics",
                                          choices = c("Geographic Region" = "REGION",
                                                      "Income Group" = "INCOMEGROUP",
                                                      "None" = "INDICATOR_NAME"),
-                                         selected = "none"),
+                                         selected = "INDICATOR_NAME"),
                             
                             sliderInput(inputId = "year",
                                         label = "Year:", 
@@ -329,6 +329,16 @@ color_selection <- reactive({input$category})
 
 rank_range <- reactive({input$rank_slider})
 
+# group.colors <- c(`East Asia & Pacific` = "#e41a1c", 
+#                   `Latin America & Caribbean` = "#377eb8",
+#                   `North America` = "#4daf4a", 
+#                   `Sub-Saharan Africa` = "#984ea3", 
+#                   `Europe & Central Asia` = "#ff7f00",
+#                   `Middle East & North Africa` = "ffff33",
+#                   `South Asia` = "f781bf",
+#                   `Energy use (kg of oil equivalent per capita)` = "e41a1c",
+#                   `Population growth (annual %)` = "#377eb8",
+#                   `Population, total` = "#4daf4a")
 
 
 tidy_subset_barplot <- reactive({tidy_pop_energy %>%
@@ -345,9 +355,13 @@ tidy_subset_barplot <- reactive({tidy_pop_energy %>%
 # total_countries <- reactive({length(unique(tidy_subset_barplot$COUNTRY_CODE))})
 
 output$ds_barplot <- renderPlot({
-    ggplot(data = tidy_subset_barplot(), aes(x = reorder(COUNTRY_CODE, VALUE), y = VALUE,
-                                             fill = get(color_selection()))) +
+    ggplot(data = tidy_subset_barplot(), 
+           aes(x = reorder(COUNTRY_CODE, VALUE), y = VALUE,
+               fill = get(color_selection()))) +
         geom_col() + xlab("Country") + ylab(my_indicator())
+     # +
+     #      scale_fill_manual(values=group.colors)
+
 })
 
 ```
