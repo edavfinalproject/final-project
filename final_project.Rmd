@@ -35,15 +35,17 @@ Our team includes:
 
 ### Description of Data
 
-Our project uses three datasets published by the World Bank:
+Our project uses three datasets below published by the World Bank. Each of these datasets contain per country data from 1960 through 2016. 
 
-* Population, total
-* Population growth (annual %)
-* Energy use (kg of oil equivalent per capita)
+  1. Population, total
+  2. Population growth (annual %)
+  3. Energy use (kg of oil equivalent per capita)
 
-Each of these datasets contain per country data from 1960 through 2016. The data was gathered and accessed using the World Bank's API, cleaned, and combined into one tidy dataframe.
+In addition to these three dataset we added metadata of region and income group. We determined that including more data at this time would bring too much complexity for the scope of this project. However, we discuss additoinal metadata as part of the conclusion in the Future Work section.
 
-tidy data is a product in itself. Talk about file size and how it organizes code and fits good in memory and simply provides the necessary work to analyze this. A good idea would be to make this into an r package. 
+The data was gathered and accessed using the World Bank's API, cleaned, and combined into one tidy dataframe. Making the tidy dataframe first was critical to collaboration. It allowed us all to have time to explore the data instead of waiting for a final dataset. Also, it made sure the code for the graphs would not change as the data format changed. Finally, it allowed us to easily make graphs with the data organized in the tidy format. Hence, having the dataset was large part of what made this project happen, and thus leads to future work of an R package discussed in the Future Work section.
+
+The code to pull the data and put it in a data frame are below.
 
 ```{r}
 # Install and/or load required libraries
@@ -677,7 +679,11 @@ List our most insightful findings
 #### Future work
 There are certainly other factors in the relationship between population and energy use. These include economic, health, wealth, and many more. Including these factors in future analyses would be beneficial.
 
+Our group sees this tidy dataframe as a product in itself. Talk about file size and how it organizes code and fits good in memory and simply provides the necessary work to analyze this. A good idea would be to make this into an r package. 
+
 Create r package with dataset for others to contribute
 
 Create open source avenue for collaborators to share their explorations of the data.
+
+Future work could include additional metadata to further explore the relationship betweeen energy and population. For example economic indicators such as GDP, income and wealth. Health indicators such as life expectancy and birthrate. And finally energy sources such as solar, wind, coal, oil and end uses such as trasportation, residential, commercial, and industrial.
 
