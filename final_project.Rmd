@@ -439,12 +439,10 @@ tab1_total_reactive <- reactive({filter(tab1_total, tab1_total$COUNTRY_NAME == t
 
 # render graph
 output$countryhist <- renderPlot({
-    ggplot(data=tab1_total_reactive(), aes(x=tab1_total_reactive()$YEAR, y=tab1_total_reactive()$VALUE)) + 
-    geom_line() + 
+    ggplot(data=tab1_total_reactive(), aes(x=YEAR, y=VALUE)) + 
     geom_point() + 
-    labs(title="Total Population over Time", x="Year", y="Population") +
-    scale_y_continuous(labels = scales::comma) + 
-    facet_grid(INDICATOR_NAME~., scales="free")
+    facet_grid(~INDICATOR_NAME, scale="free") +
+    labs(title="Total Population over Time", x="Year")
 })
 ```
 
@@ -457,7 +455,7 @@ usa_pop <- tidy_pop_energy %>%
 
 usa_data <- tidy_pop_energy %>% filter(tidy_pop_energy$INDICATOR_NAME != "Population growth (annual %)", tidy_pop_energy$COUNTRY_NAME == "United States")
 
-ggplot(data=usa_data, aes(x=usa_data$YEAR, y=usa_data$VALUE)) + geom_point() + facet_wrap(~usa_data$INDICATOR_CODE)
+ggplot(data=usa_data, aes(x=YEAR, y=VALUE)) + geom_point() + facet_wrap(~usa_data$INDICATOR_CODE, scale="free")
 
 # usa_total <- tab1_total %>% filter(tab1_total$COUNTRY_NAME == "United States", )
 
