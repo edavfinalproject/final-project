@@ -190,6 +190,7 @@ As shown in Figure 1 Energy use is growing. Many ay that we just need to replace
 Figure 1 (Energy use over time)
 
 
+
 As shown in figure 2 population is also growing and energy per captia is not growing as much. We can conclude at a high level that since enrgy per captia is not incraeasing if we just stop population growth we stop energy growth. We think there is more to this story, which is the focus of the remainder of the Main anlaysis.
 
 
@@ -197,6 +198,52 @@ Figure 2 (population growth over time)
 
 Figure 3 (Energy use per capita over time)
 
+```{r echo = FALSE}
+# Reform data
+icodes = unique(tidy_pop_energy$INDICATOR_CODE)
+scatter_data <- tidy_pop_energy[tidy_pop_energy$INDICATOR_CODE == icodes[1],]
+scatter_data$pop_growth <- as.numeric(tidy_pop_energy$VALUE[tidy_pop_energy$INDICATOR_CODE == icodes[1]])
+scatter_data$pop_tot <- as.numeric(tidy_pop_energy$VALUE[tidy_pop_energy$INDICATOR_CODE == icodes[2]])/1000000
+scatter_data$energy_percap <- as.numeric(tidy_pop_energy$VALUE[tidy_pop_energy$INDICATOR_CODE == icodes[3]])
+scatter_data$energy_tot <- (scatter_data$energy_percap * scatter_data$pop_tot) / 100
+scatter_data <- scatter_data[complete.cases(scatter_data), ]
+
+# Alter dataset
+icodes <- unique(tidy_pop_energy$INDICATOR_CODE)
+my_data <- tidy_pop_energy[tidy_pop_energy$INDICATOR_CODE == icodes[2],]
+my_data$VALUE <- as.numeric(my_data$VALUE)/1000000
+my_data$YEAR <- as.numeric(my_data$YEAR)
+
+# ENERGY GROWTH
+energy_agg <- aggregate(energy_tot ~ YEAR, scatter_data, sum)
+ggplot(energy_agg, aes(YEAR, energy_tot)) + geom_line() +
+  labs(title="Energy Growth", 
+       x="YEAR", 
+       y="Energy use (teragrams of oil equivelent)") +
+  coord_cartesian(xlim=c(1975, 2010))
+
+
+# POPULATION GROWTH
+pop_agg <- aggregate(pop_tot ~ YEAR, scatter_data, sum)
+ggplot(pop_agg, aes(YEAR, pop_tot)) + geom_line() +
+  labs(title="Population Growth", 
+       x="YEAR", 
+       y="Population (millions)") +
+  coord_cartesian(xlim=c(1975, 2010))
+
+# Per capita
+energy_capita_agg <- aggregate(energy_percap ~ YEAR, scatter_data, mean)
+energy_capita_agg$weighted <- energy_agg$energy_tot / pop_agg$pop_tot
+ggplot(energy_capita_agg, aes(YEAR, weighted)) + geom_line() +
+  labs(title="Energy per Capita", 
+       x="YEAR", 
+       y="Energy use per capita (teragrams of oil equivelent)") +
+  coord_cartesian(xlim=c(1975, 2010))
+```
+
+```{r echo = FALSE}
+
+```
 #### Interactive component
 As we started to determine what graph we should shown in this analysis, we quickly realized there were numerous insightful ways to show the data. Furthermore, there is no one chronological way to explain the data. Therefore, we chose to do R Shiny apps for our main analysis to allow the user to explore the data in many different ways. We present specific snapshots of the app in the Presentation section" to show insights that we found. Yet the shiny apps allow the user to discover their own conclusions as well.
 
