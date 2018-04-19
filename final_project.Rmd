@@ -14,13 +14,24 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE,
 
 ### Introduction
 
-The goal of our project is to explore the relationship between the world's energy consumption and population over time. Specifically, we are interested in exploring the interaction between these variables over time at a global, regional, and country level in order to making inferences about any correlation between these variables, so as to better understand the future. 
+The debate about whether human intervention is causing climate change is ending, but the search for how to avert its most harmful affects is just beginning. One of the primary casues of climate change is our burning of Fossil Fuels, which has been steadily growithing as showing in figure 1.
 
+In the important book "Prosperity Without Growth" the Author Tim Jackson we must find a way to grow our prosperity, without continuing to use more and more resources. Keeping on the same trajectory is ultimitely unsustainable in that it will have catestrophic affects to our climate, or the resources will simply run out.
+
+Many propoponts will say the problem is population. If we can find a way to stop population growth we could stop the growth of energy and become a more sustainable society. 
+
+However, our team thinks this claim needs testing. Is it fair to blame the developing countries with high population growth when many western countires, especially the USA, are consuming far more energy per person? Does the correlation of population and energy shown above still hold true when all countries are not included? We believe exploratory data analysis is a fantastic tool to help answer these questions, and therefore **the primary goal of this project is to explore and define the characteristics of the relationship between energy use and population over time.** 
+
+A secondary purpose of the project and presentaiton to the class is to showcase and important field that needs Data Science. In a field dominated by finance, advertising, marketing, sales, and tech for the sake of tech, we claim there is more to what a Data Scientist can do.
+
+
+# TODO: List team members and a description of how each contributed to the project.
 Our team includes:
+
 
 * David Schemitsch
 * Isaac Wainstein
-* Wyatt Ford
+* Wyatt Ford - 
 
 ### Description of Data
 
@@ -154,6 +165,20 @@ There is a lot of missing data before 1971 and after 2012.
 
 Provide a detailed, well-organized description of your findings, including textual description, graphs, and code.  Your focus should be on both the results and the process. Include, as reasonable and relevant, approaches that didn't work, challenges, the data cleaning process, etc.
 
+#### Setting the stage
+As shown in Figure 1 Energy use is growing. Many ay that we just need to replace our energy sources with clean sources. The toal clean energy use is ~10% today (NEED SOURCE). Therefore, to do all renewables we would need to increase by 10-fold. However, the popualtion has growth XXX times over the last 50 years. Hence, we assumed the energy growth continues (assumption only used to illustrate point) we would need to increase clean energy to 500 times what it is today. A much harder task. Hence, an extremly important componnet is stopping our energy growth.
+
+Figure 1 (Energy use over time)
+
+
+As shown in figure 2 population is also growing and energy per captia is not growing as much. We can conclude at a high level that since enrgy per captia is not incraeasing if we just stop population growth we stop energy growth. We think there is more to this story, which is the focus of the remainder of the Main anlaysis.
+
+
+Figure 2 (population growth over time)
+
+Figure 3 (Energy use per capita over time)
+
+#### Interactive
 As we started to determine what graph we should shown in this analysis, we quickly realized there were numerous insightful ways to show the data. Furthermore, there is no one chronological way to explain the data. Therefore, we chose to do R Shiny apps for our main analysis to allow the user to explore the data in many different ways. We present specific snapshots of the app in the Presentation section" to show insights that we found. Yet the shiny apps allow the user to discover their own conclusions as well.
 
 We broke the data into there separate apps to explore these distinct aspects of the data. The three apps are listed below.
