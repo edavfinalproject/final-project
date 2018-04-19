@@ -414,22 +414,25 @@ tab1_total_reactive <- reactive({filter(tab1_total, tab1_total$COUNTRY_NAME == t
 
 # render graph
 output$countryhist <- renderPlot({
-    ggplot(data=tab1_total_reactive(), aes(x=tab1_total_reactive()$YEAR, y=tab1_total_reactive()$VALUE)) + geom_line() + geom_point() + labs(title="Total Population over Time", x="Year", y="Population") + scale_y_continuous(labels = scales::comma) + facet_grid(INDICATOR_NAME~., scales="free")
+    ggplot(data=tab1_total_reactive(), aes(x=tab1_total_reactive()$YEAR, y=tab1_total_reactive()$VALUE)) + 
+    geom_line() + 
+    geom_point() + 
+    labs(title="Total Population over Time", x="Year", y="Population") +
+    scale_y_continuous(labels = scales::comma) + 
+    facet_grid(INDICATOR_NAME~., scales="free")
 })
 ```
 
 ```{r}
+#CODE TRYING TO DEBUG FACET WRAP
 usa_energy <- tidy_pop_energy %>% 
     filter(tidy_pop_energy$INDICATOR_NAME == "Energy use (kg of oil equivalent per capita)", tidy_pop_energy$COUNTRY_NAME == "United States")
-
 usa_pop <- tidy_pop_energy %>%
   filter(tidy_pop_energy$INDICATOR_NAME == "Population, total", tidy_pop_energy$COUNTRY_NAME == "United States")
 
-usa_energy_plot <- ggplot(data=usa_energy, aes(x=usa_energy$YEAR, y=usa_energy$VALUE)) +
-  geom_point() + geom_line() + xlim(1950, 2015)
-usa_pop_plot <- ggplot(data=usa_pop, aes(x=usa_pop$YEAR, y=usa_pop$VALUE)) + geom_point() + geom_line() + xlim(1950, 2015)
+usa_data <- tidy_pop_energy %>% filter(tidy_pop_energy$INDICATOR_NAME != "Population growth (annual %)", tidy_pop_energy$COUNTRY_NAME == "United States")
 
-gridExtra::grid.arrange(usa_pop_plot, usa_energy_plot)
+ggplot(data=usa_data, aes(x=usa_data$YEAR, y=usa_data$VALUE)) + geom_point() + facet_wrap(~usa_data$INDICATOR_CODE)
 
 # usa_total <- tab1_total %>% filter(tab1_total$COUNTRY_NAME == "United States", )
 
