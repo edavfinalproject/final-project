@@ -179,15 +179,16 @@ We broke the data into there separate apps to explore these distinct aspects of 
 navbarPage("Good Graphics",
            tabPanel("Macroview",
                     sidebarLayout(
+                        mainPanel(
+                          plotOutput("countryhist")
+                          ),
                         sidebarPanel(
                           selectInput(inputId = "tab1country", label = "Country:",
-                                      choices = tidy_pop_energy$COUNTRY_NAME, selected = "Aruba")
-                        ),
-                    mainPanel(
-                      plotOutput("countryhist")
-                      )
+                                      choices = as.vector(unique(tidy_pop_energy$COUNTRY_NAME)), 
+                                      selected = as.vector(unique(tidy_pop_energy$COUNTRY_NAME))[1])
+                        )
                     )
-           )
+                )
            ,
            tabPanel("TEST",
                     sidebarLayout(
@@ -289,25 +290,7 @@ navbarPage("Good Graphics",
 
 
 
-```{r}
-# Tab1 Code
 
-#create the dropdown 
-tab1_countries <- reactive({input$tab1country})
-
-# attempt to make the graph
-tab1_pop_growth <- tidy_pop_energy %>% 
-    filter(tidy_pop_energy$INDICATOR_NAME == "Population growth (annual %)") 
-
-tab1_pop_growth_reactive <- reactive({filter(tab1_pop_growth, tab1_pop_growth$COUNTRY_NAME == tab1_countries())})
-
-# attempt to render
-output$countryhist <- renderPlot({
-    ggplot(data=tab1_pop_growth_reactive(), aes(x=tab1_pop_growth_reactive()$YEAR, y=tab1_pop_growth_reactive()$VALUE)) +
-        geom_line() +
-        geom_point()
-})
-```
 
 
 ```{r echo = FALSE}
@@ -416,6 +399,42 @@ output$ds_scatter <- renderPlot({
 
 #ggplot(scatter_data, aes(pop_growth, energy_tot)) + geom_point(size=scatter_data$pop_tot) + labs(title="Population Growth vs. Energy Use")
 
+```
+
+```{r}
+# Tab1 Code
+
+#create the dropdown 
+tab1_countries <- reactive({input$tab1country})
+
+# Population Total
+tab1_total <- tidy_pop_energy %>% 
+    filter(tidy_pop_energy$INDICATOR_NAME != "Population growth (annual %)") 
+tab1_total_reactive <- reactive({filter(tab1_total, tab1_total$COUNTRY_NAME == tab1_countries())})
+
+# render graph
+output$countryhist <- renderPlot({
+    ggplot(data=tab1_total_reactive(), aes(x=tab1_total_reactive()$YEAR, y=tab1_total_reactive()$VALUE)) + geom_line() + geom_point() + labs(title="Total Population over Time", x="Year", y="Population") + scale_y_continuous(labels = scales::comma) + facet_grid(INDICATOR_NAME~., scales="free")
+})
+```
+
+```{r}
+usa_energy <- tidy_pop_energy %>% 
+    filter(tidy_pop_energy$INDICATOR_NAME == "Energy use (kg of oil equivalent per capita)", tidy_pop_energy$COUNTRY_NAME == "United States")
+
+usa_pop <- tidy_pop_energy %>%
+  filter(tidy_pop_energy$INDICATOR_NAME == "Population, total", tidy_pop_energy$COUNTRY_NAME == "United States")
+
+usa_energy_plot <- ggplot(data=usa_energy, aes(x=usa_energy$YEAR, y=usa_energy$VALUE)) +
+  geom_point() + geom_line() + xlim(1950, 2015)
+usa_pop_plot <- ggplot(data=usa_pop, aes(x=usa_pop$YEAR, y=usa_pop$VALUE)) + geom_point() + geom_line() + xlim(1950, 2015)
+
+gridExtra::grid.arrange(usa_pop_plot, usa_energy_plot)
+
+# usa_total <- tab1_total %>% filter(tab1_total$COUNTRY_NAME == "United States", )
+
+#ggplot(data=usa_total, aes(x=usa_total$YEAR, y=usa_total$VALUE)) +
+#  facet_wrap(~usa_total$INDICATOR_NAME, scales="free") + geom_line() + geom_point()
 ```
 
 #### Distribution
