@@ -185,18 +185,11 @@ The main analysis inovoles three sections
 #### Overview
 
 
-As shown in Figure 1 Energy use is growing. Many ay that we just need to replace our energy sources with clean sources. The toal clean energy use is ~10% today (NEED SOURCE). Therefore, to do all renewables we would need to increase by 10-fold. However, the popualtion has growth XXX times over the last 50 years. Hence, we assumed the energy growth continues (assumption only used to illustrate point) we would need to increase clean energy to 500 times what it is today. A much harder task. Hence, an extremly important componnet is stopping our energy growth.
-
-Figure 1 (Energy use over time)
-
+As shown in Figure 1 Energy use is growing. Many ay that we just need to replace our energy sources with clean, renewable sources. The International Energy Angency indicates today 13.2% of energy in the world comes from renewable sources. (https://www.iea.org/about/faqs/renewableenergy/). Therefore, to go 100% renwable we would need to increase out current capacity by 7.5 times. However, we see from 1975 to 2010 energy grows about 2.5 times, with a growrate of about 2.6%. If the growth rate stayed the same the energy use in 2100 would be over 8 times what it is today. Thefore, to go fully renewable with the current growth rate by 2100 means increaing out renable capacity by 64 times. Hence, an extremly important componnet is stopping our energy growth.
 
 
 As shown in figure 2 population is also growing and energy per captia is not growing as much. We can conclude at a high level that since enrgy per captia is not incraeasing if we just stop population growth we stop energy growth. We think there is more to this story, which is the focus of the remainder of the Main anlaysis.
 
-
-Figure 2 (population growth over time)
-
-Figure 3 (Energy use per capita over time)
 
 ```{r echo = FALSE}
 # Reform data
