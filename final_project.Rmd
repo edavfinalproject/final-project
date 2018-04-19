@@ -457,7 +457,7 @@ tab1_total_reactive <- reactive({filter(tab1_total, tab1_total$COUNTRY_NAME == t
 # render graph
 output$countryhist <- renderPlot({
     ggplot(data=tab1_total_reactive(), aes(x=YEAR, y=VALUE)) + 
-    geom_point() + 
+    geom_point() + geom_line() +
     facet_wrap(~INDICATOR_NAME, ncol=1, scale="free") +
     labs(title="Total Population over Time", x="Year")
 })
