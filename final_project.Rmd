@@ -8,7 +8,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE,
-                      message = FALSE)
+                      message = FALSE, cache = TRUE)
 ```
 
 
@@ -49,7 +49,7 @@ The code to pull the data and put it in a data frame are below.
 
 ```{r}
 # Install and/or load required libraries
-needed_packages <- c("data.table", "tidyverse")
+needed_packages <- c("data.table", "tidyverse", "shiny")
 
 for (p in needed_packages) {
      if (!(p %in% installed.packages())){
@@ -59,6 +59,7 @@ for (p in needed_packages) {
 
 library(data.table)
 library(tidyverse)
+library(shiny)
 ```
 
 ```{r, results = "hide"}
@@ -172,6 +173,8 @@ Add one of those visna() graphs for missing data
 Discuss how data is limited to after 1960, and even then for "Energy Use" it's only a small portion of countries are represented in the earlier years, specifically high income countries. This limits inferences we can make about lower income countries in that decade, or long term inference across the whole of the 20th century. This could be displayed as table or bar chart of total count of nations per year in the three data sets. Maybe see if there are geographic/income-based patterns across the data, which would bias the results.
 
 Talk about how in the meta files, there is a Special Notes column for descriptions on how the data was modified or revised. This might indicate the data isn't entirely accurate.
+
+We explored using additional data from the World Bank, namely energy consumption by type as a percentage of total energy consumption. These data show what percentage of energy consumption is from nuclear, non-nuclear renewables, oil, natural gas, and coal. The data take the same format as the data we did use in this project. The initial intention behind using these consumption percentage data was to see if there are any connections between population growth, total energy use, and consumption habits. For example, one hypothethical correlation might be between quickly growing populations and heavy reliance on coal. However, we ultimately decided against using the consumption data in our final analysis.
     
 ### Main Analysis (Exploratory Data Analysis)
 
