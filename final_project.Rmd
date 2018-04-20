@@ -8,7 +8,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE,
-                      message = FALSE, cache = TRUE)
+                      message = FALSE)
 ```
 
 
@@ -47,7 +47,7 @@ The data was gathered and accessed using the World Bank's API, cleaned, and comb
 
 The code to pull the data and put it in a data frame are below.
 
-```{r}
+```{r Install and/or load required libraries}
 # Install and/or load required libraries
 needed_packages <- c("data.table", "tidyverse", "shiny", "WDI")
 
@@ -63,7 +63,7 @@ for (p in needed_packages) {
 # library(shiny)
 ```
 
-```{r}
+```{r download World Bank data via the WDI package}
 # Alternate way to download World Bank data via the WDI package
 
 meta_df <- data.frame(WDI_data$country)
@@ -116,7 +116,7 @@ tidy_pop_energy <- tidy_pop_energy %>% arrange(COUNTRY_NAME)
 ```
 
 
-```{r, results = "hide"}
+```{r Download, unzip, and read in data stored as CSV files, results="hide"}
 # 
 # ### Download, unzip, and read in data stored as CSV files
 # 
@@ -193,22 +193,22 @@ tidy_pop_energy <- tidy_pop_energy %>% arrange(COUNTRY_NAME)
 # tidy_pop_energy <- tidy_pop_energy %>% arrange(COUNTRY_NAME)
 ```
 
-```{r}
+```{r Country-Year data frames}
 # pop_meta <- pop_meta[, .(COUNTRY_CODE, REGION, INCOMEGROUP)]
 # 
 # pop_df <- pop_df[,!"V63"]
 
 
 pop_country_year <- pop_df %>%
-    select(-COUNTRY_NAME, -INDICATOR_NAME, -INDICATOR_CODE) %>%
-    gather(key = "YEAR", value = "POP_GROWTH_RATE", 
-           -COUNTRY_CODE) %>%
+    # select(-COUNTRY_NAME, -INDICATOR_NAME, -INDICATOR_CODE) %>%
+    # gather(key = "YEAR", value = "POP_GROWTH_RATE", 
+    #        -COUNTRY_CODE) %>%
     mutate(COUNTRY_YEAR = paste0(COUNTRY_CODE,"_",YEAR))
 
 energy_country_year <- energy_df %>%
-    select(-COUNTRY_NAME, -INDICATOR_NAME, -INDICATOR_CODE) %>%
-    gather(key = "YEAR", value = "ENERGY_USE", 
-           -COUNTRY_CODE) %>%
+    # select(-COUNTRY_NAME, -INDICATOR_NAME, -INDICATOR_CODE) %>%
+    # gather(key = "YEAR", value = "ENERGY_USE", 
+    #        -COUNTRY_CODE) %>%
     mutate(COUNTRY_YEAR = paste0(COUNTRY_CODE,"_",YEAR))
 ```
 
@@ -252,7 +252,7 @@ As shown in figure 2 population is also growing and energy per captia is not gro
 
 ```{r echo = FALSE}
 # Reform data
-icodes = unique(tidy_pop_energy$INDICATOR_CODE)
+icodes <-  unique(tidy_pop_energy$INDICATOR_CODE)
 scatter_data <- tidy_pop_energy[tidy_pop_energy$INDICATOR_CODE == icodes[1],]
 scatter_data$pop_growth <- as.numeric(tidy_pop_energy$VALUE[tidy_pop_energy$INDICATOR_CODE == icodes[1]])
 scatter_data$pop_tot <- as.numeric(tidy_pop_energy$VALUE[tidy_pop_energy$INDICATOR_CODE == icodes[2]])/1000000
@@ -318,7 +318,7 @@ We broke the data into there separate apps to explore these distinct aspects of 
   - Y is population growth rate
   - Size of circle is size of population
 
-```{r}
+```{r NavBar}
 navbarPage("Good Graphics",
            tabPanel("Macroview",
                     sidebarLayout(
@@ -348,39 +348,36 @@ navbarPage("Good Graphics",
                     )
            ,
            tabPanel("Distribution of Population and Energy",
-                    sidebarLayout(
-                        sidebarPanel(
+                    
+                        verticalLayout(
+                            plotOutput("ds_barplot", width = "100%"),
+                            fluidRow(
+                                column(
                             radioButtons(label = "Indicator", inputId = "indicator",
                                          choices = c("Population Growth" = "Population growth (annual %)",
                                                      "Energy Use" = "Energy use (kg of oil equivalent per capita)",
                                                      "Total Population" = "Population, total"),
-                                         selected = "Population growth (annual %)"),
-                            
+                                         selected = "Population growth (annual %)"), width = 3),
+                            column(
                             radioButtons(label = "Categories", inputId = "category",
                                          choices = c("Geographic Region" = "REGION",
                                                      "Income Group" = "INCOMEGROUP",
                                                      "None" = "INDICATOR_NAME"),
-                                         selected = "INDICATOR_NAME"),
-                            
+                                         selected = "INDICATOR_NAME"), width = 3),
+                            column(
                             sliderInput(inputId = "year",
                                         label = "Year:", 
                                         value = min(tidy_pop_energy$YEAR, na.rm = TRUE),
                                         min = min(tidy_pop_energy$YEAR, na.rm = TRUE),
                                         animate = animationOptions(interval = 250),
                                         max = max(tidy_pop_energy$YEAR, na.rm = TRUE),
-                                        step = 1),
+                                        step = 1), width = 3),
                             
                                   # Copy the line below to make a slider range 
+                            column(
                               sliderInput(inputId = "rank_slider", 
                                           label = "Slider Range", 
-                                          min = 0, max = 1, value = c(0, 1))
-                            
-                            
-                            
-                            
-                            ),
-                        mainPanel(
-                            plotOutput("ds_barplot")
+                                          min = 0, max = 1, value = c(0, 1)),width = 3)
                             )
                         )
                     )
@@ -436,7 +433,7 @@ navbarPage("Good Graphics",
 
 
 
-```{r echo = FALSE}
+```{r Test Tab}
 output$hist <- renderPlot({
   hist(faithful$eruptions, probability = TRUE, 
        breaks = as.numeric(input$n_breaks),
@@ -448,26 +445,26 @@ output$hist <- renderPlot({
 })
 ```
 
-```{r}
+```{r Bar Plot tab}
 # Render a barplot
 
 my_indicator <- reactive({input$indicator})
 my_year <- reactive({input$year})
-color_selection <- reactive({input$category})
+fill_selection <- reactive({input$category})
 
 rank_range <- reactive({input$rank_slider})
 
 bar_colors <- c(`East Asia & Pacific` = "#F8766D",
-                  `Latin America & Caribbean` = "#C49A00",
-                  `North America` = "#53B400",
-                  `Sub-Saharan Africa` = "#00C094",
-                  `Europe & Central Asia` = "#00B6EB",
-                  `Middle East & North Africa` = "#A58AFF",
-                  `South Asia` = "#FB61D7",
+                `Latin America & Caribbean` = "#C49A00",
+                `North America` = "#53B400",
+                `Sub-Saharan Africa` = "#00C094",
+                `Europe & Central Asia` = "#00B6EB",
+                `Middle East & North Africa` = "#A58AFF",
+                `South Asia` = "#FB61D7",
                 `High income` = "#238b45",
-                   `Upper middle income` = "#66c2a4",
-                   `Lower middle income` = "#b2e2e2",
-                   `Low income` = "#edf8fb",
+                `Upper middle income` = "#66c2a4",
+                `Lower middle income` = "#b2e2e2",
+                `Low income` = "#edf8fb",
                 `Population growth (annual %)` = "#999999",
                 `Energy use (kg of oil equivalent per capita)` = "#999999", 
                 `Population, total` = "#999999")
@@ -499,7 +496,7 @@ output$ds_barplot <- renderPlot({
 
 ```
 
-```{r}
+```{r Scatter Plot tab}
 # Growth rate scatter
 
 
@@ -549,7 +546,7 @@ output$ds_scatter <- renderPlot({
 
 ```
 
-```{r}
+```{r Tab 1}
 # Tab1 Code
 
 #create the dropdown 
@@ -611,15 +608,17 @@ Three countries stand out from the rest. Why do these countries need to be diffe
  
 
 
-```{r}
+```{r Who are the big players?}
 # Who are the big players?
 # Histogram of population in latest year. Group all coutnries after top 100. Could also present in mosiac plot.
-energy_2010=energy_country_year[energy_country_year$YEAR == "2010", ]
-energy_2010$ENERGY_USE=as.numeric(energy_2010$ENERGY_USE)
-energy_2010$YEAR=as.numeric(energy_2010$YEAR)
-energy_2010 <- energy_2010[with(energy_2010, order(energy_2010$ENERGY_USE)),]
-
-ggplot(energy_2010, aes(x=COUNTRY_CODE, y=ENERGY_USE)) + geom_bar(stat='sum') + labs(title="Population by Country", x="Country", y="Energy use (Btu?)")
+# energy_2010 <- energy_country_year[energy_country_year$YEAR == "2010", ]
+# # energy_2010$ENERGY_USE=as.numeric(energy_2010$ENERGY_USE)
+# energy_2010$ENERGY_USE=as.numeric(energy_2010$VALUE)
+# energy_2010$YEAR=as.numeric(energy_2010$YEAR)
+# energy_2010 <- energy_2010[with(energy_2010, order(energy_2010$ENERGY_USE)),]
+# 
+# ggplot(energy_2010, aes(x=COUNTRY_CODE, y=ENERGY_USE)) + geom_bar(stat='sum') + 
+#     labs(title="Population by Country", x="Country", y="Energy use (Btu?)")
 
 
 # Histogram of energy in latest year.
@@ -637,8 +636,12 @@ ggplot(energy_2010, aes(x=COUNTRY_CODE, y=ENERGY_USE)) + geom_bar(stat='sum') + 
 
 #### Take whats needed from below and then delete.
   
-```{r}
+```{r Scatter plot of energy use and growth rate by country-year}
 # Scatter plot of energy use and growth rate by country-year
+
+pop_country_year <- pop_country_year %>% mutate(POP_GROWTH_RATE = VALUE)
+energy_country_year <- energy_country_year %>% mutate(ENERGY_USE = VALUE)
+
 pop_energy_year <- 
     left_join(pop_country_year, energy_country_year, by = "COUNTRY_YEAR") %>%
     select(COUNTRY_YEAR, POP_GROWTH_RATE, ENERGY_USE) %>%
@@ -647,7 +650,7 @@ pop_energy_year <-
     mutate(ENERGY_USE = as.numeric(ENERGY_USE))
 
 ggplot(pop_energy_year, aes(POP_GROWTH_RATE, ENERGY_USE)) + 
-    geom_point()
+    geom_point(alpha = .1) 
 
 
 # Hard to tell what's going on without any subsetting.
@@ -673,6 +676,11 @@ ggplot(pop_energy_year, aes(POP_GROWTH_RATE, ENERGY_USE)) +
  #   geom_bar() + coord_flip()
 
 
+
+
+```
+
+```{r Population growth rate over time by geographic region}
 # Population growth rate over time by geographic region
 pop_year_world <- pop_country_year %>%
     filter(COUNTRY_CODE %in% c("SSH", "SAS", "NAC", "MEA", 
@@ -695,9 +703,7 @@ ggplot(pop_year_world,
 # No recorded values before 1990
 # ggplot(elec_access_year_world %>% filter(YEAR >= 1990), 
 #        aes(YEAR, ELECTRICITY_ACCESS, color = COUNTRY_CODE)) + geom_line()
-
 ```
-
 
 
 ```{r}
