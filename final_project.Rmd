@@ -49,98 +49,154 @@ The code to pull the data and put it in a data frame are below.
 
 ```{r}
 # Install and/or load required libraries
-needed_packages <- c("data.table", "tidyverse", "shiny")
+needed_packages <- c("data.table", "tidyverse", "shiny", "WDI")
 
 for (p in needed_packages) {
      if (!(p %in% installed.packages())){
           install.packages(p)
      }
+    library(p, character.only = TRUE)
 }
 
-library(data.table)
-library(tidyverse)
-library(shiny)
-```
-
-```{r, results = "hide"}
-
-### Download, unzip, and read in data stored as CSV files
-
-#TODO Tidy the data
-
-# Links for data sources
-pop_growth_zip <- "http://api.worldbank.org/v2/en/indicator/SP.POP.GROW?downloadformat=csv"
-pop_zip <- "http://api.worldbank.org/v2/en/indicator/SP.POP.TOTL?downloadformat=csv"
-energy_zip <- "http://api.worldbank.org/v2/en/indicator/EG.USE.PCAP.KG.OE?downloadformat=csv"
-
-# Download and unzip data sources
-zip_list <- c(pop_growth_zip, pop_zip, energy_zip)
-
-for (i in zip_list){
-    
-    td = tempdir()
-    tf = tempfile(tmpdir=td, fileext=".zip")
-    
-    download.file(i, tf, mode = "wb")
-    zip_folder <- unzip(tf, list = TRUE)
-    
-    for (j in seq_along(zip_folder$Name)) {
-        
-        file_name = unzip(tf, list = TRUE)$Name[j]
-        unzip(tf, files = file_name, exdir = td, overwrite = TRUE)
-        file_path <- file.path(td, file_name)
-        csv <- fread(file_path)
-        new_header <- str_to_upper(gsub(pattern = " ", replacement = "_", x = names(csv)))
-        setnames(csv, new_header)
-        assign(file_name, csv)
-        
-    }
-    
-}
+# library(data.table)
+# library(tidyverse)
+# library(shiny)
 ```
 
 ```{r}
-# Simplify data.frame names
+# Alternate way to download World Bank data via the WDI package
 
-pop_growth_df <-  API_SP.POP.GROW_DS2_en_csv_v2.csv
-rm(API_SP.POP.GROW_DS2_en_csv_v2.csv)
-pop_growth_meta <- Metadata_Country_API_SP.POP.GROW_DS2_en_csv_v2.csv
-rm(Metadata_Country_API_SP.POP.GROW_DS2_en_csv_v2.csv)
-pop_growth_merged <- merge(pop_growth_df, subset(pop_growth_meta, select=-c(4,5,6)), by = "COUNTRY_CODE")
+meta_df <- data.frame(WDI_data$country)
+meta_df <- select(meta_df, iso3c, country, region, income)
+setnames(meta_df, c("COUNTRY_CODE", "COUNTRY_NAME", "REGION", "INCOME"))
 
-pop_df <- API_SP.POP.TOTL_DS2_en_csv_v2.csv
-rm(API_SP.POP.GROW_DS2_en_csv_v2.csv)
-pop_meta <- Metadata_Country_API_SP.POP.TOTL_DS2_en_csv_v2.csv
-rm(Metadata_Country_API_SP.POP.GROW_DS2_en_csv_v2.csv)
-pop_merged <- merge(pop_df, subset(pop_meta, select=-c(4,5,6)), by = "COUNTRY_CODE")
+pop_growth_df <- WDI(country = "all", indicator = "SP.POP.GROW", 
+                     start = 1960, end = 2017, extra = TRUE)
+pop_growth_df <- select(pop_growth_df, country, SP.POP.GROW, year, iso3c, region, income)
+setnames(pop_growth_df, c("COUNTRY_NAME", "VALUE", "YEAR", "COUNTRY_CODE", "REGION", "INCOMEGROUP"))
+pop_growth_df <- pop_growth_df %>% mutate(INDICATOR_NAME = "Population growth (annual %)") %>%
+    mutate(INDICATOR_CODE = "SP.POP.GROW")
 
-energy_df <- API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv
-rm(API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv)
-energy_df_meta <- Metadata_Country_API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv
-# rm(API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv)
-energy_merged <- merge(energy_df, subset(energy_df_meta, select=-c(4,5,6)), by = "COUNTRY_CODE")
 
-tidy_pop_energy <- rbind(pop_growth_merged, pop_merged, energy_merged)
+pop_df <- WDI(country = "all", indicator = "SP.POP.TOTL", 
+                     start = 1960, end = 2017, extra = TRUE)
+pop_df <- select(pop_df, country, SP.POP.TOTL, year, iso3c, region, income)
+setnames(pop_df, c("COUNTRY_NAME", "VALUE", "YEAR", "COUNTRY_CODE", "REGION", "INCOMEGROUP"))
+pop_df <- pop_df %>% mutate(INDICATOR_NAME = "Population, total") %>%
+    mutate(INDICATOR_CODE = "SP.POP.TOTL")
+
+
+
+energy_df <- WDI(country = "all", indicator = "EG.USE.PCAP.KG.OE", 
+                     start = 1960, end = 2017, extra = TRUE)
+energy_df <- select(energy_df, country, EG.USE.PCAP.KG.OE, year, iso3c, region, income)
+setnames(energy_df, c("COUNTRY_NAME", "VALUE", "YEAR", "COUNTRY_CODE", "REGION", "INCOMEGROUP"))
+energy_df <- energy_df %>% mutate(INDICATOR_NAME = "Energy use (kg of oil equivalent per capita)") %>%
+    mutate(INDICATOR_CODE = "EG.USE.PCAP.KG.OE")
+
+tidy_pop_energy <- rbind(pop_growth_df, pop_df, energy_df)
 
 tidy_pop_energy <- tidy_pop_energy %>% 
-    gather(key = "YEAR", value = "VALUE", -COUNTRY_CODE, -COUNTRY_NAME,
-           -INDICATOR_NAME, -INDICATOR_CODE, -REGION, -INCOMEGROUP) %>%
     mutate(YEAR = as.numeric(YEAR)) %>%
     mutate(VALUE = as.numeric(VALUE))
-
-# Filter out rows where the country is not actually a country.
 
 not_country = c("Arab World", "Central Europe and the Baltics", "Early-demographic dividend", "Europe & Central Asia (excluding high income)", "Euro area", "Fragile and conflict affected situations", "Heavily indebted poor countries (HIPC)", "IBRD only","IDA total", "Not classified", "Latin America & Caribbean (excluding high income)", "Latin America & Caribbean", "Low income", "Low & middle income", "Late-demographic dividend", "Middle income", "North America", "Post-demographic dividend", "Small states", "East Asia & Pacific (IDA & IBRD countries)", "Latin America & the Caribbean (IDA & IBRD countries)", "Middle East & North Africa (IDA & IBRD countries)", "South Asia (IDA & IBRD)", "World", "Upper middle income", "Sub-Saharan Africa (IDA & IBRD countries)", "Europe & Central Asia (IDA & IBRD countries)", "Sub-Saharan Africa", "Sub-Saharan Africa (excluding high income)", "Pacific island small states", "Pre-demographic dividend", "Other small states", "OECD members", "Middle East & North Africa (excluding high income)", "Middle East & North Africa", "Lower middle income", "Least developed countries: UN classification", "IDA only", "IDA blend", "IDA & IBRD total", "High income", "European Union", "Europe & Central Asia", "East Asia & Pacific", "East Asia & Pacific (excluding high income)", "Caribbean small states", "South Asia")
 
 tidy_pop_energy <- filter(tidy_pop_energy, !COUNTRY_NAME %in% not_country)
-# Sort dataframe by country name
+
 tidy_pop_energy <- tidy_pop_energy %>% arrange(COUNTRY_NAME)
+
+# tidy_pop_energy <- tidy_pop_energy %>% 
+#     gather(key = "YEAR", value = "VALUE", -COUNTRY_CODE, -COUNTRY_NAME,
+#            -INDICATOR_NAME, -INDICATOR_CODE, -REGION, -INCOMEGROUP) %>%
+#     mutate(YEAR = as.numeric(YEAR)) %>%
+#     mutate(VALUE = as.numeric(VALUE))
+
+
+```
+
+
+```{r, results = "hide"}
+# 
+# ### Download, unzip, and read in data stored as CSV files
+# 
+# #TODO Tidy the data
+# 
+# # Links for data sources
+# pop_growth_zip <- "http://api.worldbank.org/v2/en/indicator/SP.POP.GROW?downloadformat=csv"
+# pop_zip <- "http://api.worldbank.org/v2/en/indicator/SP.POP.TOTL?downloadformat=csv"
+# energy_zip <- "http://api.worldbank.org/v2/en/indicator/EG.USE.PCAP.KG.OE?downloadformat=csv"
+# 
+# # Download and unzip data sources
+# zip_list <- c(pop_growth_zip, pop_zip, energy_zip)
+# 
+# for (i in zip_list){
+#     
+#     td = tempdir()
+#     tf = tempfile(tmpdir=td, fileext=".zip")
+#     
+#     download.file(i, tf, mode = "wb")
+#     zip_folder <- unzip(tf, list = TRUE)
+#     
+#     for (j in seq_along(zip_folder$Name)) {
+#         
+#         file_name = unzip(tf, list = TRUE)$Name[j]
+#         unzip(tf, files = file_name, exdir = td, overwrite = TRUE)
+#         file_path <- file.path(td, file_name)
+#         csv <- fread(file_path)
+#         new_header <- str_to_upper(gsub(pattern = " ", replacement = "_", x = names(csv)))
+#         setnames(csv, new_header)
+#         assign(file_name, csv)
+#         
+#     }
+#     
+# }
+```
+
+
+
+```{r, eval=FALSE}
+# Simplify data.frame names
+
+# pop_growth_df <-  API_SP.POP.GROW_DS2_en_csv_v2.csv
+# rm(API_SP.POP.GROW_DS2_en_csv_v2.csv)
+# pop_growth_meta <- Metadata_Country_API_SP.POP.GROW_DS2_en_csv_v2.csv
+# rm(Metadata_Country_API_SP.POP.GROW_DS2_en_csv_v2.csv)
+# pop_growth_merged <- merge(pop_growth_df, subset(pop_growth_meta, select=-c(4,5,6)), by = "COUNTRY_CODE")
+# 
+# pop_df <- API_SP.POP.TOTL_DS2_en_csv_v2.csv
+# rm(API_SP.POP.GROW_DS2_en_csv_v2.csv)
+# pop_meta <- Metadata_Country_API_SP.POP.TOTL_DS2_en_csv_v2.csv
+# rm(Metadata_Country_API_SP.POP.GROW_DS2_en_csv_v2.csv)
+# pop_merged <- merge(pop_df, subset(pop_meta, select=-c(4,5,6)), by = "COUNTRY_CODE")
+# 
+# energy_df <- API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv
+# rm(API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv)
+# energy_df_meta <- Metadata_Country_API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv
+# # rm(API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv)
+# energy_merged <- merge(energy_df, subset(energy_df_meta, select=-c(4,5,6)), by = "COUNTRY_CODE")
+# 
+# tidy_pop_energy <- rbind(pop_growth_merged, pop_merged, energy_merged)
+# 
+# tidy_pop_energy <- tidy_pop_energy %>% 
+#     gather(key = "YEAR", value = "VALUE", -COUNTRY_CODE, -COUNTRY_NAME,
+#            -INDICATOR_NAME, -INDICATOR_CODE, -REGION, -INCOMEGROUP) %>%
+#     mutate(YEAR = as.numeric(YEAR)) %>%
+#     mutate(VALUE = as.numeric(VALUE))
+# 
+# # Filter out rows where the country is not actually a country.
+# 
+# not_country = c("Arab World", "Central Europe and the Baltics", "Early-demographic dividend", "Europe & Central Asia (excluding high income)", "Euro area", "Fragile and conflict affected situations", "Heavily indebted poor countries (HIPC)", "IBRD only","IDA total", "Not classified", "Latin America & Caribbean (excluding high income)", "Latin America & Caribbean", "Low income", "Low & middle income", "Late-demographic dividend", "Middle income", "North America", "Post-demographic dividend", "Small states", "East Asia & Pacific (IDA & IBRD countries)", "Latin America & the Caribbean (IDA & IBRD countries)", "Middle East & North Africa (IDA & IBRD countries)", "South Asia (IDA & IBRD)", "World", "Upper middle income", "Sub-Saharan Africa (IDA & IBRD countries)", "Europe & Central Asia (IDA & IBRD countries)", "Sub-Saharan Africa", "Sub-Saharan Africa (excluding high income)", "Pacific island small states", "Pre-demographic dividend", "Other small states", "OECD members", "Middle East & North Africa (excluding high income)", "Middle East & North Africa", "Lower middle income", "Least developed countries: UN classification", "IDA only", "IDA blend", "IDA & IBRD total", "High income", "European Union", "Europe & Central Asia", "East Asia & Pacific", "East Asia & Pacific (excluding high income)", "Caribbean small states", "South Asia")
+# 
+# tidy_pop_energy <- filter(tidy_pop_energy, !COUNTRY_NAME %in% not_country)
+# # Sort dataframe by country name
+# tidy_pop_energy <- tidy_pop_energy %>% arrange(COUNTRY_NAME)
 ```
 
 ```{r}
-pop_meta <- pop_meta[, .(COUNTRY_CODE, REGION, INCOMEGROUP)]
-
-pop_df <- pop_df[,!"V63"]
+# pop_meta <- pop_meta[, .(COUNTRY_CODE, REGION, INCOMEGROUP)]
+# 
+# pop_df <- pop_df[,!"V63"]
 
 
 pop_country_year <- pop_df %>%
