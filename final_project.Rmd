@@ -49,7 +49,7 @@ The code to pull the data and put it in a data frame are below.
 
 ```{r Install and/or load required libraries}
 # Install and/or load required libraries
-needed_packages <- c("data.table", "tidyverse", "shiny", "WDI")
+needed_packages <- c("data.table", "tidyverse", "shiny", "WDI", "extracat")
 
 for (p in needed_packages) {
      if (!(p %in% installed.packages())){
@@ -73,7 +73,8 @@ setnames(meta_df, c("COUNTRY_CODE", "COUNTRY_NAME", "REGION", "INCOME"))
 pop_growth_df <- WDI(country = "all", indicator = "SP.POP.GROW", 
                      start = 1960, end = 2017, extra = TRUE)
 pop_growth_df <- select(pop_growth_df, country, SP.POP.GROW, year, iso3c, region, income)
-setnames(pop_growth_df, c("COUNTRY_NAME", "VALUE", "YEAR", "COUNTRY_CODE", "REGION", "INCOMEGROUP"))
+setnames(pop_growth_df, c("COUNTRY_NAME", "VALUE", "YEAR", 
+                          "COUNTRY_CODE", "REGION", "INCOMEGROUP"))
 pop_growth_df <- pop_growth_df %>% mutate(INDICATOR_NAME = "Population growth (annual %)") %>%
     mutate(INDICATOR_CODE = "SP.POP.GROW")
 
@@ -81,7 +82,8 @@ pop_growth_df <- pop_growth_df %>% mutate(INDICATOR_NAME = "Population growth (a
 pop_df <- WDI(country = "all", indicator = "SP.POP.TOTL", 
                      start = 1960, end = 2017, extra = TRUE)
 pop_df <- select(pop_df, country, SP.POP.TOTL, year, iso3c, region, income)
-setnames(pop_df, c("COUNTRY_NAME", "VALUE", "YEAR", "COUNTRY_CODE", "REGION", "INCOMEGROUP"))
+setnames(pop_df, c("COUNTRY_NAME", "VALUE", "YEAR", 
+                   "COUNTRY_CODE", "REGION", "INCOMEGROUP"))
 pop_df <- pop_df %>% mutate(INDICATOR_NAME = "Population, total") %>%
     mutate(INDICATOR_CODE = "SP.POP.TOTL")
 
@@ -90,7 +92,8 @@ pop_df <- pop_df %>% mutate(INDICATOR_NAME = "Population, total") %>%
 energy_df <- WDI(country = "all", indicator = "EG.USE.PCAP.KG.OE", 
                      start = 1960, end = 2017, extra = TRUE)
 energy_df <- select(energy_df, country, EG.USE.PCAP.KG.OE, year, iso3c, region, income)
-setnames(energy_df, c("COUNTRY_NAME", "VALUE", "YEAR", "COUNTRY_CODE", "REGION", "INCOMEGROUP"))
+setnames(energy_df, c("COUNTRY_NAME", "VALUE", "YEAR", 
+                      "COUNTRY_CODE", "REGION", "INCOMEGROUP"))
 energy_df <- energy_df %>% mutate(INDICATOR_NAME = "Energy use (kg of oil equivalent per capita)") %>%
     mutate(INDICATOR_CODE = "EG.USE.PCAP.KG.OE")
 
@@ -225,6 +228,31 @@ There is a lot of missing data before 1971 and after 2012.
 - see what David wrote
 
 Add one of those visna() graphs for missing data
+
+
+The visna() graphs show the the population data is nearly complete, but the energy use data has a significant amount of missing data.
+
+```{r Visna() Graph}
+wide_energy <- filter(tidy_pop_energy, 
+                      INDICATOR_NAME == "Energy use (kg of oil equivalent per capita)")
+wide_energy <- select(wide_energy, YEAR, COUNTRY_CODE, VALUE)
+wide_energy <- wide_energy %>% spread(YEAR, VALUE)
+
+visna(wide_energy, sort = 'r')
+
+wide_pop_total <- filter(tidy_pop_energy, 
+                      INDICATOR_NAME == "Population, total")
+wide_pop_total <- select(wide_pop_total, YEAR, COUNTRY_CODE, VALUE)
+wide_pop_total <- wide_pop_total %>% spread(YEAR, VALUE)
+visna(wide_pop_total, sort = 'r')
+
+wide_pop_growth <- filter(tidy_pop_energy, 
+                      INDICATOR_NAME == "Population growth (annual %)")
+wide_pop_growth <- select(wide_pop_growth, YEAR, COUNTRY_CODE, VALUE)
+wide_pop_growth <- wide_pop_growth %>% spread(YEAR, VALUE)
+visna(wide_pop_growth, sort = 'r')
+```
+
 
 Discuss how data is limited to after 1960, and even then for "Energy Use" it's only a small portion of countries are represented in the earlier years, specifically high income countries. This limits inferences we can make about lower income countries in that decade, or long term inference across the whole of the 20th century. This could be displayed as table or bar chart of total count of nations per year in the three data sets. Maybe see if there are geographic/income-based patterns across the data, which would bias the results.
 
@@ -367,16 +395,16 @@ navbarPage("Good Graphics",
                             column(
                             sliderInput(inputId = "year",
                                         label = "Year:", 
-                                        value = min(tidy_pop_energy$YEAR, na.rm = TRUE),
-                                        min = min(tidy_pop_energy$YEAR, na.rm = TRUE),
-                                        animate = animationOptions(interval = 250),
-                                        max = max(tidy_pop_energy$YEAR, na.rm = TRUE),
+                                        value = 1961,
+                                        min = 1961,
+                                        animate = animationOptions(interval = 333),
+                                        max = 2016,
                                         step = 1), width = 3),
                             
                                   # Copy the line below to make a slider range 
                             column(
                               sliderInput(inputId = "rank_slider", 
-                                          label = "Slider Range", 
+                                          label = "Percentage slice", 
                                           min = 0, max = 1, value = c(0, 1)),width = 3)
                             )
                         )
@@ -489,7 +517,7 @@ output$ds_barplot <- renderPlot({
            aes(x = reorder(COUNTRY_CODE, VALUE), y = VALUE,
                fill = get(fill_selection()))) +
         geom_col() + xlab("Country") + ylab(my_indicator()) +
-          scale_fill_manual(values=bar_colors)
+          scale_fill_manual(values = bar_colors, name = "Categories")
 
 })
 
