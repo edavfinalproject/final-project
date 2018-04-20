@@ -401,40 +401,45 @@ color_selection <- reactive({input$category})
 
 rank_range <- reactive({input$rank_slider})
 
-# group.colors <- c(`East Asia & Pacific` = "#e41a1c", 
-#                   `Latin America & Caribbean` = "#377eb8",
-#                   `North America` = "#4daf4a", 
-#                   `Sub-Saharan Africa` = "#984ea3", 
-#                   `Europe & Central Asia` = "#ff7f00",
-#                   `Middle East & North Africa` = "ffff33",
-#                   `South Asia` = "f781bf",
-#                   `Energy use (kg of oil equivalent per capita)` = "e41a1c",
-#                   `Population growth (annual %)` = "#377eb8",
-#                   `Population, total` = "#4daf4a")
+bar_colors <- c(`East Asia & Pacific` = "#F8766D",
+                  `Latin America & Caribbean` = "#C49A00",
+                  `North America` = "#53B400",
+                  `Sub-Saharan Africa` = "#00C094",
+                  `Europe & Central Asia` = "#00B6EB",
+                  `Middle East & North Africa` = "#A58AFF",
+                  `South Asia` = "#FB61D7",
+                `High income` = "#238b45",
+                   `Upper middle income` = "#66c2a4",
+                   `Lower middle income` = "#b2e2e2",
+                   `Low income` = "#edf8fb",
+                `Population growth (annual %)` = "#999999",
+                `Energy use (kg of oil equivalent per capita)` = "#999999", 
+                `Population, total` = "#999999")
+
 
 
 tidy_subset_barplot <- reactive({tidy_pop_energy %>%
-          filter(INDICATOR_NAME == my_indicator() & YEAR == my_year()) %>%
-          na.omit() %>%
-          arrange(VALUE) %>%
-          mutate(value_percent_rank = percent_rank(VALUE)) %>%
-          mutate(value_percent_rank = value_percent_rank - .0000001) %>%
-          filter(value_percent_rank >= rank_range()[1] &
-                 value_percent_rank <= rank_range()[2])
+        filter(INDICATOR_NAME == my_indicator() & YEAR == my_year()) %>%
+        na.omit() %>%
+        arrange(VALUE) %>%
+        mutate(INCOMEGROUP = factor(INCOMEGROUP, levels = c("High income", "Upper middle income", 
+                                                            "Lower middle income", "Low income"))) %>%
+        mutate(value_percent_rank = percent_rank(VALUE)) %>%
+        mutate(value_percent_rank = value_percent_rank - .0000001) %>%
+        filter(value_percent_rank >= rank_range()[1] & value_percent_rank <= rank_range()[2])
 
 })
-
 # total_countries <- reactive({length(unique(tidy_subset_barplot$COUNTRY_CODE))})
 
 output$ds_barplot <- renderPlot({
     ggplot(data = tidy_subset_barplot(), 
            aes(x = reorder(COUNTRY_CODE, VALUE), y = VALUE,
-               fill = get(color_selection()))) +
-        geom_col() + xlab("Country") + ylab(my_indicator())
-     # +
-     #      scale_fill_manual(values=group.colors)
+               fill = get(fill_selection()))) +
+        geom_col() + xlab("Country") + ylab(my_indicator()) +
+          scale_fill_manual(values=bar_colors)
 
 })
+
 
 ```
 
