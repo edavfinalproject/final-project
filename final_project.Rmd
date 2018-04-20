@@ -35,7 +35,7 @@ Our team includes:
 
 ### Description of Data
 
-Our project uses three datasets below published by the World Bank. Each of these datasets contain per country data from 1960 through 2016. 
+Our project uses three datasets below published by the [World Bank](https://data.worldbank.org/). Each of these datasets contain per country data from 1960 through 2016. 
 
   1. Population, total
   2. Population growth (annual %)
@@ -45,7 +45,9 @@ In addition to these three dataset we added metadata of region and income group.
 
 The data was gathered and accessed using the World Bank's API, cleaned, and combined into one tidy dataframe. Making the tidy dataframe first was critical to collaboration. It allowed us all to have time to explore the data instead of waiting for a final dataset. Also, it made sure the code for the graphs would not change as the data format changed. Finally, it allowed us to easily make graphs with the data organized in the tidy format. Hence, having the dataset was large part of what made this project happen, and thus leads to future work of an R package discussed in the Future Work section.
 
-The code to pull the data and put it in a data frame are below.
+The code to pull the data and put it in a data frame are below. We explored two ways to access the data. Our initial method was to identify the URLs that link to the three datasets, then loop through those URLs to download, unzip, and read the data into R for processing. Due to the API's intermittant downtime, our next process for accessing the data was to use the [`WDI`](https://cran.r-project.org/web/packages/WDI/index.html) package. One advantage to using this package is that the data were already in long format. With the former method, we needed to convert the data frames from wide format.
+
+When processing the data, we only kept the attributes we were interested in keeping, namely country name and code, year, region, and income group. The attribute names were cleaned up for consistency, and attributes were added to identify the indicator type (e.g. "Population growth (annual %)"). Next, the three data frames were unioned together into one tidy data frame. Lastly, we needed to remove rows that represented various collections of countries as identified by the World Bank (e.g. "Small states", "European Union"). While it would be interesting to see how these bins of countries interacted with the data, we needed to limit the scope of our exploration to geographic region and income group for the brevity's sake. 
 
 ```{r Install and/or load required libraries}
 # Install and/or load required libraries
@@ -64,7 +66,7 @@ for (p in needed_packages) {
 ```
 
 ```{r download World Bank data via the WDI package}
-# Alternate way to download World Bank data via the WDI package
+ # Alternate way to download World Bank data via the WDI package
 
 meta_df <- data.frame(WDI_data$country)
 meta_df <- select(meta_df, iso3c, country, region, income)
@@ -196,24 +198,9 @@ tidy_pop_energy <- tidy_pop_energy %>% arrange(COUNTRY_NAME)
 # tidy_pop_energy <- tidy_pop_energy %>% arrange(COUNTRY_NAME)
 ```
 
-```{r Country-Year data frames}
-# pop_meta <- pop_meta[, .(COUNTRY_CODE, REGION, INCOMEGROUP)]
-# 
-# pop_df <- pop_df[,!"V63"]
 
 
-pop_country_year <- pop_df %>%
-    # select(-COUNTRY_NAME, -INDICATOR_NAME, -INDICATOR_CODE) %>%
-    # gather(key = "YEAR", value = "POP_GROWTH_RATE", 
-    #        -COUNTRY_CODE) %>%
-    mutate(COUNTRY_YEAR = paste0(COUNTRY_CODE,"_",YEAR))
 
-energy_country_year <- energy_df %>%
-    # select(-COUNTRY_NAME, -INDICATOR_NAME, -INDICATOR_CODE) %>%
-    # gather(key = "YEAR", value = "ENERGY_USE", 
-    #        -COUNTRY_CODE) %>%
-    mutate(COUNTRY_YEAR = paste0(COUNTRY_CODE,"_",YEAR))
-```
 
 ### Analysis of Data Quality
 
@@ -227,18 +214,46 @@ There is a lot of missing data before 1971 and after 2012.
 - histogram of percent of missing data. Each datapoint is a country
 - see what David wrote
 
-Add one of those visna() graphs for missing data
 
 
 The visna() graphs show the the population data is nearly complete, but the energy use data has a significant amount of missing data.
 
-```{r Visna() Graph}
-wide_energy <- filter(tidy_pop_energy, 
-                      INDICATOR_NAME == "Energy use (kg of oil equivalent per capita)")
-wide_energy <- select(wide_energy, YEAR, COUNTRY_CODE, VALUE)
-wide_energy <- wide_energy %>% spread(YEAR, VALUE)
+```{r Visna() Graphs}
+# Convert tidy data to wide and segment by indicator to get a better picture of missing data
+# patterns across time
 
-visna(wide_energy, sort = 'r')
+
+wide_energy_low <- filter(tidy_pop_energy, 
+                      INDICATOR_NAME == "Energy use (kg of oil equivalent per capita)" & 
+                          INCOMEGROUP == "Low income")
+wide_energy_low <- select(wide_energy_low, YEAR, COUNTRY_CODE, VALUE)
+wide_energy_low <- wide_energy_low %>% spread(YEAR, VALUE)
+
+visna(wide_energy_low, sort = 'r')
+
+wide_energy_low_mid <- filter(tidy_pop_energy, 
+                      INDICATOR_NAME == "Energy use (kg of oil equivalent per capita)" & 
+                          INCOMEGROUP == "Lower middle income")
+wide_energy_low_mid <- select(wide_energy_low_mid, YEAR, COUNTRY_CODE, VALUE)
+wide_energy_low_mid <- wide_energy_low_mid %>% spread(YEAR, VALUE)
+
+visna(wide_energy_low_mid, sort = 'r')
+
+wide_energy_up_mid <- filter(tidy_pop_energy, 
+                      INDICATOR_NAME == "Energy use (kg of oil equivalent per capita)" & 
+                          INCOMEGROUP == "Upper middle income")
+wide_energy_up_mid <- select(wide_energy_up_mid, YEAR, COUNTRY_CODE, VALUE)
+wide_energy_up_mid <- wide_energy_up_mid %>% spread(YEAR, VALUE)
+
+visna(wide_energy_up_mid, sort = 'r')
+
+wide_energy_up <- filter(tidy_pop_energy, 
+                      INDICATOR_NAME == "Energy use (kg of oil equivalent per capita)" & 
+                          INCOMEGROUP == "High income")
+wide_energy_up <- select(wide_energy_up, YEAR, COUNTRY_CODE, VALUE)
+wide_energy_up <- wide_energy_up %>% spread(YEAR, VALUE)
+
+visna(wide_energy_up, sort = 'r')
 
 wide_pop_total <- filter(tidy_pop_energy, 
                       INDICATOR_NAME == "Population, total")
@@ -253,6 +268,64 @@ wide_pop_growth <- wide_pop_growth %>% spread(YEAR, VALUE)
 visna(wide_pop_growth, sort = 'r')
 ```
 
+To get a broad sense of the interaction between energy consumption and total population, we created new variable for the concatenation of country and year. This technique creates a unique identifier for each observation. It is difficult to see general patterns initially due to outliers, so we removed these in a second scatterplot.
+
+```{r Scatter plot of energy use and growth rate by country-year}
+# Scatter plot of energy use and growth rate by country-year
+
+
+pop_country_year <- pop_df %>%
+    mutate(COUNTRY_YEAR = paste0(COUNTRY_CODE,"_",YEAR))
+
+energy_country_year <- energy_df %>%
+    mutate(COUNTRY_YEAR = paste0(COUNTRY_CODE,"_",YEAR))
+
+pop_country_year <- pop_country_year %>% mutate(POP_GROWTH_RATE = VALUE)
+energy_country_year <- energy_country_year %>% mutate(ENERGY_USE = VALUE)
+
+pop_energy_year <- 
+    left_join(pop_country_year, energy_country_year, by = "COUNTRY_YEAR") %>%
+    select(COUNTRY_YEAR, POP_GROWTH_RATE, ENERGY_USE) %>%
+    filter(POP_GROWTH_RATE != '' & ENERGY_USE != '') %>%
+    mutate(POP_GROWTH_RATE = as.numeric(POP_GROWTH_RATE)) %>%
+    mutate(ENERGY_USE = as.numeric(ENERGY_USE))
+
+ggplot(pop_energy_year, aes(POP_GROWTH_RATE, ENERGY_USE)) + 
+    geom_point(alpha = .1) + geom_density_2d()
+
+ggplot(pop_energy_year %>% filter(ENERGY_USE <= 10000 & POP_GROWTH_RATE <= 2e+07),
+       aes(POP_GROWTH_RATE, ENERGY_USE)) + 
+    geom_point(alpha = .1) + geom_density_2d()
+
+
+
+
+# Hard to tell what's going on without any subsetting.
+# pop_elec_year <- 
+#     left_join(pop_country_year, elec_access_country_year, by = "COUNTRY_YEAR") %>%
+#     select(COUNTRY_YEAR, POP_GROWTH_RATE, ELECTRICITY_ACCESS) %>%
+#     filter(POP_GROWTH_RATE != '' & ELECTRICITY_ACCESS != '') %>%
+#     mutate(POP_GROWTH_RATE = as.numeric(POP_GROWTH_RATE)) %>%
+#     mutate(ELECTRICITY_ACCESS = as.numeric(ELECTRICITY_ACCESS))
+
+# ggplot(pop_elec_year, aes(ELECTRICITY_ACCESS, POP_GROWTH_RATE)) + 
+#     geom_point()
+
+# ggplot(pop_elec_year %>% filter(POP_GROWTH_RATE >= 5), 
+#        aes(ELECTRICITY_ACCESS, POP_GROWTH_RATE)) + 
+#     geom_point()
+
+# Counts of countries by region and income group
+#ggplot(pop_meta %>% filter(IncomeGroup != ""), aes(Region)) +
+ #   geom_bar() + coord_flip()
+
+#ggplot(pop_meta %>% filter(IncomeGroup != ""), aes(IncomeGroup)) +
+ #   geom_bar() + coord_flip()
+
+
+
+
+```
 
 Discuss how data is limited to after 1960, and even then for "Energy Use" it's only a small portion of countries are represented in the earlier years, specifically high income countries. This limits inferences we can make about lower income countries in that decade, or long term inference across the whole of the 20th century. This could be displayed as table or bar chart of total count of nations per year in the three data sets. Maybe see if there are geographic/income-based patterns across the data, which would bias the results.
 
@@ -664,49 +737,7 @@ Three countries stand out from the rest. Why do these countries need to be diffe
 
 #### Take whats needed from below and then delete.
   
-```{r Scatter plot of energy use and growth rate by country-year}
-# Scatter plot of energy use and growth rate by country-year
 
-pop_country_year <- pop_country_year %>% mutate(POP_GROWTH_RATE = VALUE)
-energy_country_year <- energy_country_year %>% mutate(ENERGY_USE = VALUE)
-
-pop_energy_year <- 
-    left_join(pop_country_year, energy_country_year, by = "COUNTRY_YEAR") %>%
-    select(COUNTRY_YEAR, POP_GROWTH_RATE, ENERGY_USE) %>%
-    filter(POP_GROWTH_RATE != '' & ENERGY_USE != '') %>%
-    mutate(POP_GROWTH_RATE = as.numeric(POP_GROWTH_RATE)) %>%
-    mutate(ENERGY_USE = as.numeric(ENERGY_USE))
-
-ggplot(pop_energy_year, aes(POP_GROWTH_RATE, ENERGY_USE)) + 
-    geom_point(alpha = .1) 
-
-
-# Hard to tell what's going on without any subsetting.
-# pop_elec_year <- 
-#     left_join(pop_country_year, elec_access_country_year, by = "COUNTRY_YEAR") %>%
-#     select(COUNTRY_YEAR, POP_GROWTH_RATE, ELECTRICITY_ACCESS) %>%
-#     filter(POP_GROWTH_RATE != '' & ELECTRICITY_ACCESS != '') %>%
-#     mutate(POP_GROWTH_RATE = as.numeric(POP_GROWTH_RATE)) %>%
-#     mutate(ELECTRICITY_ACCESS = as.numeric(ELECTRICITY_ACCESS))
-
-# ggplot(pop_elec_year, aes(ELECTRICITY_ACCESS, POP_GROWTH_RATE)) + 
-#     geom_point()
-
-# ggplot(pop_elec_year %>% filter(POP_GROWTH_RATE >= 5), 
-#        aes(ELECTRICITY_ACCESS, POP_GROWTH_RATE)) + 
-#     geom_point()
-
-# Counts of countries by region and income group
-#ggplot(pop_meta %>% filter(IncomeGroup != ""), aes(Region)) +
- #   geom_bar() + coord_flip()
-
-#ggplot(pop_meta %>% filter(IncomeGroup != ""), aes(IncomeGroup)) +
- #   geom_bar() + coord_flip()
-
-
-
-
-```
 
 ```{r Population growth rate over time by geographic region}
 # Population growth rate over time by geographic region
