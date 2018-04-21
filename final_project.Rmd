@@ -604,14 +604,25 @@ output$countryhist <- renderPlot({
 
 #### Findings
 
+In these section we present our findings from our exploration of the data and the interactive tools.
 
+##### No visible correlation
 
-
-Overall distribution of population and energy. 
-
-#### No visible correlation
 When broken down by country there is not a solid correlation between population and energy. 
-	       	
+
+```{r Scatter Plot tab}
+# Make plot
+ggplot(data = scatter_data, aes(x=pop_tot, y=energy_tot, col=REGION)) +
+    geom_point(size=5) + labs(title="Population vs. Energy Use", 
+                        x="Population (millions)", 
+                        y="Energy use (teragrams of oil equivelent)") + 
+    coord_cartesian(xlim=c(0, 1500), ylim=c(0, 30000)) +
+    scale_x_continuous(labels = scales::comma) + scale_y_continuous(labels = scales::comma) +
+    geom_text(aes(label=COUNTRY_NAME), hjust=-0.2, vjust=0)
+
+#ggplot(scatter_data, aes(pop_growth, energy_tot)) + geom_point(size=scatter_data$pop_tot) + labs(title="Population Growth vs. Energy Use")
+
+```
 Show your scatter plot zoomed and not zoomed
 	       	
 	       	
