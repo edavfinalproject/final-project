@@ -631,7 +631,7 @@ Show your scatter plot zoomed and not zoomed
 #### Different paths to high energy use
 There are two paths to very high energy growth. One is Done by the US Where energy per capita is high but population does not grow. The second is by china where the population grows considerable and then per capita energy growth goes up. We can see this trend starting with other countries. For example, Egypt population is growing yet the energy growth is not drastically growing. This begs the question, what changed for china to slow down its population growth and change to energy growth?
 
-```{r Scatter Plot tab}
+```{r Scatter Plot tab (plot)}
 # Make plot
 ggplot(data = scatter_data, aes(x=pop_tot, y=energy_tot, col=REGION)) +
     geom_point(size=5) + labs(title="Population vs. Energy Use", 
