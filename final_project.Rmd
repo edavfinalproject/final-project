@@ -529,6 +529,23 @@ bar_colors <- c(`East Asia & Pacific` = "#F8766D",
                 `Energy use (kg of oil equivalent per capita)` = "#999999", 
                 `Population, total` = "#999999")
 
+tidy_barplot <- tidy_pop_energy
+
+tidy_barplot <- tidy_barplot %>% select(COUNTRY_NAME, YEAR, COUNTRY_CODE,
+                                        REGION, INCOMEGROUP, INDICATOR_NAME,
+                                        INDICATOR_CODE, VALUE)
+
+tidy_barplot_energy_tot <- scatter_data %>% 
+     select(COUNTRY_NAME, YEAR, COUNTRY_CODE,
+            REGION, INCOMEGROUP, INDICATOR_NAME,
+            INDICATOR_CODE, energy_tot)
+
+setnames(tidy_barplot_energy_tot, "energy_tot", "VALUE")
+
+tidy_barplot_energy_tot <- filter(tidy_barplot_energy_tot,
+                                  !is.na(VALUE))
+     
+tidy_barplot <- rbind(tidy_barplot, tidy_barplot_energy_tot)
 
 
 tidy_subset_barplot <- reactive({tidy_pop_energy %>%
@@ -615,6 +632,16 @@ ggplot(data=tab1_overview, aes(x=YEAR, y=VALUE)) +
 ```{r Tab 1}
 #create the dropdown 
 tab1_countries <- reactive({input$tab1country})
+<<<<<<< HEAD
+=======
+
+# Tab1 Code
+tab1_messy <- subset(scatter_data, select=c("COUNTRY_NAME", "YEAR", "pop_growth", "pop_tot", "energy_percap", "energy_tot"))
+
+tab1_tidy <- tab1_messy %>% gather(key="indicator_name", value="indicator_value", -YEAR, -COUNTRY_NAME)
+tab1_tidy_reactive <- reactive({filter(tab1_tidy, COUNTRY_NAME == tab1_countries())})
+
+>>>>>>> c09e8fcf461c3a7ff0b38afbb2e5fa530baf14d2
 
 # Population Total
 tab1_total <- tidy_pop_energy_for_tab_1 
