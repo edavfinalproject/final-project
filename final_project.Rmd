@@ -217,14 +217,11 @@ There is a lot of missing data before 1971 and after 2012.
 - see what David wrote
 
 
-
-The visna() graphs show the the population data is nearly complete, but the energy use data has a significant amount of missing data.
-
-```{r Visna() Graphs}
-# Convert tidy data to wide and segment by indicator to get a better picture of missing data
-# patterns across time
+We represented missing data by using the `visna` function from the `extracat` package.
+The `visna` graphs show the the population data is nearly complete, but the energy use data has a significant amount of missing data. Since the energy use data was the most incomplete, we broke out the data by income level to see if there are any discrepencies in reporting data based on this attribute. In fact, the most common pattern for low-income energy usage is that all yearly observations ar missing. This is not the case for the remaining three income brackets. This discrepancy shows that there are gaps in data collection in certain parts of the world, which will bias any findings that use these data.
 
 
+```{r Energy use low-income}
 wide_energy_low <- filter(tidy_pop_energy, 
                       INDICATOR_NAME == "Energy use (kg of oil equivalent per capita)" & 
                           INCOMEGROUP == "Low income")
@@ -232,7 +229,10 @@ wide_energy_low <- select(wide_energy_low, YEAR, COUNTRY_CODE, VALUE)
 wide_energy_low <- wide_energy_low %>% spread(YEAR, VALUE)
 
 visna(wide_energy_low, sort = 'r')
+```
 
+
+```{r Energy use lower-middle income}
 wide_energy_low_mid <- filter(tidy_pop_energy, 
                       INDICATOR_NAME == "Energy use (kg of oil equivalent per capita)" & 
                           INCOMEGROUP == "Lower middle income")
@@ -241,6 +241,9 @@ wide_energy_low_mid <- wide_energy_low_mid %>% spread(YEAR, VALUE)
 
 visna(wide_energy_low_mid, sort = 'r')
 
+```
+
+```{r Energy use Upper-middle income}
 wide_energy_up_mid <- filter(tidy_pop_energy, 
                       INDICATOR_NAME == "Energy use (kg of oil equivalent per capita)" & 
                           INCOMEGROUP == "Upper middle income")
@@ -249,6 +252,9 @@ wide_energy_up_mid <- wide_energy_up_mid %>% spread(YEAR, VALUE)
 
 visna(wide_energy_up_mid, sort = 'r')
 
+```
+
+```{r Energy use high income}
 wide_energy_up <- filter(tidy_pop_energy, 
                       INDICATOR_NAME == "Energy use (kg of oil equivalent per capita)" & 
                           INCOMEGROUP == "High income")
@@ -256,6 +262,13 @@ wide_energy_up <- select(wide_energy_up, YEAR, COUNTRY_CODE, VALUE)
 wide_energy_up <- wide_energy_up %>% spread(YEAR, VALUE)
 
 visna(wide_energy_up, sort = 'r')
+
+```
+
+
+```{r population growth and total population}
+# Convert tidy data to wide and segment by indicator to get a better picture of missing data
+# patterns across time
 
 wide_pop_total <- filter(tidy_pop_energy, 
                       INDICATOR_NAME == "Population, total")
@@ -584,6 +597,10 @@ output$ds_scatter <- renderPlot({
 
 ```{r Tab 1}
 # Tab1 Code
+tab1_messy <- subset(scatter_data, select=c("COUNTRY_NAME", "YEAR", "pop_growth", "pop_tot", "energy_percap", "energy_tot"))
+
+tab1_tidy <- tab1_messy %>% gather(key="indicator_name", value="indicator_value", -YEAR, -COUNTRY_NAME)
+tab1_tidy_reactive <- reactive({filter(tab1_tidy, tab1_tidy$COUNTRY_NAME == tab1_countries())})
 
 #create the dropdown 
 tab1_countries <- reactive({input$tab1country})
@@ -595,9 +612,9 @@ tab1_total_reactive <- reactive({filter(tab1_total, tab1_total$COUNTRY_NAME == t
 
 # render graph
 output$countryhist <- renderPlot({
-    ggplot(data=tab1_total_reactive(), aes(x=YEAR, y=VALUE)) + 
+    ggplot(data=tab1_tidy_reactive(), aes(x=YEAR, y=indicator_value)) + 
     geom_point() + geom_line() +
-    facet_wrap(~INDICATOR_NAME, ncol=1, scale="free") +
+    facet_wrap(~indicator_name, ncol=1, scale="free") +
     labs(title="Total Population over Time", x="Year")
 })
 ```
