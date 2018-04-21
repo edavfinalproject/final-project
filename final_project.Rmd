@@ -399,13 +399,15 @@ As we started to determine what graphs we should shown in this analysis, we quic
 
 We broke the data into there separate apps to explore these distinct aspects of the data. We often found ourselves jumping back and forth, and encourage users to do the same, as each story of the data does not need to go in chronological order. The three apps are listed below.
 
-  1. **Individual country** - Deep divy into how population and energy has changed over time for one country.
+  1. **Individual Country** - Deep divy into how population and energy has changed over time for one country.
   2. **Country Comparison** - Presents countries side-by-side in a way where magnitudes of energy and population can be easily compared over time.
   3 **Energy vs. Population** - Presents energy vs population in a scatter plot to visualize correlations over time.
 
+The code below creates the Layout for the navigation bar.
 
 ```{r NavBar}
-navbarPage("Good Graphics",
+# Shiny Layour
+navbarPage("Interactive Component",
            tabPanel("Macroview",
                     sidebarLayout(
                         mainPanel(
@@ -419,21 +421,7 @@ navbarPage("Good Graphics",
                     )
                 )
            ,
-           tabPanel("TEST",
-                    sidebarLayout(
-                        sidebarPanel(
-                            selectInput("n_breaks", label = "Number of bins:",
-                                        choices = c(10, 20, 35, 50), selected = 20),
-                            sliderInput("bw_adjust", label = "Bandwidth adjustment:",
-                                        min = 0.2, max = 2, value = 1, step = 0.2)
-                            ),
-                        mainPanel(
-                            plotOutput("hist")
-                            )
-                        )
-                    )
-           ,
-           tabPanel("Distribution of Population and Energy",
+           tabPanel("Country Comparison",
                     
                         verticalLayout(
                             plotOutput("ds_barplot", width = "100%"),
@@ -468,7 +456,7 @@ navbarPage("Good Graphics",
                         )
                     )
            ,
-           tabPanel("Growth Rate Scatter",
+           tabPanel("Energy vs. Population",
                       verticalLayout(
                         plotOutput("ds_scatter",  width = "100%"),
                         wellPanel(
@@ -494,45 +482,14 @@ navbarPage("Good Graphics",
                       )
            )
 )
-  #   tabPanel("Distribution of Population and Energy",
-  #       sidebarLayout(
-  #           sidebarPanel(
-  #               selectInput("region", "Region:",
-  #                           choices=colnames(WorldPhones)),
-  #     hr(),
-  #     helpText("Data from AT&T (1961) The World's Telephones.")
-  #   ),
-  #   
-  #   # Create a spot for the barplot
-  #   mainPanel(
-  #     plotOutput("ds_barplot")  
-  #   )
-  #   
-  # )
-  #            
-  # )
 
 ```
 
 
-
-
-
-
-```{r Test Tab}
-output$hist <- renderPlot({
-  hist(faithful$eruptions, probability = TRUE, 
-       breaks = as.numeric(input$n_breaks),
-       xlab = "Duration (minutes)", 
-       main = "Geyser eruption duration")
-  
-  dens <- density(faithful$eruptions, adjust = input$bw_adjust)
-  lines(dens, col = "blue")
-})
-```
+The Code below renders the figures in the shiny app.
 
 ```{r Bar Plot tab}
-# Render a barplot
+# Country Comparison.
 
 my_indicator <- reactive({input$indicator})
 my_year <- reactive({input$year})
@@ -583,14 +540,7 @@ output$ds_barplot <- renderPlot({
 ```
 
 ```{r Scatter Plot tab}
-# Growth rate scatter
-
-
-#TODOs
-# Larger fonts
-# Play button
-# Button zoom in and out instead of slider.
-
+# Energy vs. Population
 
 # Reform data
 icodes = unique(tidy_pop_energy$INDICATOR_CODE)
