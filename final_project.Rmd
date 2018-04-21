@@ -508,7 +508,28 @@ navbarPage("Interactive Component",
                                       step = 2000)
                         )
                       )
-           )
+           ),
+           tabPanel("Country Races",
+                   verticalLayout(
+                     fluidRow(
+                       column(
+                         sliderInput(inputId = "year_scatter",
+                                     label = "Year:", 
+                                     value = min(tidy_pop_energy$YEAR, na.rm = TRUE),
+                                     min = 1961,
+                                     animate = animationOptions(interval = 333),
+                                     max = 2016,
+                                     step = 1),width=3),
+                       column(
+                         selectInput(inputId = "tab1country", label = "Country 1:",
+                                     choices = as.vector(unique(tidy_pop_energy$COUNTRY_NAME)), 
+                                     selected = as.vector(unique(tidy_pop_energy$COUNTRY_NAME))[207]), width=3),
+                       column(
+                         selectInput(inputId = "tab1country", label = "Country 2:",
+                                     choices = as.vector(unique(tidy_pop_energy$COUNTRY_NAME)), 
+                                     selected = as.vector(unique(tidy_pop_energy$COUNTRY_NAME))[42]), width=3)
+                     )
+                   ))
 )
 
 ```
@@ -631,12 +652,6 @@ output$ds_scatter <- renderPlot({
 #create the dropdown 
 tab1_countries <- reactive({input$tab1country})
 
-# Tab1 Code
-tab1_messy <- subset(scatter_data, select=c("COUNTRY_NAME", "YEAR", "pop_growth", "pop_tot", "energy_percap", "energy_tot"))
-
-tab1_tidy <- tab1_messy %>% gather(key="indicator_name", value="indicator_value", -YEAR, -COUNTRY_NAME)
-tab1_tidy_reactive <- reactive({filter(tab1_tidy, COUNTRY_NAME == tab1_countries())})
-
 # Population Total
 tab1_total <- tidy_pop_energy_for_tab_1 
 tab1_total_reactive <- reactive({filter(tab1_total, tab1_total$COUNTRY_NAME == tab1_countries())})
@@ -649,6 +664,8 @@ output$countryhist <- renderPlot({
     labs(title="Values by Country", x="Year") +
     theme(strip.text = element_text(size=15), title = element_text(size=20, face='bold'))
 })
+
+# render race graph
 ```
 
 #### Findings
