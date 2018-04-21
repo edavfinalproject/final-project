@@ -107,19 +107,23 @@ tidy_pop_energy <- tidy_pop_energy %>%
 
 not_country = c("Arab World", "Central Europe and the Baltics", "Early-demographic dividend", "Europe & Central Asia (excluding high income)", "Euro area", "Fragile and conflict affected situations", "Heavily indebted poor countries (HIPC)", "IBRD only","IDA total", "Not classified", "Latin America & Caribbean (excluding high income)", "Latin America & Caribbean", "Low income", "Low & middle income", "Late-demographic dividend", "Middle income", "North America", "Post-demographic dividend", "Small states", "East Asia & Pacific (IDA & IBRD countries)", "Latin America & the Caribbean (IDA & IBRD countries)", "Middle East & North Africa (IDA & IBRD countries)", "South Asia (IDA & IBRD)", "World", "Upper middle income", "Sub-Saharan Africa (IDA & IBRD countries)", "Europe & Central Asia (IDA & IBRD countries)", "Sub-Saharan Africa", "Sub-Saharan Africa (excluding high income)", "Pacific island small states", "Pre-demographic dividend", "Other small states", "OECD members", "Middle East & North Africa (excluding high income)", "Middle East & North Africa", "Lower middle income", "Least developed countries: UN classification", "IDA only", "IDA blend", "IDA & IBRD total", "High income", "European Union", "Europe & Central Asia", "East Asia & Pacific", "East Asia & Pacific (excluding high income)", "Caribbean small states", "South Asia")
 
-# Overview stats
-tidy_overview <- filter(tidy_pop_energy, COUNTRY_NAME %in% c("World", "East Asia & Pacific", "Europe & Central Asia", "Latin America & Caribbean", "Middle East & North Africa", "North America", "South Asia", "Sub-Saharan Africa"))
-
 tidy_pop_energy <- filter(tidy_pop_energy, !COUNTRY_NAME %in% not_country)
 tidy_pop_energy <- tidy_pop_energy %>% arrange(COUNTRY_NAME)
 
-# tidy_pop_energy <- tidy_pop_energy %>% 
-#     gather(key = "YEAR", value = "VALUE", -COUNTRY_CODE, -COUNTRY_NAME,
-#            -INDICATOR_NAME, -INDICATOR_CODE, -REGION, -INCOMEGROUP) %>%
-#     mutate(YEAR = as.numeric(YEAR)) %>%
-#     mutate(VALUE = as.numeric(VALUE))
+#Adding in energy total (for Tab1 Graphs)
+energy_total_df <- energy_df %>% mutate(VALUE = VALUE * pop_df$VALUE) %>% mutate(INDICATOR_NAME = c("Energy use total (kg of oil equivalent"))
 
+tidy_pop_energy_for_tab_1 <- rbind(pop_growth_df, pop_df, energy_df, energy_total_df)
+tidy_pop_energy_for_tab_1 <- tidy_pop_energy_for_tab_1 %>%
+  mutate(YEAR = as.numeric(YEAR)) %>%
+  mutate(VALUE = as.numeric(VALUE))
 
+# Overview stats
+tidy_overview <- filter(tidy_pop_energy_for_tab_1, COUNTRY_NAME %in% c("World", "East Asia & Pacific", "Europe & Central Asia", "Latin America & Caribbean", "Middle East & North Africa", "North America", "South Asia", "Sub-Saharan Africa"))
+tidy_overview <- tidy_overview %>% arrange(COUNTRY_NAME)
+
+tidy_pop_energy_for_tab_1 <- filter(tidy_pop_energy_for_tab_1, !COUNTRY_NAME %in% not_country)
+tidy_pop_energy_for_tab_1 <- tidy_pop_energy_for_tab_1 %>% arrange(COUNTRY_NAME)
 ```
 
 
@@ -414,13 +418,14 @@ We broke the data into there separate apps to explore these distinct aspects of 
   3 **Energy vs. Population** - Presents energy vs population in a scatter plot to visualize correlations over time. 
   
 The idea to include a year slider was inspired by the follwoing TED talk.
+https://www.gapminder.org/videos/ted-us-state-department/ 
 
 The code below creates the Layout for the navigation bar.
 
 ```{r NavBar}
 # Shiny Layour
 navbarPage("Interactive Component",
-           tabPanel("Macroview",
+           tabPanel("Individual Country",
                     sidebarLayout(
                         mainPanel(
                           plotOutput("countryhist")
@@ -581,10 +586,10 @@ scatter_data$energy_tot <- (scatter_data$energy_percap * scatter_data$pop_tot) /
 scatter_data <- scatter_data[complete.cases(scatter_data), ]
 
 # Most energy using countries 
-energy2012 <- scatter_data$energy_tot[scatter_data$YEAR == "2012"]
+energy2012 <- scatter_data$energy_tot[scatter_data$YEAR == "2010"]
 energy2012[is.na(energy2012)] <- 0
 energy2012_total <- sum(energy2012)
-sum(sort(energy2012, decreasing=TRUE)[0:5])/energy2012_total # top 20
+sum(sort(energy2012, decreasing=TRUE)[0:2])/energy2012_total # top 2
 
 # Config sliders
 year_scatter <- reactive({input$year_scatter})
@@ -611,6 +616,19 @@ output$ds_scatter <- renderPlot({
 
 ```
 
+``` {r }
+tab1_overview <- tidy_overview %>%
+  filter(tidy_overview$INDICATOR_NAME != "Population growth (annual %)") 
+
+ggplot(data=tab1_overview, aes(x=YEAR, y=VALUE)) +
+  geom_point() +
+  facet_wrap(~INDICATOR_NAME, ncol=1, scale="free") +
+  scale_fill_manual(values = bar_colors, name = "Categories")
+
+
+
+```
+
 ```{r Tab 1}
 #create the dropdown 
 tab1_countries <- reactive({input$tab1country})
@@ -629,9 +647,9 @@ tab1_total_reactive <- reactive({filter(tab1_total, tab1_total$COUNTRY_NAME == t
 
 # render graph
 output$countryhist <- renderPlot({
-    ggplot(data=tab1_tidy_reactive(), aes(x=YEAR, y=indicator_value)) + 
+    ggplot(data=tab1_total_reactive(), aes(x=YEAR, y=VALUE)) + 
     geom_point() + geom_line() +
-    facet_wrap(~indicator_name, ncol=1, scale="free") +
+    facet_wrap(~INDICATOR_NAME, ncol=1, scale="free") +
     labs(title="Total Population over Time", x="Year")
 })
 ```
@@ -640,18 +658,69 @@ output$countryhist <- renderPlot({
 
 In these section we present our findings from our exploration of the data and the interactive tools.
 
-##### No visible correlation
+##### Weak correlation
+The stead growth of population and energy lead us to believe there was likely a strong correlation. However, Figure 4-# and 4-# indicate that although there is a direct relationship, the correlation is not strong. Therefore, there is lots of variation in the relationship between energy and popualtion amound contries. 
 
-When broken down by country there is not a solid correlation between population and energy. 
+```{r}
+# No zoom
+ggplot(data = scatter_data[scatter_data$YEAR == 2010, ], 
+       aes(x=pop_tot, y=energy_tot, col=REGION)) +
+  geom_point(size=5) + 
+  labs(title="Figure 4-#. Energy vs. Population (2010)",
+       x="Population (millions)",
+       y="Energy use (teragrams of oil equivelent)") + 
+  coord_cartesian(xlim=c(0, 1500), ylim=c(0, 30000)) +
+  scale_x_continuous(labels = scales::comma) + scale_y_continuous(labels = scales::comma) +
+  geom_text(aes(label=COUNTRY_NAME), hjust=-0.2, vjust=0)
 
+# zoom
+ggplot(data = scatter_data[scatter_data$YEAR == 2010, ], 
+       aes(x=pop_tot, y=energy_tot, col=REGION)) +
+  geom_point(size=5) + 
+  labs(title="Figure 4-#. Energy vs. Population, Zoomed (2010)",
+       x="Population (millions)",
+       y="Energy use (teragrams of oil equivelent)") + 
+  coord_cartesian(xlim=c(0, 75), ylim=c(0, 1000)) +
+  scale_x_continuous(labels = scales::comma) + scale_y_continuous(labels = scales::comma) +
+  geom_text(aes(label=COUNTRY_NAME), hjust=-0.2, vjust=0)
 
-Show your scatter plot zoomed and not zoomed
+```
 	       	
-	       	
-#### Different paths to high energy use
-When we look at the three standout contries (United States, China, India) we distinct paths to high energy use. The United States grew its energy use without large increases in populaiton. Conversely, Chiny first grew its populaiton and then later the rate of population growth slowed and the energy use per capita grew.has a comparitive slow growthn in population, but large increase in energy use. Conversely, China and iOne is Done by the US Where energy per capita is high but population does not grow. The second is by china where the population grows considerable and then per capita energy growth goes up. We can see this trend starting with other countries. For example, Egypt population is growing yet the energy growth is not drastically growing. This begs the question, what changed for china to slow down its population growth and change to energy growth?
+#### Distribution across countires
+We immediately notice from Figure 4-# there is large inequality of energy use. China and USA are the two outliers accounting for nearly 40% of the energy use from those countries alone. The top 10 countires account for 65% and the top 50 account for 93%. This indicates our energy use is high concentrated.
 
-```{r Scatter Plot tab (plot)}
+```{r}
+
+ggplot(data = scatter_data[scatter_data$YEAR == 2010, ], 
+       aes(x = reorder(COUNTRY_CODE, energy_tot), y = energy_tot)) +
+  geom_col() +   
+  labs(title="Figure 4-#. Distribution of Energy (2010)",
+       x="Country",
+       y="Energy use (teragrams of oil equivelent)") + 
+  scale_y_continuous(labels = scales::comma)
+
+```
+
+
+The population has high ineqality as well, yet the two outlying countries are now India and China. These two countries account for 38% of the total population. The top 10 account for 61% of the population and top 50 account for 91% of the populaiton. Again, we learn the that although there are houndres of countires, the overal story described in the Overview section is being driven by a small number of countries.
+
+```{r}
+
+ggplot(data = scatter_data[scatter_data$YEAR == 2010, ], 
+       aes(x = reorder(COUNTRY_CODE, pop_tot), y = pop_tot)) +
+  geom_col() +   
+  labs(title="Figure 4-#. Distribution of Population (2010)",
+       x="Country",
+       y="Population (Millions)") + 
+  scale_y_continuous(labels = scales::comma)
+
+```
+
+     	
+#### Different paths
+When we look at the three standout contries (United States, China, India) we distinct paths to high energy use. The United States grew its energy use without large increases in populaiton. Conversely, China first grew its populaiton and then later the rate of population growth slowed and the energy use per capita grew. India seems on a similar path as China, with its population growth about to slow and energy use per captia about to rise. Further research into what causes these various paths could help countries design more sustainable trajectories. 
+
+```{r}
 # Make plot
 ggplot(data = scatter_data[scatter_data$COUNTRY_NAME %in% c("China", "United States", "India"), ], 
        aes(x=pop_tot, y=energy_tot, col=REGION)) +
@@ -663,135 +732,15 @@ ggplot(data = scatter_data[scatter_data$COUNTRY_NAME %in% c("China", "United Sta
   scale_x_continuous(labels = scales::comma) + scale_y_continuous(labels = scales::comma) +
   geom_text(aes(label=COUNTRY_NAME), hjust=-0.2, vjust=0)
 
-#ggplot(scatter_data, aes(pop_growth, energy_tot)) + geom_point(size=scatter_data$pop_tot) + labs(title="Population Growth vs. Energy Use")
-
 ```
 
-#### Some countries didn't grow
+#### Sustainable paths
 There are also examples, such as Germany, where over the whole range there is little change in population and energy use. Needless the country has certainly had advances in health, technology, education, any more. Which leads to the question, what makes that country different from the rest?
 
-#### Outliers
-Three countries stand out from the rest. Why do these countries need to be different? Also over the 40 year span these countries are still the only ones separate. This leads me to believe that compounding (potentially capitalism) has influence.
 
- 
-
-
-```{r Who are the big players?}
-# Who are the big players?
-# Histogram of population in latest year. Group all coutnries after top 100. Could also present in mosiac plot.
-# energy_2010 <- energy_country_year[energy_country_year$YEAR == "2010", ]
-# # energy_2010$ENERGY_USE=as.numeric(energy_2010$ENERGY_USE)
-# energy_2010$ENERGY_USE=as.numeric(energy_2010$VALUE)
-# energy_2010$YEAR=as.numeric(energy_2010$YEAR)
-# energy_2010 <- energy_2010[with(energy_2010, order(energy_2010$ENERGY_USE)),]
-# 
-# ggplot(energy_2010, aes(x=COUNTRY_CODE, y=ENERGY_USE)) + geom_bar(stat='sum') + 
-#     labs(title="Population by Country", x="Country", y="Energy use (Btu?)")
-
-
-# Histogram of energy in latest year.
-
-# Repeat two above with mosaic plot
-
-```
-
-- Binned Histogram of 
-  - Energy use and energy use per capita for latest year
-  - Population and population growth rate for latest year
-  - Population and energy growth rate across years for select countries
-  
-
-
-#### Take whats needed from below and then delete.
-  
-
-
-```{r Population growth rate over time by geographic region}
-# Population growth rate over time by geographic region
-pop_year_world <- pop_country_year %>%
-    filter(COUNTRY_CODE %in% c("SSH", "SAS", "NAC", "MEA", 
-                               "LCN", "ECS", "EAS")) %>%
-    mutate(YEAR = as.integer(YEAR)) %>%
-    mutate(POP_GROWTH_RATE = as.numeric(POP_GROWTH_RATE))
-
-
-
-ggplot(pop_year_world, 
-       aes(YEAR, POP_GROWTH_RATE, color = COUNTRY_CODE)) + geom_line()
-
-# elec_access_year_world <- elec_access_country_year %>%
-#     filter(COUNTRY_CODE %in% c("SSH", "SAS", "NAC", "MEA", 
-#                                "LCN", "ECS", "EAS")) %>%
-#     mutate(YEAR = as.integer(YEAR)) %>%
-#     mutate(ELECTRICITY_ACCESS = as.numeric(ELECTRICITY_ACCESS))
-
-
-# No recorded values before 1990
-# ggplot(elec_access_year_world %>% filter(YEAR >= 1990), 
-#        aes(YEAR, ELECTRICITY_ACCESS, color = COUNTRY_CODE)) + geom_line()
-```
-
-
-```{r}
-
-# world_prod_coal <- elec_prod_coal %>%
-#      filter(COUNTRY_CODE %in% c("SSH", "SAS", "NAC", "MEA", 
-#                                "LCN", "ECS", "EAS", "WLD"))
-# 
-# world_prod_hydro <- elec_prod_hydro %>%
-#      filter(COUNTRY_CODE %in% c("SSH", "SAS", "NAC", "MEA", 
-#                                "LCN", "ECS", "EAS", "WLD"))
-# 
-# world_prod_natural_gas <- elec_prod_natural_gas %>%
-#      filter(COUNTRY_CODE %in% c("SSH", "SAS", "NAC", "MEA", 
-#                                "LCN", "ECS", "EAS", "WLD"))
-# 
-# world_prod_nuclear <- elec_prod_nuclear %>%
-#      filter(COUNTRY_CODE %in% c("SSH", "SAS", "NAC", "MEA", 
-#                                "LCN", "ECS", "EAS", "WLD"))
-# 
-# world_prod_oil <- elec_prod_oil %>%
-#      filter(COUNTRY_CODE %in% c("SSH", "SAS", "NAC", "MEA", 
-#                                "LCN", "ECS", "EAS", "WLD"))
-# 
-# world_prod_renewable <- elec_prod_renewable %>%
-#      filter(COUNTRY_CODE %in% c("SSH", "SAS", "NAC", "MEA", 
-#                                "LCN", "ECS", "EAS", "WLD"))
-# 
-# 
-# world_prod_total <- rbind(world_prod_coal, world_prod_hydro, 
-#                           world_prod_natural_gas, world_prod_nuclear,
-#                           world_prod_oil, world_prod_renewable)
-# 
-# world_prod_total <- world_prod_total %>%
-#      gather(key = "YEAR", value = "VALUE", -COUNTRY_NAME, -COUNTRY_CODE,
-#             -INDICATOR_NAME, -INDICATOR_CODE) %>%
-#      mutate(VALUE = as.numeric(VALUE)) %>%
-#      mutate(YEAR = as.integer(YEAR)) %>%
-#      left_join(y = pop_meta) %>%
-#      drop_na()
-
-# world_prod_total <- na.rm(world_prod_total)
-
-
-# ggplot(world_prod_total %>% filter(COUNTRY_CODE == "WLD"),
-#        aes(YEAR, VALUE, color = INDICATOR_CODE)) +
-#      geom_line()
-# 
-# ggplot(world_prod_total,
-#        aes(YEAR, VALUE, color = INDICATOR_CODE)) +
-#      geom_line() + facet_wrap(facets = "COUNTRY_NAME")
-
-
-# Data issue - for some years, total production by region is way above %100
-# world_prod_total %>% 
-#      group_by(COUNTRY_CODE, YEAR) %>% 
-#      summarize(total = sum(VALUE)) %>%
-#      arrange(-total)
-
-```
-
-
+#### Challanges
+- Plotting many counties at same time
+- Narrowing down the endless possability of graphs. Making sure the graph is meaningful
 
 
 ### Executive Summary (Presentation-style)
@@ -800,8 +749,17 @@ Note: "Presentation" here refers to the style of graph, that is, graphs that are
 
 Provide a short nontechnical summary of the most revealing findings of your analysis  written for a nontechnical audience. The length should be approximately two pages (if we were using pages...) Take extra care to clean up your graphs, ensuring that best practices for presentation are followed.
 
+In the executive summary we present a story of what the data told us. Our aim is that this story provides reference and guidence about the the relationship ebtwen energy and popualtion so that ourselves and other researches can discover  sustainable paths towards clean energy.
 
+We clearly see that energy and population are growing and energy per capita is not. So there is a correlation.
 
+Yet when we look at the scatter there is more to the story.
+
+We look at distribution and find that we are only talking about a small portion
+
+There are multiple paths.
+
+We find some countries have found sustainable paths.
 
 ### Conclusion
 
