@@ -1,6 +1,6 @@
 ---
 title: "Final Project"
-author: "Names and Unis....."
+author: "David Schemitsch (ds3300), Isaac Wainstein (ikw2102), Wyatt Ford (wgf2102)"
 date:   "April 24, 2018"
 runtime: shiny
 output: html_document
@@ -107,8 +107,10 @@ tidy_pop_energy <- tidy_pop_energy %>%
 
 not_country = c("Arab World", "Central Europe and the Baltics", "Early-demographic dividend", "Europe & Central Asia (excluding high income)", "Euro area", "Fragile and conflict affected situations", "Heavily indebted poor countries (HIPC)", "IBRD only","IDA total", "Not classified", "Latin America & Caribbean (excluding high income)", "Latin America & Caribbean", "Low income", "Low & middle income", "Late-demographic dividend", "Middle income", "North America", "Post-demographic dividend", "Small states", "East Asia & Pacific (IDA & IBRD countries)", "Latin America & the Caribbean (IDA & IBRD countries)", "Middle East & North Africa (IDA & IBRD countries)", "South Asia (IDA & IBRD)", "World", "Upper middle income", "Sub-Saharan Africa (IDA & IBRD countries)", "Europe & Central Asia (IDA & IBRD countries)", "Sub-Saharan Africa", "Sub-Saharan Africa (excluding high income)", "Pacific island small states", "Pre-demographic dividend", "Other small states", "OECD members", "Middle East & North Africa (excluding high income)", "Middle East & North Africa", "Lower middle income", "Least developed countries: UN classification", "IDA only", "IDA blend", "IDA & IBRD total", "High income", "European Union", "Europe & Central Asia", "East Asia & Pacific", "East Asia & Pacific (excluding high income)", "Caribbean small states", "South Asia")
 
-tidy_pop_energy <- filter(tidy_pop_energy, !COUNTRY_NAME %in% not_country)
+# Overview stats
+tidy_overview <- filter(tidy_pop_energy, COUNTRY_NAME %in% c("World", "East Asia & Pacific", "Europe & Central Asia", "Latin America & Caribbean", "Middle East & North Africa", "North America", "South Asia", "Sub-Saharan Africa"))
 
+tidy_pop_energy <- filter(tidy_pop_energy, !COUNTRY_NAME %in% not_country)
 tidy_pop_energy <- tidy_pop_energy %>% arrange(COUNTRY_NAME)
 
 # tidy_pop_energy <- tidy_pop_energy %>% 
@@ -348,21 +350,13 @@ We explored using additional data from the World Bank, namely energy consumption
     
 ### Main Analysis (Exploratory Data Analysis)
 
-Provide a detailed, well-organized description of your findings, including textual description, graphs, and code.  Your focus should be on both the results and the process. Include, as reasonable and relevant, approaches that didn't work, challenges, the data cleaning process, etc.
-
-The main analysis inovoles three sections
-  1. Overview - High level representaiton of the growth of energy and poulation over time
-  2. Interactive component - Tools to look at many facets of the data.
-  3. Findings - Key insights learned and challanges faced. 
+The main analysis section has been split into the following subsecitons.
+  1. **Overview** - High level representaiton of the relaitonship between energy and population over time.
+  2. **Interactive component** - Tools for observing numerous facets of the data.
+  3. **Findings** - Key insights and challanges the team faced. 
 
 #### Overview
-
-
-As shown in Figure 1 Energy use is growing. Many ay that we just need to replace our energy sources with clean, renewable sources. The International Energy Angency indicates today 13.2% of energy in the world comes from renewable sources. (https://www.iea.org/about/faqs/renewableenergy/). Therefore, to go 100% renwable we would need to increase out current capacity by 7.5 times. However, we see from 1975 to 2010 energy grows about 2.5 times, with a growrate of about 2.6%. If the growth rate stayed the same the energy use in 2100 would be over 8 times what it is today. Thefore, to go fully renewable with the current growth rate by 2100 means increaing out renable capacity by 64 times. Hence, an extremly important componnet is stopping our energy growth.
-
-
-As shown in figure 2 population is also growing and energy per captia is not growing as much. We can conclude at a high level that since enrgy per captia is not incraeasing if we just stop population growth we stop energy growth. We think there is more to this story, which is the focus of the remainder of the Main anlaysis.
-
+As shown in Figure 1-4, energy use is consistently growing. As today the The International Energy Angency reports  that 13.2% of energy in the world comes from renewable sources. (https://www.iea.org/about/faqs/renewableenergy/). Therefore, to replace our energy consumption with 100% clean, renewable source we need to increase our current capacity by 7.5 times. However, we learn from Figure 1-4 that energy consumption has growth approximitely 2.5 times from 1975 to 2010 at a growth rate of 2.6%. If the growth rate stayed the same the energy use in 2100 would be over 8 times what it is today. Thefore, to go 100% clean energy by 2100 would require increasing clean energy capcity by 64 times. 
 
 ```{r echo = FALSE}
 # Reform data
@@ -383,12 +377,16 @@ my_data$YEAR <- as.numeric(my_data$YEAR)
 # ENERGY GROWTH
 energy_agg <- aggregate(energy_tot ~ YEAR, scatter_data, sum)
 ggplot(energy_agg, aes(YEAR, energy_tot)) + geom_line() +
-  labs(title="Energy Growth", 
+  labs(title="Figure 4-1. Energy Growth", 
        x="YEAR", 
        y="Energy use (teragrams of oil equivelent)") +
   coord_cartesian(xlim=c(1975, 2010))
 
+```
 
+Therefore, for society to go 100% clean energy we need to slow our energy growth as well. One approach to slowing energy growth is to slow population as well. Figure 4-2 shows that population also consistently growing, while energy use per-capita (Figure 4-3) has only shown moderate growth. The slow growth of energy per-captia shows that our improvements in energy efficiency are keeping up with our demand for more power. Hence, if we could just stop population growth we stop energy growth. 
+
+```{r echo = FALSE}
 # POPULATION GROWTH
 pop_agg <- aggregate(pop_tot ~ YEAR, scatter_data, sum)
 ggplot(pop_agg, aes(YEAR, pop_tot)) + geom_line() +
@@ -407,30 +405,17 @@ ggplot(energy_capita_agg, aes(YEAR, weighted)) + geom_line() +
   coord_cartesian(xlim=c(1975, 2010))
 ```
 
-```{r echo = FALSE}
+Yet when we look at figures such as 3-# and 3-# (the scatter plot in data quality section) we learn that when we split by country the smooth coorelation immediately goes away. In the remainder of the main analysis we provide interactive tools explore the relationship between energy growth and populaiton, and then present our main findings from using the tools we made.
 
-```
 #### Interactive component
-As we started to determine what graph we should shown in this analysis, we quickly realized there were numerous insightful ways to show the data. Furthermore, there is no one chronological way to explain the data. Therefore, we chose to do R Shiny apps for our main analysis to allow the user to explore the data in many different ways. We present specific snapshots of the app in the Presentation section" to show insights that we found. Yet the shiny apps allow the user to discover their own conclusions as well.
+As we started to determine what graphs we should shown in this analysis, we quickly realized there were so many insightful ways we could split the data the report would either be too long or skipping key insights. Therefore, we chose to do interactive R Shiny apps for the main part of our analysis. This allowed our team to easily explore the data, while also allowing users to explore in ways we had not yet thought of. 
 
-We broke the data into there separate apps to explore these distinct aspects of the data. The three apps are listed below.
+We broke the data into there separate apps to explore these distinct aspects of the data. We often found ourselves jumping back and forth, and encourage users to do the same, as each story of the data does not need to go in chronological order. The three apps are listed below.
 
-1. One country at a time....
-  - Dropdown to select country
-  - Shows graph of population, population growth, energy and energy growth over time
-  - Dropdown for line graph or histogram
-  
-2. Distribution of population and energy across the world (David)
-  - Each bar represents the value per country
-  - Value select (population or energy use)
-  - Slider bar on bottom for year
+  1. **Individual country** - Deep divy into how population and energy has changed over time for one country.
+  2. **Country Comparison** - Presents countries side-by-side in a way where magnitudes of energy and population can be easily compared over time.
+  3 **Energy vs. Population** - Presents energy vs population in a scatter plot to visualize correlations over time.
 
-3. Scatter to compare energy and population growth rates (Isaac)
-  - Each point is a country
-  - Slider bar on bottom for year
-  - X is energy growth rate
-  - Y is population growth rate
-  - Size of circle is size of population
 
 ```{r NavBar}
 navbarPage("Good Graphics",
@@ -678,23 +663,6 @@ output$countryhist <- renderPlot({
     facet_wrap(~INDICATOR_NAME, ncol=1, scale="free") +
     labs(title="Total Population over Time", x="Year")
 })
-```
-
-```{r}
-#CODE TRYING TO DEBUG FACET WRAP
-usa_energy <- tidy_pop_energy %>% 
-    filter(tidy_pop_energy$INDICATOR_NAME == "Energy use (kg of oil equivalent per capita)", tidy_pop_energy$COUNTRY_NAME == "United States")
-usa_pop <- tidy_pop_energy %>%
-  filter(tidy_pop_energy$INDICATOR_NAME == "Population, total", tidy_pop_energy$COUNTRY_NAME == "United States")
-
-usa_data <- tidy_pop_energy %>% filter(tidy_pop_energy$INDICATOR_NAME != "Population growth (annual %)", tidy_pop_energy$COUNTRY_NAME == "United States")
-
-ggplot(data=usa_data, aes(x=YEAR, y=VALUE)) + geom_point() + facet_wrap(~usa_data$INDICATOR_CODE, ncol=1, scale="free")
-
-# usa_total <- tab1_total %>% filter(tab1_total$COUNTRY_NAME == "United States", )
-
-#ggplot(data=usa_total, aes(x=usa_total$YEAR, y=usa_total$VALUE)) +
-#  facet_wrap(~usa_total$INDICATOR_NAME, scales="free") + geom_line() + geom_point()
 ```
 
 #### Findings
