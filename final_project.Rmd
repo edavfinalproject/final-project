@@ -610,6 +610,13 @@ In these section we present our findings from our exploration of the data and th
 
 When broken down by country there is not a solid correlation between population and energy. 
 
+
+Show your scatter plot zoomed and not zoomed
+	       	
+	       	
+#### Different paths to high energy use
+There are two paths to very high energy growth. One is Done by the US Where energy per capita is high but population does not grow. The second is by china where the population grows considerable and then per capita energy growth goes up. We can see this trend starting with other countries. For example, Egypt population is growing yet the energy growth is not drastically growing. This begs the question, what changed for china to slow down its population growth and change to energy growth?
+
 ```{r Scatter Plot tab}
 # Make plot
 ggplot(data = scatter_data, aes(x=pop_tot, y=energy_tot, col=REGION)) +
@@ -623,11 +630,6 @@ ggplot(data = scatter_data, aes(x=pop_tot, y=energy_tot, col=REGION)) +
 #ggplot(scatter_data, aes(pop_growth, energy_tot)) + geom_point(size=scatter_data$pop_tot) + labs(title="Population Growth vs. Energy Use")
 
 ```
-Show your scatter plot zoomed and not zoomed
-	       	
-	       	
-#### Different paths to high energy use
-There are two paths to very high energy growth. One is Done by the US Where energy per capita is high but population does not grow. The second is by china where the population grows considerable and then per capita energy growth goes up. We can see this trend starting with other countries. For example, Egypt population is growing yet the energy growth is not drastically growing. This begs the question, what changed for china to slow down its population growth and change to energy growth?
 
 #### Some countries didn't grow
 There are also examples, such as Germany, where over the whole range there is little change in population and energy use. Needless the country has certainly had advances in health, technology, education, any more. Which leads to the question, what makes that country different from the rest?
