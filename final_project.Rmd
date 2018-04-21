@@ -511,21 +511,22 @@ navbarPage("Interactive Component",
            ),
            tabPanel("Country Races",
                    verticalLayout(
+                     plotOutput("countryRace",  width = "100%"),
                      fluidRow(
                        column(
-                         sliderInput(inputId = "year_scatter",
+                         sliderInput(inputId = "raceYear",
                                      label = "Year:", 
-                                     value = min(tidy_pop_energy$YEAR, na.rm = TRUE),
-                                     min = 1961,
+                                     value = 1971,
+                                     min = 1971,
                                      animate = animationOptions(interval = 333),
-                                     max = 2016,
+                                     max = 2012,
                                      step = 1),width=3),
                        column(
-                         selectInput(inputId = "tab1country", label = "Country 1:",
+                         selectInput(inputId = "tab4country1", label = "Country 1:",
                                      choices = as.vector(unique(tidy_pop_energy$COUNTRY_NAME)), 
                                      selected = as.vector(unique(tidy_pop_energy$COUNTRY_NAME))[207]), width=3),
                        column(
-                         selectInput(inputId = "tab1country", label = "Country 2:",
+                         selectInput(inputId = "tab4country2", label = "Country 2:",
                                      choices = as.vector(unique(tidy_pop_energy$COUNTRY_NAME)), 
                                      selected = as.vector(unique(tidy_pop_energy$COUNTRY_NAME))[42]), width=3)
                      )
@@ -665,7 +666,31 @@ output$countryhist <- renderPlot({
     theme(strip.text = element_text(size=15), title = element_text(size=20, face='bold'))
 })
 
-# render race graph
+
+# render country race graph
+# Config sliders
+race_year_set <- reactive({input$raceYear})
+pop_max <- reactive({input$pop_max})
+energy_max <- reactive({input$energy_max})
+
+# Config data
+tab4_countries <- reactive({c(input$tab4country1, input$tab4country2)}) 
+tab4_pop_max <- reactive({max(filter(scatter_data, COUNTRY_NAME %in% tab4_countries())$pop_tot)})
+tab4_energy_max <- reactive({max(filter(scatter_data, COUNTRY_NAME %in% tab4_countries())$energy_tot)})
+tab4_data <- reactive({filter(scatter_data, COUNTRY_NAME %in% tab4_countries()) %>% filter(YEAR > 1970 & YEAR <= race_year_set())})
+
+#tidy_subset <- reactive({scatter_data %>%
+#    filter(YEAR == year_scatter())
+
+output$countryRace <- renderPlot({
+    ggplot(data = tab4_data(), aes(x=pop_tot, y=energy_tot, col=COUNTRY_NAME)) +
+        geom_point(size=5) + labs(title="Population vs. Energy Use", 
+                            x="Population (millions)", 
+                            y="Energy use (teragrams of oil equivelent)") + 
+        coord_cartesian(xlim=c(0, tab4_pop_max()), ylim=c(0, tab4_energy_max())) +
+        scale_x_continuous(labels = scales::comma) + scale_y_continuous(labels = scales::comma)
+}) 
+
 ```
 
 #### Findings
