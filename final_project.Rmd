@@ -111,7 +111,7 @@ tidy_pop_energy <- filter(tidy_pop_energy, !COUNTRY_NAME %in% not_country)
 tidy_pop_energy <- tidy_pop_energy %>% arrange(COUNTRY_NAME)
 
 #Adding in energy total (for Tab1 Graphs)
-energy_total_df <- energy_df %>% mutate(VALUE = VALUE * pop_df$VALUE) %>% mutate(INDICATOR_NAME = c("Energy use total (kg of oil equivalent"))
+energy_total_df <- energy_df %>% mutate(VALUE = VALUE * pop_df$VALUE) %>% mutate(INDICATOR_NAME = c("Energy use total (kg of oil equivalent)"))
 
 tidy_pop_energy_for_tab_1 <- rbind(pop_growth_df, pop_df, energy_df, energy_total_df)
 tidy_pop_energy_for_tab_1 <- tidy_pop_energy_for_tab_1 %>%
@@ -613,18 +613,11 @@ ggplot(data=tab1_overview, aes(x=YEAR, y=VALUE)) +
 ```
 
 ```{r Tab 1}
-# Tab1 Code
-tab1_messy <- subset(scatter_data, select=c("COUNTRY_NAME", "YEAR", "pop_growth", "pop_tot", "energy_percap", "energy_tot"))
-
-tab1_tidy <- tab1_messy %>% gather(key="indicator_name", value="indicator_value", -YEAR, -COUNTRY_NAME)
-tab1_tidy_reactive <- reactive({filter(tab1_tidy, COUNTRY_NAME == tab1_countries())})
-
 #create the dropdown 
 tab1_countries <- reactive({input$tab1country})
 
 # Population Total
-tab1_total <- tidy_pop_energy %>% 
-    filter(tidy_pop_energy$INDICATOR_NAME != "Population growth (annual %)") 
+tab1_total <- tidy_pop_energy_for_tab_1 
 tab1_total_reactive <- reactive({filter(tab1_total, tab1_total$COUNTRY_NAME == tab1_countries())})
 
 # render graph
