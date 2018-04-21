@@ -307,11 +307,23 @@ pop_energy_year <-
     mutate(ENERGY_USE = as.numeric(ENERGY_USE))
 
 ggplot(pop_energy_year, aes(POP_GROWTH_RATE, ENERGY_USE)) + 
-    geom_point(alpha = .1) + geom_density_2d()
+     ggtitle("Total Population vs. Energy Use", 
+             subtitle = "Country-Years") +
+    geom_point(alpha = .1) + geom_density_2d() +
+     scale_x_continuous(name="Total Population", labels = scales::comma) +
+     scale_y_continuous(name="Energy use (kg of oil equivalent per capita)", 
+                        labels = scales::comma)
+
+     
 
 ggplot(pop_energy_year %>% filter(ENERGY_USE <= 10000 & POP_GROWTH_RATE <= 2e+07),
        aes(POP_GROWTH_RATE, ENERGY_USE)) + 
-    geom_point(alpha = .1) + geom_density_2d()
+    geom_point(alpha = .1) + geom_density_2d() + 
+     ggtitle("Total Population vs. Energy Use", 
+             subtitle = "Country-Years (Outliers removed)") +
+     scale_x_continuous(name="Total Population", labels = scales::comma) +
+     scale_y_continuous(name="Energy use (kg of oil equivalent per capita)", 
+                        labels = scales::comma)
 
 
 
