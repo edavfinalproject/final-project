@@ -366,7 +366,7 @@ scatter_data <- tidy_pop_energy[tidy_pop_energy$INDICATOR_CODE == icodes[1],]
 scatter_data$pop_growth <- as.numeric(tidy_pop_energy$VALUE[tidy_pop_energy$INDICATOR_CODE == icodes[1]])
 scatter_data$pop_tot <- as.numeric(tidy_pop_energy$VALUE[tidy_pop_energy$INDICATOR_CODE == icodes[2]])/1000000
 scatter_data$energy_percap <- as.numeric(tidy_pop_energy$VALUE[tidy_pop_energy$INDICATOR_CODE == icodes[3]])
-scatter_data$energy_tot <- (scatter_data$energy_percap * scatter_data$pop_tot) / 100
+scatter_data$energy_tot <- (scatter_data$energy_percap * scatter_data$pop_tot) / 1000
 scatter_data <- scatter_data[complete.cases(scatter_data), ]
 
 # Alter dataset
@@ -491,9 +491,9 @@ navbarPage("Interactive Component",
                                       step = 100),
                           sliderInput(inputId = "energy_max",
                                       label = "Max energy:", 
-                                      value = 30000,
+                                      value = 3000,
                                       min = 0,
-                                      max = 30000,
+                                      max = 3000,
                                       step = 2000)
                         )
                       )
@@ -565,7 +565,7 @@ scatter_data <- tidy_pop_energy[tidy_pop_energy$INDICATOR_CODE == icodes[1],]
 scatter_data$pop_growth <- as.numeric(tidy_pop_energy$VALUE[tidy_pop_energy$INDICATOR_CODE == icodes[1]])
 scatter_data$pop_tot <- as.numeric(tidy_pop_energy$VALUE[tidy_pop_energy$INDICATOR_CODE == icodes[2]])/1000000
 scatter_data$energy_percap <- as.numeric(tidy_pop_energy$VALUE[tidy_pop_energy$INDICATOR_CODE == icodes[3]])
-scatter_data$energy_tot <- (scatter_data$energy_percap * scatter_data$pop_tot) / 100
+scatter_data$energy_tot <- (scatter_data$energy_percap * scatter_data$pop_tot) / 1000
 scatter_data <- scatter_data[complete.cases(scatter_data), ]
 
 # Most energy using countries 
@@ -651,7 +651,7 @@ ggplot(data = scatter_data[scatter_data$YEAR == 2010, ],
   labs(title="Figure 4-#. Energy vs. Population (2010)",
        x="Population (millions)",
        y="Energy use (teragrams of oil equivelent)") + 
-  coord_cartesian(xlim=c(0, 1500), ylim=c(0, 30000)) +
+  coord_cartesian(xlim=c(0, 1500), ylim=c(0, 3000)) +
   scale_x_continuous(labels = scales::comma) + scale_y_continuous(labels = scales::comma) +
   geom_text(aes(label=COUNTRY_NAME), hjust=-0.2, vjust=0)
 
@@ -662,7 +662,7 @@ ggplot(data = scatter_data[scatter_data$YEAR == 2010, ],
   labs(title="Figure 4-#. Energy vs. Population, Zoomed (2010)",
        x="Population (millions)",
        y="Energy use (teragrams of oil equivelent)") + 
-  coord_cartesian(xlim=c(0, 75), ylim=c(0, 1000)) +
+  coord_cartesian(xlim=c(0, 75), ylim=c(0, 100)) +
   scale_x_continuous(labels = scales::comma) + scale_y_continuous(labels = scales::comma) +
   geom_text(aes(label=COUNTRY_NAME), hjust=-0.2, vjust=0)
 
@@ -710,14 +710,35 @@ ggplot(data = scatter_data[scatter_data$COUNTRY_NAME %in% c("China", "United Sta
   labs(title="Figure 4-#. Paths of Energy Growth",
        x="Population (millions)",
        y="Energy use (teragrams of oil equivelent)") + 
-  coord_cartesian(xlim=c(0, 1500), ylim=c(0, 30000)) +
+  coord_cartesian(xlim=c(0, 1500), ylim=c(0, 3000)) +
   scale_x_continuous(labels = scales::comma) + scale_y_continuous(labels = scales::comma) +
   geom_text(aes(label=COUNTRY_NAME), hjust=-0.2, vjust=0)
 
 ```
 
-#### Sustainable paths
-There are also examples, such as Germany, where over the whole range there is little change in population and energy use. Needless the country has certainly had advances in health, technology, education, any more. Which leads to the question, what makes that country different from the rest?
+#### Ethics of change
+Countires such as the United Kingdom are seing the energy use per capita shrink. Conversely, we a less developed country such as Indonesia has rapid stead growth in energy use per captia. THis may lead us to believe that United Kingdom is on a good path, while the tregectory of Indonesia needs to change. However, the United Kindom's current energy use per-capita is three times higher than Indonisia. Hence, is it fair to say they do not deserve to growth their country to the same level? This is one of many ethica delemmas that we must face as we find sustainable paths for all countires.
+
+```{r}
+# United Kingdom
+ggplot(data = scatter_data[scatter_data$COUNTRY_NAME == "United Kingdom", ], 
+       aes(x=YEAR, y=energy_percap)) +
+  geom_line() + 
+  labs(title="Figure 4-#. Energy Use Per-Capita (United Kingdom)",
+       x="Year",
+       y="Energy use per capita (teragrams of oil equivelent)") + 
+  scale_y_continuous(labels = scales::comma)
+
+# Indonesia
+ggplot(data = scatter_data[scatter_data$COUNTRY_NAME == "Indonesia", ], 
+       aes(x=YEAR, y=energy_percap)) +
+  geom_line() + 
+  labs(title="Figure 4-#. Energy Use Per-Capita (United Kingdom)",
+       x="Year",
+       y="Energy use per capita (teragrams of oil equivelent)") + 
+  scale_y_continuous(labels = scales::comma)
+
+```
 
 
 #### Challanges
@@ -741,16 +762,16 @@ We look at distribution and find that we are only talking about a small portion
 
 There are multiple paths.
 
-We find some countries have found sustainable paths.
+The ethics of each path are different for each country.
+
 
 ### Conclusion
 
 Discuss limitations and future directions, lessons learned.
 
-#### Key findings
-List our most insightful findings
 
-#### Future work
+
+
 There are certainly other factors in the relationship between population and energy use. These include economic, health, wealth, and many more. Including these factors in future analyses would be beneficial.
 
 Our group sees this tidy dataframe as a product in itself. Talk about file size and how it organizes code and fits good in memory and simply provides the necessary work to analyze this. A good idea would be to make this into an r package. 
