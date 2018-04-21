@@ -414,7 +414,9 @@ We broke the data into there separate apps to explore these distinct aspects of 
 
   1. **Individual Country** - Deep divy into how population and energy has changed over time for one country.
   2. **Country Comparison** - Presents countries side-by-side in a way where magnitudes of energy and population can be easily compared over time.
-  3 **Energy vs. Population** - Presents energy vs population in a scatter plot to visualize correlations over time.
+  3 **Energy vs. Population** - Presents energy vs population in a scatter plot to visualize correlations over time. 
+  
+The idea to include a year slider was inspired by the follwoing TED talk.
 
 The code below creates the Layout for the navigation bar.
 
@@ -632,17 +634,19 @@ Show your scatter plot zoomed and not zoomed
 	       	
 	       	
 #### Different paths to high energy use
-There are two paths to very high energy growth. One is Done by the US Where energy per capita is high but population does not grow. The second is by china where the population grows considerable and then per capita energy growth goes up. We can see this trend starting with other countries. For example, Egypt population is growing yet the energy growth is not drastically growing. This begs the question, what changed for china to slow down its population growth and change to energy growth?
+When we look at the three standout contries (United States, China, India) we distinct paths to high energy use. The United States grew its energy use without large increases in populaiton. Conversely, Chiny first grew its populaiton and then later the rate of population growth slowed and the energy use per capita grew.has a comparitive slow growthn in population, but large increase in energy use. Conversely, China and iOne is Done by the US Where energy per capita is high but population does not grow. The second is by china where the population grows considerable and then per capita energy growth goes up. We can see this trend starting with other countries. For example, Egypt population is growing yet the energy growth is not drastically growing. This begs the question, what changed for china to slow down its population growth and change to energy growth?
 
 ```{r Scatter Plot tab}
 # Make plot
-ggplot(data = scatter_data, aes(x=pop_tot, y=energy_tot, col=REGION)) +
-    geom_point(size=5) + labs(title="Population vs. Energy Use", 
-                        x="Population (millions)", 
-                        y="Energy use (teragrams of oil equivelent)") + 
-    coord_cartesian(xlim=c(0, 1500), ylim=c(0, 30000)) +
-    scale_x_continuous(labels = scales::comma) + scale_y_continuous(labels = scales::comma) +
-    geom_text(aes(label=COUNTRY_NAME), hjust=-0.2, vjust=0)
+ggplot(data = scatter_data[scatter_data$COUNTRY_NAME %in% c("China", "United States", "India"), ], 
+       aes(x=pop_tot, y=energy_tot, col=REGION)) +
+  geom_point(size=5) + 
+  labs(title="Figure 4-#. Paths of Energy Growth",
+       x="Population (millions)",
+       y="Energy use (teragrams of oil equivelent)") + 
+  coord_cartesian(xlim=c(0, 1500), ylim=c(0, 30000)) +
+  scale_x_continuous(labels = scales::comma) + scale_y_continuous(labels = scales::comma) +
+  geom_text(aes(label=COUNTRY_NAME), hjust=-0.2, vjust=0)
 
 #ggplot(scatter_data, aes(pop_growth, energy_tot)) + geom_point(size=scatter_data$pop_tot) + labs(title="Population Growth vs. Energy Use")
 
