@@ -435,7 +435,7 @@ The code below creates the Layout for the navigation bar.
 navbarPage("Interactive Component",
            tabPanel("Individual Country",
                     verticalLayout(
-                          plotOutput("countryhist", width="100%", height = "500px"),
+                          plotOutput("countryhist", width="100%", height = "400px"),
                         wellPanel(
                           selectInput(inputId = "tab1country", label = "Country:",
                                       choices = as.vector(unique(tidy_pop_energy$COUNTRY_NAME)), 
@@ -622,19 +622,6 @@ output$ds_scatter <- renderPlot({
 
 ```
 
-``` {r }
-tab1_overview <- tidy_overview %>%
-  filter(tidy_overview$INDICATOR_NAME != "Population growth (annual %)") 
-
-ggplot(data=tab1_overview, aes(x=YEAR, y=VALUE)) +
-  geom_point() +
-  facet_wrap(~INDICATOR_NAME, ncol=2, scale="free") +
-  scale_fill_manual(values = bar_colors, name = "Categories")
-
-
-
-```
-
 ```{r Tab 1}
 #create the dropdown 
 tab1_countries <- reactive({input$tab1country})
@@ -651,10 +638,11 @@ tab1_total_reactive <- reactive({filter(tab1_total, tab1_total$COUNTRY_NAME == t
 
 # render graph
 output$countryhist <- renderPlot({
-    ggplot(data=tab1_total_reactive(), aes(x=YEAR, y=VALUE)) + 
+    ggplot(data=tab1_total_reactive(), aes(x=YEAR, y=VALUE, ymin=0)) + 
     geom_point() + geom_line() +
-    facet_wrap(~INDICATOR_NAME, ncol=1, scale="free") +
-    labs(title="Values by Country", x="Year")
+    facet_wrap(~INDICATOR_NAME, ncol=2, scale="free") +
+    labs(title="Values by Country", x="Year") +
+    theme(strip.text = element_text(size=15), title = element_text(size=20, face='bold'))
 })
 ```
 
