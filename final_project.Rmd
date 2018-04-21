@@ -111,7 +111,14 @@ tidy_pop_energy <- filter(tidy_pop_energy, !COUNTRY_NAME %in% not_country)
 tidy_pop_energy <- tidy_pop_energy %>% arrange(COUNTRY_NAME)
 
 #Adding in energy total (for Tab1 Graphs)
-energy_total_df <- energy_df %>% mutate(VALUE = VALUE * pop_df$VALUE) %>% mutate(INDICATOR_NAME = c("Energy use total (kg of oil equivalent)"))
+# Divide population by 1000000 for scaling
+pop_df <- pop_df %>% mutate(VALUE = VALUE/1000000)
+# Divide Energy per capita by 1000; rename to reflect new scale
+energy_df <- energy_df %>% mutate(VALUE = VALUE/1000) %>%
+  mutate(INDICATOR_NAME = c("Energy use per capita (teragrams of oil equivalent)"))
+
+# Create energy_total column
+energy_total_df <- energy_df %>% mutate(VALUE = VALUE * pop_df$VALUE) %>% mutate(INDICATOR_NAME = c("Energy use total (teragrams of oil equivalent)"))
 
 tidy_pop_energy_for_tab_1 <- rbind(pop_growth_df, pop_df, energy_df, energy_total_df)
 tidy_pop_energy_for_tab_1 <- tidy_pop_energy_for_tab_1 %>%
@@ -426,11 +433,11 @@ The code below creates the Layout for the navigation bar.
 # Shiny Layour
 navbarPage("Interactive Component",
            tabPanel("Individual Country",
-                    sidebarLayout(
+                    verticalLayout(
                         mainPanel(
-                          plotOutput("countryhist")
+                          plotOutput("countryhist", width="100%")
                           ),
-                        sidebarPanel(
+                        wellPanel(
                           selectInput(inputId = "tab1country", label = "Country:",
                                       choices = as.vector(unique(tidy_pop_energy$COUNTRY_NAME)), 
                                       selected = as.vector(unique(tidy_pop_energy$COUNTRY_NAME))[1])
@@ -632,16 +639,12 @@ ggplot(data=tab1_overview, aes(x=YEAR, y=VALUE)) +
 ```{r Tab 1}
 #create the dropdown 
 tab1_countries <- reactive({input$tab1country})
-<<<<<<< HEAD
-=======
 
 # Tab1 Code
 tab1_messy <- subset(scatter_data, select=c("COUNTRY_NAME", "YEAR", "pop_growth", "pop_tot", "energy_percap", "energy_tot"))
 
 tab1_tidy <- tab1_messy %>% gather(key="indicator_name", value="indicator_value", -YEAR, -COUNTRY_NAME)
 tab1_tidy_reactive <- reactive({filter(tab1_tidy, COUNTRY_NAME == tab1_countries())})
-
->>>>>>> c09e8fcf461c3a7ff0b38afbb2e5fa530baf14d2
 
 # Population Total
 tab1_total <- tidy_pop_energy_for_tab_1 
