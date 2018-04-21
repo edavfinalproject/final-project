@@ -389,7 +389,8 @@ ggplot(energy_agg, aes(YEAR, energy_tot)) + geom_line() +
   labs(title="Figure 4-1. Energy Growth", 
        x="YEAR", 
        y="Energy use (teragrams of oil equivelent)") +
-  coord_cartesian(xlim=c(1975, 2010))
+  coord_cartesian(xlim=c(1975, 2010)) + 
+  scale_y_continuous(labels = scales::comma)
 
 ```
 
@@ -402,7 +403,9 @@ ggplot(pop_agg, aes(YEAR, pop_tot)) + geom_line() +
   labs(title="Population Growth", 
        x="YEAR", 
        y="Population (millions)") +
-  coord_cartesian(xlim=c(1975, 2010))
+  coord_cartesian(xlim=c(1975, 2010)) +
+  scale_y_continuous(labels = scales::comma)
+
 
 # Per capita
 energy_capita_agg <- aggregate(energy_percap ~ YEAR, scatter_data, mean)
@@ -701,7 +704,8 @@ ggplot(data = scatter_data[scatter_data$YEAR == 2010, ],
   labs(title="Figure 4-#. Distribution of Energy (2010)",
        x="Country",
        y="Energy use (teragrams of oil equivelent)") + 
-  scale_y_continuous(labels = scales::comma)
+  scale_y_continuous(labels = scales::comma) +
+  theme(axis.text.x=element_blank())
 
 ```
 
@@ -716,7 +720,8 @@ ggplot(data = scatter_data[scatter_data$YEAR == 2010, ],
   labs(title="Figure 4-#. Distribution of Population (2010)",
        x="Country",
        y="Population (Millions)") + 
-  scale_y_continuous(labels = scales::comma)
+  scale_y_continuous(labels = scales::comma) +
+  theme(axis.text.x=element_blank())
 
 ```
 
@@ -727,14 +732,13 @@ When we look at the three standout contries (United States, China, India) we dis
 ```{r}
 # Make plot
 ggplot(data = scatter_data[scatter_data$COUNTRY_NAME %in% c("China", "United States", "India"), ], 
-       aes(x=pop_tot, y=energy_tot, col=REGION)) +
+       aes(x=pop_tot, y=energy_tot, col=COUNTRY_NAME)) +
   geom_point(size=5) + 
   labs(title="Figure 4-#. Paths of Energy Growth",
        x="Population (millions)",
        y="Energy use (teragrams of oil equivelent)") + 
   coord_cartesian(xlim=c(0, 1500), ylim=c(0, 3000)) +
-  scale_x_continuous(labels = scales::comma) + scale_y_continuous(labels = scales::comma) +
-  geom_text(aes(label=COUNTRY_NAME), hjust=-0.2, vjust=0)
+  scale_x_continuous(labels = scales::comma) + scale_y_continuous(labels = scales::comma)
 
 ```
 
@@ -755,7 +759,7 @@ ggplot(data = scatter_data[scatter_data$COUNTRY_NAME == "United Kingdom", ],
 ggplot(data = scatter_data[scatter_data$COUNTRY_NAME == "Indonesia", ], 
        aes(x=YEAR, y=energy_percap)) +
   geom_line() + 
-  labs(title="Figure 4-#. Energy Use Per-Capita (United Kingdom)",
+  labs(title="Figure 4-#. Energy Use Per-Capita (Indonesia)",
        x="Year",
        y="Energy use per capita (teragrams of oil equivelent)") + 
   scale_y_continuous(labels = scales::comma)
@@ -781,7 +785,8 @@ ggplot(energy_agg, aes(YEAR, energy_tot)) + geom_line() +
   labs(title="Figure 4-1. Energy and Population Growth", 
        x="YEAR", 
        y="Energy use (teragrams of oil equivelent)") +
-  coord_cartesian(xlim=c(1975, 2010))
+  coord_cartesian(xlim=c(1975, 2010)) +
+  theme(axis.text.x=element_blank())
 
 # Population growth
 pop_agg <- aggregate(pop_tot ~ YEAR, scatter_data, sum)
@@ -789,7 +794,8 @@ ggplot(pop_agg, aes(YEAR, pop_tot)) + geom_line() +
   labs(title="Population Growth", 
        x="YEAR", 
        y="Population (millions)") +
-  coord_cartesian(xlim=c(1975, 2010))
+  coord_cartesian(xlim=c(1975, 2010)) +
+  theme(axis.text.x=element_blank())
 
 pop_energy_agg <- cbind(pop_agg, energy_agg)
 ggplot(data = pop_energy_agg, 
@@ -798,7 +804,8 @@ ggplot(data = pop_energy_agg,
   labs(title="Figure 4-#. World Energy vs. Population",
        x="Population (millions)",
        y="Energy use (teragrams of oil equivelent)") + 
-  scale_x_continuous(labels = scales::comma) + scale_y_continuous(labels = scales::comma)
+  scale_x_continuous(labels = scales::comma) + scale_y_continuous(labels = scales::comma) +
+  theme(axis.text.x=element_blank())
 
 ```
 
@@ -844,14 +851,13 @@ We can see these countries took different path to be outliers.
 ```{r}
 # Make plot
 ggplot(data = scatter_data[scatter_data$COUNTRY_NAME %in% c("China", "United States", "India"), ], 
-       aes(x=pop_tot, y=energy_tot, col=REGION)) +
+       aes(x=pop_tot, y=energy_tot, col=COUNTRY_NAME)) +
   geom_point(size=5) + 
   labs(title="Figure 4-#. Paths of Energy Growth",
        x="Population (millions)",
        y="Energy use (teragrams of oil equivelent)") + 
   coord_cartesian(xlim=c(0, 1500), ylim=c(0, 3000)) +
-  scale_x_continuous(labels = scales::comma) + scale_y_continuous(labels = scales::comma) +
-  geom_text(aes(label=COUNTRY_NAME), hjust=-0.2, vjust=0)
+  scale_x_continuous(labels = scales::comma) + scale_y_continuous(labels = scales::comma)
 
 ```
 
@@ -871,7 +877,7 @@ ggplot(data = scatter_data[scatter_data$COUNTRY_NAME == "United Kingdom", ],
 ggplot(data = scatter_data[scatter_data$COUNTRY_NAME == "Indonesia", ], 
        aes(x=YEAR, y=energy_percap)) +
   geom_line() + 
-  labs(title="Figure 4-#. Energy Use Per-Capita (United Kingdom)",
+  labs(title="Figure 4-#. Energy Use Per-Capita (Indonesia)",
        x="Year",
        y="Energy use per capita (teragrams of oil equivelent)") + 
   scale_y_continuous(labels = scales::comma)
