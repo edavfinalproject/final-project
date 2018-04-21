@@ -667,6 +667,8 @@ ggplot(data = scatter_data[scatter_data$YEAR == 2010, ],
 ```
 
 
+The population has high ineqality as well, yet the two outlying countries are now India and China. These two countries account for 38% of the total population. The top 10 account for 61% of the population and top 50 account for 91% of the populaiton. Again, we learn the that although there are houndres of countires, the overal story described in the Overview section is being driven by a small number of countries.
+
 ```{r Bar Plot tab}
 
 ggplot(data = scatter_data[scatter_data$YEAR == 2010, ], 
@@ -674,16 +676,11 @@ ggplot(data = scatter_data[scatter_data$YEAR == 2010, ],
   geom_col() +   
   labs(title="Figure 4-#. Distribution of Population (2010)",
        x="Country",
-       y="Energy use (teragrams of oil equivelent)") + 
+       y="Population (Millions)") + 
   scale_y_continuous(labels = scales::comma)
 
 ```
 
-As we look at the ditribution of energy use Figure 4-# above clearly indicates that the United States, India, and China stand out from the rest. However, when we compare there energy use and population to the remaining countries, we see there is less inequality as expected.
-
-
-
-there are three clear outlier countries includinggThree countries stand out from the rest. Why do these countries need to be different? Also over the 40 year span these countries are still the only ones separate. This leads me to believe that compounding (potentially capitalism) has influence.
      	
 #### Different paths
 When we look at the three standout contries (United States, China, India) we distinct paths to high energy use. The United States grew its energy use without large increases in populaiton. Conversely, China first grew its populaiton and then later the rate of population growth slowed and the energy use per capita grew. India seems on a similar path as China, with its population growth about to slow and energy use per captia about to rise. Further research into what causes these various paths could help countries design more sustainable trajectories. 
@@ -702,7 +699,7 @@ ggplot(data = scatter_data[scatter_data$COUNTRY_NAME %in% c("China", "United Sta
 
 ```
 
-#### Some countries didn't grow
+#### Sustainable paths
 There are also examples, such as Germany, where over the whole range there is little change in population and energy use. Needless the country has certainly had advances in health, technology, education, any more. Which leads to the question, what makes that country different from the rest?
 
 
@@ -835,6 +832,17 @@ Note: "Presentation" here refers to the style of graph, that is, graphs that are
 
 Provide a short nontechnical summary of the most revealing findings of your analysis  written for a nontechnical audience. The length should be approximately two pages (if we were using pages...) Take extra care to clean up your graphs, ensuring that best practices for presentation are followed.
 
+In the executive summary we present a story of what the data told us. Our aim is that this story provides reference and guidence about the the relationship ebtwen energy and popualtion so that ourselves and other researches can discover  sustainable paths towards clean energy.
+
+We clearly see that energy and population are growing and energy per capita is not. So there is a correlation.
+
+Yet when we look at the scatter there is more to the story.
+
+We look at distribution and find that we are only talking about a small portion
+
+There are multiple paths.
+
+We find some countries have found sustainable paths.
 
 
 
