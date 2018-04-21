@@ -112,7 +112,8 @@ tidy_pop_energy <- tidy_pop_energy %>% arrange(COUNTRY_NAME)
 
 #Adding in energy total (for Tab1 Graphs)
 # Divide population by 1000000 for scaling
-pop_df <- pop_df %>% mutate(VALUE = VALUE/1000000)
+pop_df <- pop_df %>% mutate(VALUE = VALUE/1000000) %>% 
+  mutate(INDICATOR_NAME = c("Population (millions)"))
 # Divide Energy per capita by 1000; rename to reflect new scale
 energy_df <- energy_df %>% mutate(VALUE = VALUE/1000) %>%
   mutate(INDICATOR_NAME = c("Energy use per capita (teragrams of oil equivalent)"))
@@ -434,9 +435,7 @@ The code below creates the Layout for the navigation bar.
 navbarPage("Interactive Component",
            tabPanel("Individual Country",
                     verticalLayout(
-                        mainPanel(
-                          plotOutput("countryhist", width="100%")
-                          ),
+                          plotOutput("countryhist", width="100%", height = "500px"),
                         wellPanel(
                           selectInput(inputId = "tab1country", label = "Country:",
                                       choices = as.vector(unique(tidy_pop_energy$COUNTRY_NAME)), 
@@ -629,7 +628,7 @@ tab1_overview <- tidy_overview %>%
 
 ggplot(data=tab1_overview, aes(x=YEAR, y=VALUE)) +
   geom_point() +
-  facet_wrap(~INDICATOR_NAME, ncol=1, scale="free") +
+  facet_wrap(~INDICATOR_NAME, ncol=2, scale="free") +
   scale_fill_manual(values = bar_colors, name = "Categories")
 
 
@@ -655,7 +654,7 @@ output$countryhist <- renderPlot({
     ggplot(data=tab1_total_reactive(), aes(x=YEAR, y=VALUE)) + 
     geom_point() + geom_line() +
     facet_wrap(~INDICATOR_NAME, ncol=1, scale="free") +
-    labs(title="Total Population over Time", x="Year")
+    labs(title="Values by Country", x="Year")
 })
 ```
 
