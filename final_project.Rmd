@@ -1,6 +1,6 @@
 ---
 title: "Final Project"
-author: "Names and Unis....."
+author: "David Schemitsch (ds3300), Isaac Wainstein (ikw2102), Wyatt Ford (wgf2102)"
 date:   "April 24, 2018"
 runtime: shiny
 output: html_document
@@ -107,8 +107,10 @@ tidy_pop_energy <- tidy_pop_energy %>%
 
 not_country = c("Arab World", "Central Europe and the Baltics", "Early-demographic dividend", "Europe & Central Asia (excluding high income)", "Euro area", "Fragile and conflict affected situations", "Heavily indebted poor countries (HIPC)", "IBRD only","IDA total", "Not classified", "Latin America & Caribbean (excluding high income)", "Latin America & Caribbean", "Low income", "Low & middle income", "Late-demographic dividend", "Middle income", "North America", "Post-demographic dividend", "Small states", "East Asia & Pacific (IDA & IBRD countries)", "Latin America & the Caribbean (IDA & IBRD countries)", "Middle East & North Africa (IDA & IBRD countries)", "South Asia (IDA & IBRD)", "World", "Upper middle income", "Sub-Saharan Africa (IDA & IBRD countries)", "Europe & Central Asia (IDA & IBRD countries)", "Sub-Saharan Africa", "Sub-Saharan Africa (excluding high income)", "Pacific island small states", "Pre-demographic dividend", "Other small states", "OECD members", "Middle East & North Africa (excluding high income)", "Middle East & North Africa", "Lower middle income", "Least developed countries: UN classification", "IDA only", "IDA blend", "IDA & IBRD total", "High income", "European Union", "Europe & Central Asia", "East Asia & Pacific", "East Asia & Pacific (excluding high income)", "Caribbean small states", "South Asia")
 
-tidy_pop_energy <- filter(tidy_pop_energy, !COUNTRY_NAME %in% not_country)
+# Overview stats
+tidy_overview <- filter(tidy_pop_energy, COUNTRY_NAME %in% c("World", "East Asia & Pacific", "Europe & Central Asia", "Latin America & Caribbean", "Middle East & North Africa", "North America", "South Asia", "Sub-Saharan Africa"))
 
+tidy_pop_energy <- filter(tidy_pop_energy, !COUNTRY_NAME %in% not_country)
 tidy_pop_energy <- tidy_pop_energy %>% arrange(COUNTRY_NAME)
 
 # tidy_pop_energy <- tidy_pop_energy %>% 
@@ -662,23 +664,6 @@ output$countryhist <- renderPlot({
     facet_wrap(~INDICATOR_NAME, ncol=1, scale="free") +
     labs(title="Total Population over Time", x="Year")
 })
-```
-
-```{r}
-#CODE TRYING TO DEBUG FACET WRAP
-usa_energy <- tidy_pop_energy %>% 
-    filter(tidy_pop_energy$INDICATOR_NAME == "Energy use (kg of oil equivalent per capita)", tidy_pop_energy$COUNTRY_NAME == "United States")
-usa_pop <- tidy_pop_energy %>%
-  filter(tidy_pop_energy$INDICATOR_NAME == "Population, total", tidy_pop_energy$COUNTRY_NAME == "United States")
-
-usa_data <- tidy_pop_energy %>% filter(tidy_pop_energy$INDICATOR_NAME != "Population growth (annual %)", tidy_pop_energy$COUNTRY_NAME == "United States")
-
-ggplot(data=usa_data, aes(x=YEAR, y=VALUE)) + geom_point() + facet_wrap(~usa_data$INDICATOR_CODE, ncol=1, scale="free")
-
-# usa_total <- tab1_total %>% filter(tab1_total$COUNTRY_NAME == "United States", )
-
-#ggplot(data=usa_total, aes(x=usa_total$YEAR, y=usa_total$VALUE)) +
-#  facet_wrap(~usa_total$INDICATOR_NAME, scales="free") + geom_line() + geom_point()
 ```
 
 #### Findings
