@@ -107,19 +107,23 @@ tidy_pop_energy <- tidy_pop_energy %>%
 
 not_country = c("Arab World", "Central Europe and the Baltics", "Early-demographic dividend", "Europe & Central Asia (excluding high income)", "Euro area", "Fragile and conflict affected situations", "Heavily indebted poor countries (HIPC)", "IBRD only","IDA total", "Not classified", "Latin America & Caribbean (excluding high income)", "Latin America & Caribbean", "Low income", "Low & middle income", "Late-demographic dividend", "Middle income", "North America", "Post-demographic dividend", "Small states", "East Asia & Pacific (IDA & IBRD countries)", "Latin America & the Caribbean (IDA & IBRD countries)", "Middle East & North Africa (IDA & IBRD countries)", "South Asia (IDA & IBRD)", "World", "Upper middle income", "Sub-Saharan Africa (IDA & IBRD countries)", "Europe & Central Asia (IDA & IBRD countries)", "Sub-Saharan Africa", "Sub-Saharan Africa (excluding high income)", "Pacific island small states", "Pre-demographic dividend", "Other small states", "OECD members", "Middle East & North Africa (excluding high income)", "Middle East & North Africa", "Lower middle income", "Least developed countries: UN classification", "IDA only", "IDA blend", "IDA & IBRD total", "High income", "European Union", "Europe & Central Asia", "East Asia & Pacific", "East Asia & Pacific (excluding high income)", "Caribbean small states", "South Asia")
 
-# Overview stats
-tidy_overview <- filter(tidy_pop_energy, COUNTRY_NAME %in% c("World", "East Asia & Pacific", "Europe & Central Asia", "Latin America & Caribbean", "Middle East & North Africa", "North America", "South Asia", "Sub-Saharan Africa"))
-
 tidy_pop_energy <- filter(tidy_pop_energy, !COUNTRY_NAME %in% not_country)
 tidy_pop_energy <- tidy_pop_energy %>% arrange(COUNTRY_NAME)
 
-# tidy_pop_energy <- tidy_pop_energy %>% 
-#     gather(key = "YEAR", value = "VALUE", -COUNTRY_CODE, -COUNTRY_NAME,
-#            -INDICATOR_NAME, -INDICATOR_CODE, -REGION, -INCOMEGROUP) %>%
-#     mutate(YEAR = as.numeric(YEAR)) %>%
-#     mutate(VALUE = as.numeric(VALUE))
+#Adding in energy total (for Tab1 Graphs)
+energy_total_df <- energy_df %>% mutate(VALUE = VALUE * pop_df$VALUE) %>% mutate(INDICATOR_NAME = c("Energy use total (kg of oil equivalent"))
 
+tidy_pop_energy_for_tab_1 <- rbind(pop_growth_df, pop_df, energy_df, energy_total_df)
+tidy_pop_energy_for_tab_1 <- tidy_pop_energy_for_tab_1 %>%
+  mutate(YEAR = as.numeric(YEAR)) %>%
+  mutate(VALUE = as.numeric(VALUE))
 
+# Overview stats
+tidy_overview <- filter(tidy_pop_energy_for_tab_1, COUNTRY_NAME %in% c("World", "East Asia & Pacific", "Europe & Central Asia", "Latin America & Caribbean", "Middle East & North Africa", "North America", "South Asia", "Sub-Saharan Africa"))
+tidy_overview <- tidy_overview %>% arrange(COUNTRY_NAME)
+
+tidy_pop_energy_for_tab_1 <- filter(tidy_pop_energy_for_tab_1, !COUNTRY_NAME %in% not_country)
+tidy_pop_energy_for_tab_1 <- tidy_pop_energy_for_tab_1 %>% arrange(COUNTRY_NAME)
 ```
 
 
@@ -645,12 +649,25 @@ output$ds_scatter <- renderPlot({
 
 ```
 
+``` {r }
+tab1_overview <- tidy_overview %>%
+  filter(tidy_overview$INDICATOR_NAME != "Population growth (annual %)") 
+
+ggplot(data=tab1_overview, aes(x=YEAR, y=VALUE)) +
+  geom_point() +
+  facet_wrap(~INDICATOR_NAME, ncol=1, scale="free") +
+  scale_fill_manual(values = bar_colors, name = "Categories")
+
+
+
+```
+
 ```{r Tab 1}
 # Tab1 Code
 tab1_messy <- subset(scatter_data, select=c("COUNTRY_NAME", "YEAR", "pop_growth", "pop_tot", "energy_percap", "energy_tot"))
 
 tab1_tidy <- tab1_messy %>% gather(key="indicator_name", value="indicator_value", -YEAR, -COUNTRY_NAME)
-tab1_tidy_reactive <- reactive({filter(tab1_tidy, tab1_tidy$COUNTRY_NAME == tab1_countries())})
+tab1_tidy_reactive <- reactive({filter(tab1_tidy, COUNTRY_NAME == tab1_countries())})
 
 #create the dropdown 
 tab1_countries <- reactive({input$tab1country})
@@ -662,9 +679,9 @@ tab1_total_reactive <- reactive({filter(tab1_total, tab1_total$COUNTRY_NAME == t
 
 # render graph
 output$countryhist <- renderPlot({
-    ggplot(data=tab1_tidy_reactive(), aes(x=YEAR, y=indicator_value)) + 
+    ggplot(data=tab1_total_reactive(), aes(x=YEAR, y=VALUE)) + 
     geom_point() + geom_line() +
-    facet_wrap(~indicator_name, ncol=1, scale="free") +
+    facet_wrap(~INDICATOR_NAME, ncol=1, scale="free") +
     labs(title="Total Population over Time", x="Year")
 })
 ```
@@ -817,8 +834,6 @@ ggplot(pop_year_world,
 Note: "Presentation" here refers to the style of graph, that is, graphs that are cleaned up for presentation, as opposed to the rough ones we often use for exploratory data analysis. You do not have to present your work to the class! However, you may choose to present your work as your community contribution, in which case you need to email me to set a date before the community contribution due date (Apr 3). (The presentation itself may be later.)
 
 Provide a short nontechnical summary of the most revealing findings of your analysis  written for a nontechnical audience. The length should be approximately two pages (if we were using pages...) Take extra care to clean up your graphs, ensuring that best practices for presentation are followed.
-
-
 
 
 ### Conclusion
