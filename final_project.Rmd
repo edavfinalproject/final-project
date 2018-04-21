@@ -425,7 +425,7 @@ The code below creates the Layout for the navigation bar.
 ```{r NavBar}
 # Shiny Layour
 navbarPage("Interactive Component",
-           tabPanel("Macroview",
+           tabPanel("Individual Country",
                     sidebarLayout(
                         mainPanel(
                           plotOutput("countryhist")
