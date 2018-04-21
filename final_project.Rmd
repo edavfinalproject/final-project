@@ -414,6 +414,7 @@ We broke the data into there separate apps to explore these distinct aspects of 
   3 **Energy vs. Population** - Presents energy vs population in a scatter plot to visualize correlations over time. 
   
 The idea to include a year slider was inspired by the follwoing TED talk.
+https://www.gapminder.org/videos/ted-us-state-department/ 
 
 The code below creates the Layout for the navigation bar.
 
@@ -564,10 +565,10 @@ scatter_data$energy_tot <- (scatter_data$energy_percap * scatter_data$pop_tot) /
 scatter_data <- scatter_data[complete.cases(scatter_data), ]
 
 # Most energy using countries 
-energy2012 <- scatter_data$energy_tot[scatter_data$YEAR == "2012"]
+energy2012 <- scatter_data$energy_tot[scatter_data$YEAR == "2010"]
 energy2012[is.na(energy2012)] <- 0
 energy2012_total <- sum(energy2012)
-sum(sort(energy2012, decreasing=TRUE)[0:5])/energy2012_total # top 20
+sum(sort(energy2012, decreasing=TRUE)[0:2])/energy2012_total # top 2
 
 # Config sliders
 year_scatter <- reactive({input$year_scatter})
@@ -622,16 +623,70 @@ output$countryhist <- renderPlot({
 
 In these section we present our findings from our exploration of the data and the interactive tools.
 
-##### No visible correlation
+##### Weak correlation
+The stead growth of population and energy lead us to believe there was likely a strong correlation. However, Figure 4-# and 4-# indicate that although there is a direct relationship, the correlation is not strong. Therefore, there is lots of variation in the relationship between energy and popualtion amound contries. 
 
-When broken down by country there is not a solid correlation between population and energy. 
+```{r Scatter Plot tab}
+# No zoom
+ggplot(data = scatter_data[scatter_data$YEAR == 2010, ], 
+       aes(x=pop_tot, y=energy_tot, col=REGION)) +
+  geom_point(size=5) + 
+  labs(title="Figure 4-#. Energy vs. Population (2010)",
+       x="Population (millions)",
+       y="Energy use (teragrams of oil equivelent)") + 
+  coord_cartesian(xlim=c(0, 1500), ylim=c(0, 30000)) +
+  scale_x_continuous(labels = scales::comma) + scale_y_continuous(labels = scales::comma) +
+  geom_text(aes(label=COUNTRY_NAME), hjust=-0.2, vjust=0)
 
+# zoom
+ggplot(data = scatter_data[scatter_data$YEAR == 2010, ], 
+       aes(x=pop_tot, y=energy_tot, col=REGION)) +
+  geom_point(size=5) + 
+  labs(title="Figure 4-#. Energy vs. Population, Zoomed (2010)",
+       x="Population (millions)",
+       y="Energy use (teragrams of oil equivelent)") + 
+  coord_cartesian(xlim=c(0, 75), ylim=c(0, 1000)) +
+  scale_x_continuous(labels = scales::comma) + scale_y_continuous(labels = scales::comma) +
+  geom_text(aes(label=COUNTRY_NAME), hjust=-0.2, vjust=0)
 
-Show your scatter plot zoomed and not zoomed
+```
 	       	
-	       	
-#### Different paths to high energy use
-When we look at the three standout contries (United States, China, India) we distinct paths to high energy use. The United States grew its energy use without large increases in populaiton. Conversely, Chiny first grew its populaiton and then later the rate of population growth slowed and the energy use per capita grew.has a comparitive slow growthn in population, but large increase in energy use. Conversely, China and iOne is Done by the US Where energy per capita is high but population does not grow. The second is by china where the population grows considerable and then per capita energy growth goes up. We can see this trend starting with other countries. For example, Egypt population is growing yet the energy growth is not drastically growing. This begs the question, what changed for china to slow down its population growth and change to energy growth?
+#### Distribution across countires
+We immediately notice from Figure 4-# there is large inequality of energy use. China and USA are the two outliers accounting for nearly 40% of the energy use from those countries alone. The top 10 countires account for 65% and the top 50 account for 93%. This indicates our energy use is high concentrated.
+
+```{r Bar Plot tab}
+
+ggplot(data = scatter_data[scatter_data$YEAR == 2010, ], 
+       aes(x = reorder(COUNTRY_CODE, energy_tot), y = energy_tot)) +
+  geom_col() +   
+  labs(title="Figure 4-#. Distribution of Energy (2010)",
+       x="Country",
+       y="Energy use (teragrams of oil equivelent)") + 
+  scale_y_continuous(labels = scales::comma)
+
+```
+
+
+```{r Bar Plot tab}
+
+ggplot(data = scatter_data[scatter_data$YEAR == 2010, ], 
+       aes(x = reorder(COUNTRY_CODE, pop_tot), y = pop_tot)) +
+  geom_col() +   
+  labs(title="Figure 4-#. Distribution of Population (2010)",
+       x="Country",
+       y="Energy use (teragrams of oil equivelent)") + 
+  scale_y_continuous(labels = scales::comma)
+
+```
+
+As we look at the ditribution of energy use Figure 4-# above clearly indicates that the United States, India, and China stand out from the rest. However, when we compare there energy use and population to the remaining countries, we see there is less inequality as expected.
+
+
+
+there are three clear outlier countries includinggThree countries stand out from the rest. Why do these countries need to be different? Also over the 40 year span these countries are still the only ones separate. This leads me to believe that compounding (potentially capitalism) has influence.
+     	
+#### Different paths
+When we look at the three standout contries (United States, China, India) we distinct paths to high energy use. The United States grew its energy use without large increases in populaiton. Conversely, China first grew its populaiton and then later the rate of population growth slowed and the energy use per capita grew. India seems on a similar path as China, with its population growth about to slow and energy use per captia about to rise. Further research into what causes these various paths could help countries design more sustainable trajectories. 
 
 ```{r Scatter Plot tab}
 # Make plot
@@ -645,17 +700,15 @@ ggplot(data = scatter_data[scatter_data$COUNTRY_NAME %in% c("China", "United Sta
   scale_x_continuous(labels = scales::comma) + scale_y_continuous(labels = scales::comma) +
   geom_text(aes(label=COUNTRY_NAME), hjust=-0.2, vjust=0)
 
-#ggplot(scatter_data, aes(pop_growth, energy_tot)) + geom_point(size=scatter_data$pop_tot) + labs(title="Population Growth vs. Energy Use")
-
 ```
 
 #### Some countries didn't grow
 There are also examples, such as Germany, where over the whole range there is little change in population and energy use. Needless the country has certainly had advances in health, technology, education, any more. Which leads to the question, what makes that country different from the rest?
 
-#### Outliers
-Three countries stand out from the rest. Why do these countries need to be different? Also over the 40 year span these countries are still the only ones separate. This leads me to believe that compounding (potentially capitalism) has influence.
 
- 
+#### Challanges
+- Plotting many counties at same time
+- Narrowing down the endless possability of graphs. Making sure the graph is meaningful
 
 
 ```{r Who are the big players?}
