@@ -669,23 +669,6 @@ output$countryhist <- renderPlot({
 })
 ```
 
-```{r}
-#CODE TRYING TO DEBUG FACET WRAP
-usa_energy <- tidy_pop_energy %>% 
-    filter(tidy_pop_energy$INDICATOR_NAME == "Energy use (kg of oil equivalent per capita)", tidy_pop_energy$COUNTRY_NAME == "United States")
-usa_pop <- tidy_pop_energy %>%
-  filter(tidy_pop_energy$INDICATOR_NAME == "Population, total", tidy_pop_energy$COUNTRY_NAME == "United States")
-
-usa_data <- tidy_pop_energy %>% filter(tidy_pop_energy$INDICATOR_NAME != "Population growth (annual %)", tidy_pop_energy$COUNTRY_NAME == "United States")
-
-ggplot(data=usa_data, aes(x=YEAR, y=VALUE)) + geom_point() + facet_wrap(~usa_data$INDICATOR_CODE, ncol=1, scale="free")
-
-# usa_total <- tab1_total %>% filter(tab1_total$COUNTRY_NAME == "United States", )
-
-#ggplot(data=usa_total, aes(x=usa_total$YEAR, y=usa_total$VALUE)) +
-#  facet_wrap(~usa_total$INDICATOR_NAME, scales="free") + geom_line() + geom_point()
-```
-
 #### Findings
 
 
