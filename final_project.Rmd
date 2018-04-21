@@ -861,7 +861,7 @@ ggplot(data = scatter_data[scatter_data$COUNTRY_NAME == "United Kingdom", ],
        x="Year",
        y="Energy use per capita (teragrams of oil equivelent)") + 
   scale_y_continuous(labels = scales::comma)
-
+```
 =======
 
 Figure 5-1 and 5-2 show steady growth of both energy and population. Figure 5-3 shows there is a strong relaship between these two variables.
@@ -961,7 +961,6 @@ ggplot(data = scatter_data[scatter_data$COUNTRY_NAME == "United Kingdom", ],
        y="Energy use per capita (teragrams of oil equivelent)") + 
   scale_y_continuous(labels = scales::comma)
 
->>>>>>> b4869c62d1ec0e2cd8ff00594e7eace53bfbc775
 # Indonesia
 ggplot(data = scatter_data[scatter_data$COUNTRY_NAME == "Indonesia", ], 
        aes(x=YEAR, y=energy_percap)) +
