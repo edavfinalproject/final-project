@@ -649,11 +649,21 @@ output$ds_scatter <- renderPlot({
 
 ```
 
+``` {r}
+tab1 <-  
+```
+
 ```{r Tab 1}
 # Tab1 Code
 
 #create the dropdown 
 tab1_countries <- reactive({input$tab1country})
+
+# Convert Energy Per Capita to Energy Total
+
+
+
+
 
 # Population Total
 tab1_total <- tidy_pop_energy %>% 
