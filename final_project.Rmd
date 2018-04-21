@@ -643,7 +643,7 @@ In these section we present our findings from our exploration of the data and th
 ##### Weak correlation
 The stead growth of population and energy lead us to believe there was likely a strong correlation. However, Figure 4-# and 4-# indicate that although there is a direct relationship, the correlation is not strong. Therefore, there is lots of variation in the relationship between energy and popualtion amound contries. 
 
-```{r Scatter Plot tab}
+```{r}
 # No zoom
 ggplot(data = scatter_data[scatter_data$YEAR == 2010, ], 
        aes(x=pop_tot, y=energy_tot, col=REGION)) +
@@ -671,7 +671,7 @@ ggplot(data = scatter_data[scatter_data$YEAR == 2010, ],
 #### Distribution across countires
 We immediately notice from Figure 4-# there is large inequality of energy use. China and USA are the two outliers accounting for nearly 40% of the energy use from those countries alone. The top 10 countires account for 65% and the top 50 account for 93%. This indicates our energy use is high concentrated.
 
-```{r Bar Plot tab}
+```{r}
 
 ggplot(data = scatter_data[scatter_data$YEAR == 2010, ], 
        aes(x = reorder(COUNTRY_CODE, energy_tot), y = energy_tot)) +
@@ -686,7 +686,7 @@ ggplot(data = scatter_data[scatter_data$YEAR == 2010, ],
 
 The population has high ineqality as well, yet the two outlying countries are now India and China. These two countries account for 38% of the total population. The top 10 account for 61% of the population and top 50 account for 91% of the populaiton. Again, we learn the that although there are houndres of countires, the overal story described in the Overview section is being driven by a small number of countries.
 
-```{r Bar Plot tab}
+```{r}
 
 ggplot(data = scatter_data[scatter_data$YEAR == 2010, ], 
        aes(x = reorder(COUNTRY_CODE, pop_tot), y = pop_tot)) +
@@ -702,7 +702,7 @@ ggplot(data = scatter_data[scatter_data$YEAR == 2010, ],
 #### Different paths
 When we look at the three standout contries (United States, China, India) we distinct paths to high energy use. The United States grew its energy use without large increases in populaiton. Conversely, China first grew its populaiton and then later the rate of population growth slowed and the energy use per capita grew. India seems on a similar path as China, with its population growth about to slow and energy use per captia about to rise. Further research into what causes these various paths could help countries design more sustainable trajectories. 
 
-```{r Scatter Plot tab (plot)}
+```{r}
 # Make plot
 ggplot(data = scatter_data[scatter_data$COUNTRY_NAME %in% c("China", "United States", "India"), ], 
        aes(x=pop_tot, y=energy_tot, col=REGION)) +
