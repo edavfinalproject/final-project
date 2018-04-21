@@ -397,26 +397,12 @@ Yet when we look at figures such as 3-# and 3-# (the scatter plot in data qualit
 #### Interactive component
 As we started to determine what graphs we should shown in this analysis, we quickly realized there were so many insightful ways we could split the data the report would either be too long or skipping key insights. Therefore, we chose to do interactive R Shiny apps for the main part of our analysis. This allowed our team to easily explore the data, while also allowing users to explore in ways we had not yet thought of. 
 
+We broke the data into there separate apps to explore these distinct aspects of the data. We often found ourselves jumping back and forth, and encourage users to do the same, as each story of the data does not need to go in chronological order. The three apps are listed below.
 
-We broke the data into there separate apps to explore these distinct aspects of the data. The three apps are listed below.
+  1. **Individual country** - Deep divy into how population and energy has changed over time for one country.
+  2. **Country Comparison** - Presents countries side-by-side in a way where magnitudes of energy and population can be easily compared over time.
+  3 **Energy vs. Population** - Presents energy vs population in a scatter plot to visualize correlations over time.
 
-1. One country at a time....
-  - Dropdown to select country
-  - Shows graph of population, population growth, energy and energy growth over time
-  - Dropdown for line graph or histogram
-  
-2. Distribution of population and energy across the world (David)
-  - Each bar represents the value per country
-  - Value select (population or energy use)
-  - Slider bar on bottom for year
-
-The third graph we were inspired by a TED talk.
-3. Scatter to compare energy and population growth rates (Isaac)
-  - Each point is a country
-  - Slider bar on bottom for year
-  - X is energy growth rate
-  - Y is population growth rate
-  - Size of circle is size of population
 
 ```{r NavBar}
 navbarPage("Good Graphics",
