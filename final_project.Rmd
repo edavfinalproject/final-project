@@ -409,13 +409,15 @@ As we started to determine what graphs we should shown in this analysis, we quic
 
 We broke the data into there separate apps to explore these distinct aspects of the data. We often found ourselves jumping back and forth, and encourage users to do the same, as each story of the data does not need to go in chronological order. The three apps are listed below.
 
-  1. **Individual country** - Deep divy into how population and energy has changed over time for one country.
+  1. **Individual Country** - Deep divy into how population and energy has changed over time for one country.
   2. **Country Comparison** - Presents countries side-by-side in a way where magnitudes of energy and population can be easily compared over time.
   3 **Energy vs. Population** - Presents energy vs population in a scatter plot to visualize correlations over time.
 
+The code below creates the Layout for the navigation bar.
 
 ```{r NavBar}
-navbarPage("Good Graphics",
+# Shiny Layour
+navbarPage("Interactive Component",
            tabPanel("Macroview",
                     sidebarLayout(
                         mainPanel(
@@ -429,21 +431,7 @@ navbarPage("Good Graphics",
                     )
                 )
            ,
-           tabPanel("TEST",
-                    sidebarLayout(
-                        sidebarPanel(
-                            selectInput("n_breaks", label = "Number of bins:",
-                                        choices = c(10, 20, 35, 50), selected = 20),
-                            sliderInput("bw_adjust", label = "Bandwidth adjustment:",
-                                        min = 0.2, max = 2, value = 1, step = 0.2)
-                            ),
-                        mainPanel(
-                            plotOutput("hist")
-                            )
-                        )
-                    )
-           ,
-           tabPanel("Distribution of Population and Energy",
+           tabPanel("Country Comparison",
                     
                         verticalLayout(
                             plotOutput("ds_barplot", width = "100%"),
@@ -478,7 +466,7 @@ navbarPage("Good Graphics",
                         )
                     )
            ,
-           tabPanel("Growth Rate Scatter",
+           tabPanel("Energy vs. Population",
                       verticalLayout(
                         plotOutput("ds_scatter",  width = "100%"),
                         wellPanel(
@@ -504,45 +492,14 @@ navbarPage("Good Graphics",
                       )
            )
 )
-  #   tabPanel("Distribution of Population and Energy",
-  #       sidebarLayout(
-  #           sidebarPanel(
-  #               selectInput("region", "Region:",
-  #                           choices=colnames(WorldPhones)),
-  #     hr(),
-  #     helpText("Data from AT&T (1961) The World's Telephones.")
-  #   ),
-  #   
-  #   # Create a spot for the barplot
-  #   mainPanel(
-  #     plotOutput("ds_barplot")  
-  #   )
-  #   
-  # )
-  #            
-  # )
 
 ```
 
 
-
-
-
-
-```{r Test Tab}
-output$hist <- renderPlot({
-  hist(faithful$eruptions, probability = TRUE, 
-       breaks = as.numeric(input$n_breaks),
-       xlab = "Duration (minutes)", 
-       main = "Geyser eruption duration")
-  
-  dens <- density(faithful$eruptions, adjust = input$bw_adjust)
-  lines(dens, col = "blue")
-})
-```
+The Code below renders the figures in the shiny app.
 
 ```{r Bar Plot tab}
-# Render a barplot
+# Country Comparison.
 
 my_indicator <- reactive({input$indicator})
 my_year <- reactive({input$year})
@@ -593,14 +550,7 @@ output$ds_barplot <- renderPlot({
 ```
 
 ```{r Scatter Plot tab}
-# Growth rate scatter
-
-
-#TODOs
-# Larger fonts
-# Play button
-# Button zoom in and out instead of slider.
-
+# Energy vs. Population
 
 # Reform data
 icodes = unique(tidy_pop_energy$INDICATOR_CODE)
@@ -644,6 +594,10 @@ output$ds_scatter <- renderPlot({
 
 ```{r Tab 1}
 # Tab1 Code
+tab1_messy <- subset(scatter_data, select=c("COUNTRY_NAME", "YEAR", "pop_growth", "pop_tot", "energy_percap", "energy_tot"))
+
+tab1_tidy <- tab1_messy %>% gather(key="indicator_name", value="indicator_value", -YEAR, -COUNTRY_NAME)
+tab1_tidy_reactive <- reactive({filter(tab1_tidy, tab1_tidy$COUNTRY_NAME == tab1_countries())})
 
 #create the dropdown 
 tab1_countries <- reactive({input$tab1country})
@@ -655,28 +609,41 @@ tab1_total_reactive <- reactive({filter(tab1_total, tab1_total$COUNTRY_NAME == t
 
 # render graph
 output$countryhist <- renderPlot({
-    ggplot(data=tab1_total_reactive(), aes(x=YEAR, y=VALUE)) + 
+    ggplot(data=tab1_tidy_reactive(), aes(x=YEAR, y=indicator_value)) + 
     geom_point() + geom_line() +
-    facet_wrap(~INDICATOR_NAME, ncol=1, scale="free") +
+    facet_wrap(~indicator_name, ncol=1, scale="free") +
     labs(title="Total Population over Time", x="Year")
 })
 ```
 
 #### Findings
 
+In these section we present our findings from our exploration of the data and the interactive tools.
 
+##### No visible correlation
 
-
-Overall distribution of population and energy. 
-
-#### No visible correlation
 When broken down by country there is not a solid correlation between population and energy. 
-	       	
+
+
 Show your scatter plot zoomed and not zoomed
 	       	
 	       	
 #### Different paths to high energy use
 There are two paths to very high energy growth. One is Done by the US Where energy per capita is high but population does not grow. The second is by china where the population grows considerable and then per capita energy growth goes up. We can see this trend starting with other countries. For example, Egypt population is growing yet the energy growth is not drastically growing. This begs the question, what changed for china to slow down its population growth and change to energy growth?
+
+```{r Scatter Plot tab}
+# Make plot
+ggplot(data = scatter_data, aes(x=pop_tot, y=energy_tot, col=REGION)) +
+    geom_point(size=5) + labs(title="Population vs. Energy Use", 
+                        x="Population (millions)", 
+                        y="Energy use (teragrams of oil equivelent)") + 
+    coord_cartesian(xlim=c(0, 1500), ylim=c(0, 30000)) +
+    scale_x_continuous(labels = scales::comma) + scale_y_continuous(labels = scales::comma) +
+    geom_text(aes(label=COUNTRY_NAME), hjust=-0.2, vjust=0)
+
+#ggplot(scatter_data, aes(pop_growth, energy_tot)) + geom_point(size=scatter_data$pop_tot) + labs(title="Population Growth vs. Energy Use")
+
+```
 
 #### Some countries didn't grow
 There are also examples, such as Germany, where over the whole range there is little change in population and energy use. Needless the country has certainly had advances in health, technology, education, any more. Which leads to the question, what makes that country different from the rest?
