@@ -206,9 +206,6 @@ tidy_pop_energy <- tidy_pop_energy %>% arrange(COUNTRY_NAME)
 
 ### Analysis of Data Quality
 
-Provide a detailed, well-organized description of data quality, including textual description, graphs, and code.
-
-* For some years, total production by region is much higher than %100
 
 There is a lot of missing data before 1971 and after 2012.
 
