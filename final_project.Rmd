@@ -353,6 +353,7 @@ We explored using additional data from the World Bank, namely energy consumption
 ### Main Analysis (Exploratory Data Analysis)
 
 The main analysis section has been split into the following subsections.
+
   1. **Overview** - High level representation of the relationship between energy and population over time.
   2. **Interactive component** - Tools for observing numerous facets of the data.
   3. **Findings** - Key insights and challenges the team faced. 
@@ -653,7 +654,7 @@ output$countryhist <- renderPlot({
     ggplot(data=tab1_total_reactive(), aes(x=YEAR, y=VALUE, ymin=0)) + 
     geom_point() + geom_line() +
     facet_wrap(~INDICATOR_NAME, ncol=2, scale="free") +
-    labs(title="Values by Country", x="Year") +
+    labs(title="Indicators by Country", x="Year") +
     theme(strip.text = element_text(size=15), title = element_text(size=20, face='bold'))
 })
 
