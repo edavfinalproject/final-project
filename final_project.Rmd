@@ -434,7 +434,7 @@ navbarPage("Interactive Component",
                             column(
                             sliderInput(inputId = "year",
                                         label = "Year:", 
-                                        value = 1961,
+                                        value = 2010,
                                         min = 1961,
                                         animate = animationOptions(interval = 333),
                                         max = 2016,
