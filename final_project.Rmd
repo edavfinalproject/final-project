@@ -908,6 +908,18 @@ ggplot(data = scatter_data[scatter_data$COUNTRY_NAME == "Indonesia", ],
 
 ```
 
+```{r}
+indonesia_uk_data <- scatter_data %>% filter(COUNTRY_NAME %in% c("Indonesia", "United Kingdom"))
+ggplot(data=indonesia_uk_data, aes(x=YEAR, y=energy_percap, col=COUNTRY_NAME)) +
+  geom_line() +
+  labs(title="Figure 4-#. Energy Use Per-Capita (Indonesia vs. United Kingdom)",
+       x="Year",
+       y="Energy use per capita (teragrams of oil equivalent)") +
+  scale_y_continuous(labels=scales::comma) +
+  coord_cartesian(ylim=c(0, max(indonesia_uk_data$energy_percap)))
+  
+```
+
 ### Conclusion
 Our biggest lesson learned was our hypothesis that the strong direct relationship between energy and population growth was not the full story was correct. Simply when breaking down by year the correlation was less visible. We hope this inspires other as our team has been to think deeply about how population and energy factor into our paths to sustainability.
 
