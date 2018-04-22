@@ -21,13 +21,11 @@ A common trope which is brought up in most discussions of sustainable developmen
 
 A secondary objective of this project (and our presentation to the class) is to showcase the important impact that Data Science can have on the field of sustainable development. While finance, advertising, marketing, sales, and tech for the sake of tech all have their place and time, we claim that there are a plethora of other fields which could benefit from the insights provided by Data Science tools and techniques.
 
-# TODO: List team members and a description of how each contributed to the project.
-Our team includes:
+All team members contriubuted at various points to data collection, data cleaning, graph creation, and theoretical discussion. We divided responsibility for the interactive component:
 
-
-* David Schemitsch
-* Isaac Wainstein
-* Wyatt Ford - 
+* David Schemitsch: "Country Comparison"
+* Isaac Wainstein: "Energy vs. Population"
+* Wyatt Ford: "Individual Countries" and "Country Races"
 
 ### Description of Data
 
