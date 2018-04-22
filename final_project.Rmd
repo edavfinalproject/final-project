@@ -1,5 +1,5 @@
 ---
-title: "Final Project"
+title: "Interaction Between Population Growth and Energy Consumption"
 author: "David Schemitsch (ds3300), Isaac Wainstein (ikw2102), Wyatt Ford (wgf2102)"
 date:   "April 24, 2018"
 runtime: shiny
