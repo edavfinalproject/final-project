@@ -289,8 +289,6 @@ To get a broad sense of the interaction between energy consumption and total pop
 
 ```{r Scatter plot of energy use and growth rate by country-year}
 # Scatter plot of energy use and growth rate by country-year
-
-
 pop_country_year <- pop_df %>%
     mutate(COUNTRY_YEAR = paste0(COUNTRY_CODE,"_",YEAR))
 
@@ -313,35 +311,6 @@ ggplot(pop_energy_year, aes(POP_GROWTH_RATE, ENERGY_USE)) +
 ggplot(pop_energy_year %>% filter(ENERGY_USE <= 10000 & POP_GROWTH_RATE <= 2e+07),
        aes(POP_GROWTH_RATE, ENERGY_USE)) + 
     geom_point(alpha = .1) + geom_density_2d()
-
-
-
-
-# Hard to tell what's going on without any subsetting.
-# pop_elec_year <- 
-#     left_join(pop_country_year, elec_access_country_year, by = "COUNTRY_YEAR") %>%
-#     select(COUNTRY_YEAR, POP_GROWTH_RATE, ELECTRICITY_ACCESS) %>%
-#     filter(POP_GROWTH_RATE != '' & ELECTRICITY_ACCESS != '') %>%
-#     mutate(POP_GROWTH_RATE = as.numeric(POP_GROWTH_RATE)) %>%
-#     mutate(ELECTRICITY_ACCESS = as.numeric(ELECTRICITY_ACCESS))
-
-# ggplot(pop_elec_year, aes(ELECTRICITY_ACCESS, POP_GROWTH_RATE)) + 
-#     geom_point()
-
-# ggplot(pop_elec_year %>% filter(POP_GROWTH_RATE >= 5), 
-#        aes(ELECTRICITY_ACCESS, POP_GROWTH_RATE)) + 
-#     geom_point()
-
-# Counts of countries by region and income group
-#ggplot(pop_meta %>% filter(IncomeGroup != ""), aes(Region)) +
- #   geom_bar() + coord_flip()
-
-#ggplot(pop_meta %>% filter(IncomeGroup != ""), aes(IncomeGroup)) +
- #   geom_bar() + coord_flip()
-
-
-
-
 ```
 
 Discuss how data is limited to after 1960, and even then for "Energy Use" it's only a small portion of countries are represented in the earlier years, specifically high income countries. This limits inferences we can make about lower income countries in that decade, or long term inference across the whole of the 20th century. This could be displayed as table or bar chart of total count of nations per year in the three data sets. Maybe see if there are geographic/income-based patterns across the data, which would bias the results.
@@ -531,8 +500,7 @@ navbarPage("Interactive Component",
 The Code below renders the figures in the shiny app.
 
 ```{r Bar Plot tab}
-# Country Comparison.
-
+# Tab 2: Country Comparison
 my_indicator <- reactive({input$indicator})
 my_year <- reactive({input$year})
 fill_selection <- reactive({input$category})
@@ -584,7 +552,6 @@ tidy_subset_barplot <- reactive({tidy_pop_energy %>%
         filter(value_percent_rank >= rank_range()[1] & value_percent_rank <= rank_range()[2])
 
 })
-# total_countries <- reactive({length(unique(tidy_subset_barplot$COUNTRY_CODE))})
 
 output$ds_barplot <- renderPlot({
     ggplot(data = tidy_subset_barplot(), 
@@ -595,12 +562,7 @@ output$ds_barplot <- renderPlot({
 
 })
 
-
-```
-
-```{r Scatter Plot tab}
-# Energy vs. Population
-
+# Tab 3Energy vs. Population
 # Reform data
 icodes = unique(tidy_pop_energy$INDICATOR_CODE)
 scatter_data <- tidy_pop_energy[tidy_pop_energy$INDICATOR_CODE == icodes[1],]
@@ -639,9 +601,7 @@ output$ds_scatter <- renderPlot({
 
 #ggplot(scatter_data, aes(pop_growth, energy_tot)) + geom_point(size=scatter_data$pop_tot) + labs(title="Population Growth vs. Energy Use")
 
-```
-
-```{r Tab 1}
+# Tab 1
 #create the dropdown 
 tab1_countries <- reactive({input$tab1country})
 
@@ -658,8 +618,7 @@ output$countryhist <- renderPlot({
     theme(strip.text = element_text(size=15), title = element_text(size=20, face='bold'))
 })
 
-
-# render country race graph
+# Tab 4: Country Races 
 # Config sliders
 race_year_set <- reactive({input$raceYear})
 pop_max <- reactive({input$pop_max})
@@ -671,9 +630,6 @@ tab4_pop_max <- reactive({max(filter(scatter_data, COUNTRY_NAME %in% tab4_countr
 tab4_energy_max <- reactive({max(filter(scatter_data, COUNTRY_NAME %in% tab4_countries())$energy_tot)})
 tab4_data <- reactive({filter(scatter_data, COUNTRY_NAME %in% tab4_countries()) %>% filter(YEAR > 1970 & YEAR <= race_year_set())})
 
-#tidy_subset <- reactive({scatter_data %>%
-#    filter(YEAR == year_scatter())
-
 output$countryRace <- renderPlot({
     ggplot(data = tab4_data(), aes(x=pop_tot, y=energy_tot, col=COUNTRY_NAME)) +
         geom_point(size=5) + labs(title="Population vs. Energy Use", 
@@ -682,7 +638,6 @@ output$countryRace <- renderPlot({
         coord_cartesian(xlim=c(0, tab4_pop_max()), ylim=c(0, tab4_energy_max())) +
         scale_x_continuous(labels = scales::comma) + scale_y_continuous(labels = scales::comma)
 }) 
-
 ```
 
 #### Findings
