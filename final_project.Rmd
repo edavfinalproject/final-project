@@ -56,10 +56,17 @@ for (p in needed_packages) {
     library(p, character.only = TRUE)
 }
 
+
 # library(data.table)
 # library(tidyverse)
 # library(shiny)
 ```
+
+```{r Read in files locally}
+install.packages("rstudioapi"); library(rstudioapi)
+
+```
+
 
 ```{r download World Bank data via the WDI package}
  # Alternate way to download World Bank data via the WDI package
