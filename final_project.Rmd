@@ -433,7 +433,7 @@ my_data$YEAR <- as.numeric(my_data$YEAR)
 energy_agg <- aggregate(energy_tot ~ YEAR, scatter_data, sum)
 ggplot(energy_agg, aes(YEAR, energy_tot)) + geom_line() +
   labs(title="Figure 4-1. Energy Growth", 
-       x="YEAR", 
+       x="Year", 
        y="Energy use (teragrams of oil equivelent)") +
   coord_cartesian(xlim=c(1975, 2010)) + 
   scale_y_continuous(labels = scales::comma)
@@ -447,7 +447,7 @@ These above-mentioned figures suggest that slowing global energy consumption wou
 pop_agg <- aggregate(pop_tot ~ YEAR, scatter_data, sum)
 ggplot(pop_agg, aes(YEAR, pop_tot)) + geom_line() +
   labs(title="Population Growth", 
-       x="YEAR", 
+       x="Year", 
        y="Population (millions)") +
   coord_cartesian(xlim=c(1975, 2010)) +
   scale_y_continuous(labels = scales::comma)
@@ -458,7 +458,7 @@ energy_capita_agg <- aggregate(energy_percap ~ YEAR, scatter_data, mean)
 energy_capita_agg$weighted <- energy_agg$energy_tot / pop_agg$pop_tot
 ggplot(energy_capita_agg, aes(YEAR, weighted)) + geom_line() +
   labs(title="Energy per Capita", 
-       x="YEAR", 
+       x="Year", 
        y="Energy use per capita (teragrams of oil equivelent)") +
   coord_cartesian(xlim=c(1975, 2010), ylim=c(0,2.5))
 ```
