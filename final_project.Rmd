@@ -109,7 +109,7 @@ energy_df <- merge(energy_df, subset(energy_df_meta, select=-c(4,5,6)), by = "CO
 ```
 
 
-```{r download World Bank data via the WDI package}
+```{r Alternate way to download World Bank data via the WDI package}
  # Alternate way to download World Bank data via the WDI package
 
 # meta_df <- data.frame(WDI_data$country)
@@ -139,33 +139,39 @@ energy_df <- merge(energy_df, subset(energy_df_meta, select=-c(4,5,6)), by = "CO
 #                       "COUNTRY_CODE", "REGION", "INCOMEGROUP"))
 # energy_df <- energy_df %>% mutate(INDICATOR_NAME = "Energy use (kg of oil equivalent per capita)") %>%
 #     mutate(INDICATOR_CODE = "EG.USE.PCAP.KG.OE")
+```
 
+
+```{r Manipulate local files}
+
+# Tidy each of the three data frames
 pop_df <- pop_df %>%
     gather(key = "YEAR", value = "VALUE", -COUNTRY_CODE, -COUNTRY_NAME,
            -INDICATOR_NAME, -INDICATOR_CODE, -REGION, -INCOMEGROUP) %>%
     mutate(YEAR = as.numeric(YEAR)) %>%
     mutate(VALUE = as.numeric(VALUE))
+
 energy_df <- energy_df %>%
     gather(key = "YEAR", value = "VALUE", -COUNTRY_CODE, -COUNTRY_NAME,
            -INDICATOR_NAME, -INDICATOR_CODE, -REGION, -INCOMEGROUP) %>%
     mutate(YEAR = as.numeric(YEAR)) %>%
     mutate(VALUE = as.numeric(VALUE))
+
 pop_growth_df <- pop_growth_df %>%
     gather(key = "YEAR", value = "VALUE", -COUNTRY_CODE, -COUNTRY_NAME,
            -INDICATOR_NAME, -INDICATOR_CODE, -REGION, -INCOMEGROUP) %>%
     mutate(YEAR = as.numeric(YEAR)) %>%
     mutate(VALUE = as.numeric(VALUE))
 
-# CREATE INITIAL TIDY DATAFRAME
+# CREATE INITIAL COMBINED TIDY DATAFRAME
 tidy_pop_energy <- rbind(pop_growth_df, pop_df, energy_df, fill = TRUE)
 tidy_pop_energy$V63 <- NULL
 
-
-
-tidy_pop_energy <- tidy_pop_energy %>% 
+# CLEAN UP ATTRIBUTES
+tidy_pop_energy <- tidy_pop_energy %>%
      mutate(REGION = str_trim(REGION)) %>% #trailing whitespace in some regions
-    mutate(YEAR = as.numeric(YEAR)) %>%
-    mutate(VALUE = as.numeric(VALUE))
+     mutate(YEAR = as.numeric(YEAR)) %>%
+     mutate(VALUE = as.numeric(VALUE))
 
 # LIST OF COUNTRIES WHICH ARE NOT ACTUALLY COUNTRIES
 not_country = c("Arab World", "Central Europe and the Baltics", "Early-demographic dividend", "Europe & Central Asia (excluding high income)", "Euro area", "Fragile and conflict affected situations", "Heavily indebted poor countries (HIPC)", "IBRD only","IDA total", "Not classified", "Latin America & Caribbean (excluding high income)", "Latin America & Caribbean", "Low income", "Low & middle income", "Late-demographic dividend", "Middle income", "North America", "Post-demographic dividend", "Small states", "East Asia & Pacific (IDA & IBRD countries)", "Latin America & the Caribbean (IDA & IBRD countries)", "Middle East & North Africa (IDA & IBRD countries)", "South Asia (IDA & IBRD)", "World", "Upper middle income", "Sub-Saharan Africa (IDA & IBRD countries)", "Europe & Central Asia (IDA & IBRD countries)", "Sub-Saharan Africa", "Sub-Saharan Africa (excluding high income)", "Pacific island small states", "Pre-demographic dividend", "Other small states", "OECD members", "Middle East & North Africa (excluding high income)", "Middle East & North Africa", "Lower middle income", "Least developed countries: UN classification", "IDA only", "IDA blend", "IDA & IBRD total", "High income", "European Union", "Europe & Central Asia", "East Asia & Pacific", "East Asia & Pacific (excluding high income)", "Caribbean small states", "South Asia")
@@ -379,11 +385,15 @@ pop_energy_year <-
     mutate(ENERGY_USE = as.numeric(ENERGY_USE))
 
 ggplot(pop_energy_year, aes(POP_GROWTH_RATE, ENERGY_USE)) + 
-    geom_point(alpha = .1) + geom_density_2d()
+    geom_point(alpha = .1) + geom_density_2d() + 
+     xlab("Population Growth Rate") + ylab("Energy use (teragrams of oil equivelent)") +
+     ggtitle("Population Growth Rate vs. Energy Use", subtitle = "One observation = values for each country-year combination")
 
-ggplot(pop_energy_year %>% filter(ENERGY_USE <= 10000 & POP_GROWTH_RATE <= 2e+07),
+ggplot(pop_energy_year %>% filter(ENERGY_USE <= 10 & POP_GROWTH_RATE <= 100),
        aes(POP_GROWTH_RATE, ENERGY_USE)) + 
-    geom_point(alpha = .1) + geom_density_2d()
+    geom_point(alpha = .1) + geom_density_2d() +
+     xlab("Population Growth Rate") + ylab("Energy use (teragrams of oil equivelent)") +
+     ggtitle("Population Growth Rate vs. Energy Use", subtitle = "One observation = values for each country-year combination")
 ```
 
 Discuss how data is limited to after 1960, and even then for "Energy Use" it's only a small portion of countries are represented in the earlier years, specifically high income countries. This limits inferences we can make about lower income countries in that decade, or long term inference across the whole of the 20th century. This could be displayed as table or bar chart of total count of nations per year in the three data sets. Maybe see if there are geographic/income-based patterns across the data, which would bias the results.
@@ -396,9 +406,9 @@ We explored using additional data from the World Bank, namely energy consumption
 
 The main analysis section has been split into the following subsections.
 
-  1. **Overview** - High level representation of the relationship between energy and population over time.
-  2. **Interactive component** - Tools for observing numerous facets of the data.
-  3. **Findings** - Key insights and challenges the team faced. 
+1. **Overview** - High level representation of the relationship between energy and population over time.
+2. **Interactive component** - Tools for observing numerous facets of the data.
+3. **Findings** - Key insights and challenges the team faced. 
 
 #### Overview
 As shown in Figure 1-4, energy use is consistently growing. As today the The International Energy Agency reports  that 13.2% of energy in the world comes from renewable sources. (https://www.iea.org/about/faqs/renewableenergy/). Therefore, to replace our energy consumption with 100% clean, renewable source we need to increase our current capacity by 7.5 times. However, we learn from Figure 1-4 that energy consumption has growth approximately 2.5 times from 1975 to 2010 at a growth rate of 2.6%. If the growth rate stayed the same the energy use in 2100 would be over 8 times what it is today. Therefore, to go 100% clean energy by 2100 would require increasing clean energy capacity by 64 times. 
