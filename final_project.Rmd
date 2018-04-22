@@ -473,20 +473,22 @@ ggplot(data=tidy_overview, aes(x=YEAR, y=VALUE, col=COUNTRY_NAME, ymin=0)) +
 Yet when we look at figures such as 3-# and 3-# (the scatter plot in data quality section) we learn that when we split by country the smooth correlation immediately goes away. In the remainder of the main analysis we provide interactive tools explore the relationship between energy growth and population, and then present our main findings from using the tools we made.
 
 #### Interactive component
-As we started to determine what graphs we should shown in this analysis, we quickly realized there were so many insightful ways we could split the data the report would either be too long or skipping key insights. Therefore, we chose to do interactive R Shiny apps for the main part of our analysis. This allowed our team to easily explore the data, while also allowing users to explore in ways we had not yet thought of. 
 
-We broke the data into there separate apps to explore these distinct aspects of the data. We often found ourselves jumping back and forth, and encourage users to do the same, as each story of the data does not need to go in chronological order. The three apps are listed below.
+As we started to determine what graphs we should show in this analysis, we quickly realized there were so many insightful ways we could split the data that the report would either be too long or end of skipping many key insights. Therefore, we chose to do interactive R Shiny apps for the main part of our analysis. This allowed our team to easily explore the data, while also allowing users to explore in ways we had not yet thought of. 
+
+We broke the data into separate apps to explore these distinct aspects of the data. We often found ourselves jumping back and forth, and encourage users to do the same, as each story of the data does not need to go in chronological order. The three apps are listed below.
 
   1. **Individual Country** - Deep dive into how population and energy has changed over time for one country.
   2. **Country Comparison** - Presents countries side-by-side in a way where magnitudes of energy and population can be easily compared over time.
   3 **Energy vs. Population** - Presents energy vs population in a scatter plot to visualize correlations over time. 
-  
+  population can be easily compared over time.
+  4**Country Races** - Compares the path of energy and population over time for two countries. 
+
 The idea to include a year slider was inspired by the following TED talk by the late Hans Rosling.
 https://www.gapminder.org/videos/ted-us-state-department/ 
 
-The code below creates the Layout for the navigation bar.
 
-```{r NavBar}
+```{r echo = FALSE}
 # Shiny Layour
 navbarPage("Interactive Component",
            tabPanel("Individual Country",
@@ -587,9 +589,7 @@ navbarPage("Interactive Component",
 ```
 
 
-The Code below renders the figures in the shiny app.
-
-```{r Bar Plot tab}
+```{r echo = FALSE}
 # Tab 2: Country Comparison
 my_indicator <- reactive({input$indicator})
 my_year <- reactive({input$year})
@@ -742,14 +742,14 @@ output$countryRace <- renderPlot({
 In these section we present our findings from our exploration of the data and the interactive tools.
 
 ##### Weak correlation
-The stead growth of population and energy lead us to believe there was likely a strong correlation. However, Figure 4-# and 4-# indicate that although there is a direct relationship, the correlation is not strong. Therefore, there is lots of variation in the relationship between energy and population among countries. 
+The steady growth of population and energy lead us to believe there was likely a strong correlation. However, the scatter plots below indicate that although there is a direct relationship, the correlation is not strong. Therefore, there is lots of variation in the relationship between energy and population among countries.
 
-```{r}
+```{r echo = FALSE, fig.width=20}
 # No zoom
 ggplot(data = scatter_data[scatter_data$YEAR == 2010, ], 
        aes(x=pop_tot, y=energy_tot, col=REGION)) +
   geom_point(size=5) + 
-  labs(title="Figure 4-#. Energy vs. Population (2010)",
+  labs(title="Figure 4-5. Energy vs. Population (2010)",
        x="Population (millions)",
        y="Energy use (teragrams of oil equivelent)") + 
   coord_cartesian(xlim=c(0, 1500), ylim=c(0, 3000)) +
@@ -760,7 +760,7 @@ ggplot(data = scatter_data[scatter_data$YEAR == 2010, ],
 ggplot(data = scatter_data[scatter_data$YEAR == 2010, ], 
        aes(x=pop_tot, y=energy_tot, col=REGION)) +
   geom_point(size=5) + 
-  labs(title="Figure 4-#. Energy vs. Population, Zoomed (2010)",
+  labs(title="Figure 4-6. Energy vs. Population, Zoomed (2010)",
        x="Population (millions)",
        y="Energy use (teragrams of oil equivelent)") + 
   coord_cartesian(xlim=c(0, 75), ylim=c(0, 100)) +
@@ -769,15 +769,16 @@ ggplot(data = scatter_data[scatter_data$YEAR == 2010, ],
 
 ```
 	       	
+
 #### Distribution across countires
 We immediately notice from Figure 4-# there is large inequality of energy use. China and USA are the two outliers accounting for nearly 40% of the energy use from those countries alone. The top 10 countries account for 65% and the top 50 account for 93%. This indicates our energy use is high concentrated.
 
-```{r}
+```{r echo = FALSE}
 
 ggplot(data = scatter_data[scatter_data$YEAR == 2010, ], 
        aes(x = reorder(COUNTRY_CODE, energy_tot), y = energy_tot)) +
   geom_col() +   
-  labs(title="Figure 4-#. Distribution of Energy (2010)",
+  labs(title="Figure 4-7. Distribution of Energy (2010)",
        x="Country",
        y="Energy use (teragrams of oil equivelent)") + 
   scale_y_continuous(labels = scales::comma) +
@@ -788,12 +789,12 @@ ggplot(data = scatter_data[scatter_data$YEAR == 2010, ],
 
 The population has high inequality as well, yet the two outlying countries are now India and China. These two countries account for 38% of the total population. The top 10 account for 61% of the population and top 50 account for 91% of the population. Again, we learn the that although there are hundreds of countries, the overall story described in the Overview section is being driven by a small number of countries.
 
-```{r}
+```{r echo = FALSE}
 
 ggplot(data = scatter_data[scatter_data$YEAR == 2010, ], 
        aes(x = reorder(COUNTRY_CODE, pop_tot), y = pop_tot)) +
   geom_col() +   
-  labs(title="Figure 4-#. Distribution of Population (2010)",
+  labs(title="Figure 4-8. Distribution of Population (2010)",
        x="Country",
        y="Population (Millions)") + 
   scale_y_continuous(labels = scales::comma) +
@@ -805,12 +806,12 @@ ggplot(data = scatter_data[scatter_data$YEAR == 2010, ],
 #### Different paths
 When we look at the three standout countries (United States, China, India) we distinct paths to high energy use. The United States grew its energy use without large increases in population. Conversely, China first grew its population and then later the rate of population growth slowed and the energy use per capita grew. India seems on a similar path as China, with its population growth about to slow and energy use per capita about to rise. Further research into what causes these various paths could help countries design more sustainable trajectories. 
 
-```{r}
+```{r echo = FALSE}
 # Make plot
 ggplot(data = scatter_data[scatter_data$COUNTRY_NAME %in% c("China", "United States", "India"), ], 
        aes(x=pop_tot, y=energy_tot, col=COUNTRY_NAME)) +
   geom_point(size=5) + 
-  labs(title="Figure 4-#. Paths of Energy Growth",
+  labs(title="Figure 4-9. Paths of Energy Growth",
        x="Population (millions)",
        y="Energy use (teragrams of oil equivelent)") + 
   coord_cartesian(xlim=c(0, 1500), ylim=c(0, 3000)) +
@@ -821,12 +822,12 @@ ggplot(data = scatter_data[scatter_data$COUNTRY_NAME %in% c("China", "United Sta
 #### Ethics of change
 Countries such as the United Kingdom are seeing the energy use per capita shrink. Conversely, we a less developed country such as Indonesia has rapid stead growth in energy use per capita. This may lead us to believe that United Kingdom is on a good path, while the trajectory of Indonesia needs to change. However, the United Kingdom's current energy use per-capita is three times higher than Indonesia. Hence, is it fair to say they do not deserve to growth their country to the same level? This is one of many ethical dilemmas that we must face as we find sustainable paths for all countries.
 
-```{r}
+```{r echo = FALSE}
 # United Kingdom
 ggplot(data = scatter_data[scatter_data$COUNTRY_NAME == "United Kingdom", ], 
        aes(x=YEAR, y=energy_percap)) +
   geom_line() + 
-  labs(title="Figure 4-#. Energy Use Per-Capita (United Kingdom)",
+  labs(title="Figure 4-10. Energy Use Per-Capita (United Kingdom)",
        x="Year",
        y="Energy use per capita (teragrams of oil equivelent)") + 
   scale_y_continuous(labels = scales::comma)
@@ -854,11 +855,11 @@ Moving towards the 100% clean energy will require immense research into the rela
 
 Figure 5-1 and 5-2 show steady growth of both energy and population. Figure 5-3 shows there is a strong relationship between these two variables.
 
-```{r}
+```{r echo = FALSE}
 # Energy growth
 energy_agg <- aggregate(energy_tot ~ YEAR, scatter_data, sum)
 ggplot(energy_agg, aes(YEAR, energy_tot)) + geom_line() +
-  labs(title="Figure 4-1. Energy and Population Growth", 
+  labs(title="Figure 5-1. Energy and Population Growth", 
        x="YEAR", 
        y="Energy use (teragrams of oil equivelent)") +
   coord_cartesian(xlim=c(1975, 2010)) +
@@ -867,7 +868,7 @@ ggplot(energy_agg, aes(YEAR, energy_tot)) + geom_line() +
 # Population growth
 pop_agg <- aggregate(pop_tot ~ YEAR, scatter_data, sum)
 ggplot(pop_agg, aes(YEAR, pop_tot)) + geom_line() +
-  labs(title="Population Growth", 
+  labs(title="Figure 5-2. Population Growth", 
        x="YEAR", 
        y="Population (millions)") +
   coord_cartesian(xlim=c(1975, 2010)) +
@@ -877,7 +878,7 @@ pop_energy_agg <- cbind(pop_agg, energy_agg)
 ggplot(data = pop_energy_agg, 
        aes(x=pop_tot, y=energy_tot)) +
   geom_point(size=5) + 
-  labs(title="Figure 4-#. World Energy vs. Population",
+  labs(title="Figure 5-3.. World Energy vs. Population",
        x="Population (millions)",
        y="Energy use (teragrams of oil equivelent)") + 
   scale_x_continuous(labels = scales::comma) + scale_y_continuous(labels = scales::comma) +
@@ -887,11 +888,11 @@ ggplot(data = pop_energy_agg,
 
 However, we see there is a lot of information hidden when average over the entire world. Figure 5-3 below shows the relationship between energy use and population for each country in 2010.
 
-```{r}
+```{r echo = FALSE}
 ggplot(data = scatter_data[scatter_data$YEAR == 2010, ], 
        aes(x=pop_tot, y=energy_tot, col=REGION)) +
   geom_point(size=5) + 
-  labs(title="Figure 4-#. Energy vs. Population (2010)",
+  labs(title="Figure 5-4. Energy vs. Population (2010)",
        x="Population (millions)",
        y="Energy use (teragrams of oil equivelent)") + 
   coord_cartesian(xlim=c(0, 1500), ylim=c(0, 3000)) +
@@ -902,12 +903,12 @@ ggplot(data = scatter_data[scatter_data$YEAR == 2010, ],
 
 From the scatter we immediately see there are outliers. Figures 5-4 and 5-5 below show the unequal distribution of energy and population. For example, China and the US account for X% of the worlds energy use, and China and India account for X% of the worlds population.
 
-```{r}
+```{r echo = FALSE}
 
 ggplot(data = scatter_data[scatter_data$YEAR == 2010, ], 
        aes(x = reorder(COUNTRY_CODE, energy_tot), y = energy_tot)) +
   geom_col() +   
-  labs(title="Figure 4-#. Distribution of Energy (2010)",
+  labs(title="Figure 5-5. Distribution of Energy (2010)",
        x="Country",
        y="Energy use (teragrams of oil equivelent)") + 
   scale_y_continuous(labels = scales::comma)
@@ -915,7 +916,7 @@ ggplot(data = scatter_data[scatter_data$YEAR == 2010, ],
 ggplot(data = scatter_data[scatter_data$YEAR == 2010, ], 
        aes(x = reorder(COUNTRY_CODE, pop_tot), y = pop_tot)) +
   geom_col() +   
-  labs(title="Figure 4-#. Distribution of Population (2010)",
+  labs(title="Figure 5-6. Distribution of Population (2010)",
        x="Country",
        y="Population (Millions)") + 
   scale_y_continuous(labels = scales::comma)
@@ -924,12 +925,12 @@ ggplot(data = scatter_data[scatter_data$YEAR == 2010, ],
 
 
 We can see these countries took different path to be outliers.
-```{r}
+```{r echo = FALSE}
 # Make plot
 ggplot(data = scatter_data[scatter_data$COUNTRY_NAME %in% c("China", "United States", "India"), ], 
        aes(x=pop_tot, y=energy_tot, col=COUNTRY_NAME)) +
   geom_point(size=5) + 
-  labs(title="Figure 4-#. Paths of Energy Growth",
+  labs(title="Figure 5-7. Paths of Energy Growth",
        x="Population (millions)",
        y="Energy use (teragrams of oil equivelent)") + 
   coord_cartesian(xlim=c(0, 1500), ylim=c(0, 3000)) +
@@ -939,12 +940,12 @@ ggplot(data = scatter_data[scatter_data$COUNTRY_NAME %in% c("China", "United Sta
 
 We need to determine the right path for each country. Below we see the United Kingdom has decreasing energy use per capita while Indonesia is increasing. yet looking closely reveals that the United Kingdom has three times the energy use per capita as Indonesia. Hence, should we be trying to shrink the UK to Indonesia? Is it fair to let Indonesia to get to the level of the UK?  These are just some of the ethical questions we must face as we find sustainable paths for all countries.
 
-```{r}
+```{r echo = FALSE}
 # United Kingdom
 ggplot(data = scatter_data[scatter_data$COUNTRY_NAME == "United Kingdom", ], 
        aes(x=YEAR, y=energy_percap)) +
   geom_line() + 
-  labs(title="Figure 4-#. Energy Use Per-Capita (United Kingdom)",
+  labs(title="Figure 5-8. Energy Use Per-Capita (United Kingdom)",
        x="Year",
        y="Energy use per capita (teragrams of oil equivelent)") + 
   scale_y_continuous(labels = scales::comma)
@@ -953,18 +954,18 @@ ggplot(data = scatter_data[scatter_data$COUNTRY_NAME == "United Kingdom", ],
 ggplot(data = scatter_data[scatter_data$COUNTRY_NAME == "Indonesia", ], 
        aes(x=YEAR, y=energy_percap)) +
   geom_line() + 
-  labs(title="Figure 4-#. Energy Use Per-Capita (Indonesia)",
+  labs(title="Figure 5-9. Energy Use Per-Capita (Indonesia)",
        x="Year",
        y="Energy use per capita (teragrams of oil equivelent)") + 
   scale_y_continuous(labels = scales::comma)
 
 ```
 
-```{r}
+```{r echo = FALSE}
 indonesia_uk_data <- scatter_data %>% filter(COUNTRY_NAME %in% c("Indonesia", "United Kingdom"))
 ggplot(data=indonesia_uk_data, aes(x=YEAR, y=energy_percap, col=COUNTRY_NAME)) +
   geom_line() +
-  labs(title="Figure 4-#. Energy Use Per-Capita (Indonesia vs. United Kingdom)",
+  labs(title="Figure 5-10. Energy Use Per-Capita (Indonesia vs. United Kingdom)",
        x="Year",
        y="Energy use per capita (teragrams of oil equivalent)") +
   scale_y_continuous(labels=scales::comma) +
