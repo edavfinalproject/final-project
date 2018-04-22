@@ -4,6 +4,7 @@ author: "David Schemitsch (ds3300), Isaac Wainstein (ikw2102), Wyatt Ford (wgf21
 date:   "April 24, 2018"
 runtime: shiny
 output: html_document
+bibliography: bibliography.bib
 ---
 
 ```{r setup, include=FALSE}
@@ -14,16 +15,11 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE,
 
 ### Introduction
 
-The debate about whether human intervention is causing climate change is ending, but the search for how to avert its most harmful affects is just beginning. One of the primary causes of climate change is our burning of Fossil Fuels, which has been steadily growing as showing in figure 1.
+While the debate about whether human intervention has impacted the pace of climate change is all but settled (it has), the search for solutions to averting the most harmful effects of human activity on climate change is just beginning. Research has shown that one of the primary causes of climate change is the burning of fossil fuels, whose rate has been steadily growing, as shown in Figure 1. In *Prosperity Without Growth*, Tim Jackson argues that humankind cannot continue to realize advances in prosperity through the continued consumption of natural resources, pointing out that staying on the current trajectory of resource consumption is not an unsustainable endeavor [@prosperity-growth]. To the point, Jackson urges researchers and policymakers to explore sustainable avenues of global development.
 
-In the important book "Prosperity Without Growth" the Author Tim Jackson we must find a way to grow our prosperity, without continuing to use more and more resources. Keeping on the same trajectory is ultimately unsustainable in that it will have catastrophic affects to our climate, or the resources will simply run out.
+A common trope which is brought up in most discussions of sustainable development is the questions of population: many observers claim that population growth is a critical contributing factor to increased energy consumption, arguing that finding ways to curb population growth could curtail the consumption of natural resources and move us closer towards sustainable development. We are skeptical of this claim and think that it needs testing. Is it fair to place the blame for increased energy consumption on developing countries with high population growth, when many Western countries, especially the United States, are consuming far more energy per person? Are population and energy consumption even correlated? If so, does this correlation hold true at a global, regional, and country level? We believe exploratory data analysis is a fantastic technique to help answer these, and other questions regarding sustainable development and population growth. Therefore, **the primary goal of this project is to explore and define the characteristics of the relationship between energy use and population over time.** 
 
-Many proponents will say the problem is population. If we can find a way to stop population growth we could stop the growth of energy and become a more sustainable society. 
-
-However, our team thinks this claim needs testing. Is it fair to blame the developing countries with high population growth when many western countries, especially the USA, are consuming far more energy per person? Does the correlation of population and energy shown above still hold true when all countries are not included? We believe exploratory data analysis is a fantastic tool to help answer these questions, and therefore **the primary goal of this project is to explore and define the characteristics of the relationship between energy use and population over time.** 
-
-A secondary purpose of the project and presentation to the class is to showcase and important field that needs Data Science. In a field dominated by finance, advertising, marketing, sales, and tech for the sake of tech, we claim there is more to what a Data Scientist can do.
-
+A secondary objective of this project (and our presentation to the class) is to showcase the important impact that Data Science can have on the field of sustainable development. While finance, advertising, marketing, sales, and tech for the sake of tech all have their place and time, we claim that there are a plethora of other fields which could benefit from the insights provided by Data Science tools and techniques.
 
 # TODO: List team members and a description of how each contributed to the project.
 Our team includes:
@@ -1021,5 +1017,5 @@ Our team was inspired by depth of what could be explored with just the variable 
 
 Our group quickly realized the tidy dataframe could inspire collaboration beyond our team. Future work could involve organizing all the data sources into an organized database with APIs for R, Python, and other languages for researches to use. Furthermore we could create an online environment for researchers to share their explorations of the data. We believe this collaboration could greatly enhance countries to successfully define their paths to sustainability. 
 
-
+# References
 
