@@ -380,7 +380,7 @@ ggplot(energy_capita_agg, aes(YEAR, weighted)) + geom_line() +
   labs(title="Energy per Capita", 
        x="YEAR", 
        y="Energy use per capita (teragrams of oil equivelent)") +
-  coord_cartesian(xlim=c(1975, 2010))
+  coord_cartesian(xlim=c(1975, 2010), ylim=c(0,2.5))
 ```
 
 Yet when we look at figures such as 3-# and 3-# (the scatter plot in data quality section) we learn that when we split by country the smooth correlation immediately goes away. In the remainder of the main analysis we provide interactive tools explore the relationship between energy growth and population, and then present our main findings from using the tools we made.
