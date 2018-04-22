@@ -272,34 +272,44 @@ tidy_pop_energy_for_tab_1 <- tidy_pop_energy_for_tab_1 %>% arrange(COUNTRY_NAME)
 
 We represented missing data by using the `visna` function from the `extracat` package.
 
-The `visna` graphs show the population data is nearly complete, but the energy use data has a significant amount of missing data. Since the energy use data was the most incomplete, we broke out the data by income level to see if there are any discrepancies in reporting data based on this attribute. In fact, the most common pattern for low-income energy usage is that all yearly observations are missing. This is not the case for the remaining three income brackets. This discrepancy shows that there are gaps in data collection in certain parts of the world, which will bias any findings that use these data.
+The `visna` graphs show the population data is nearly complete, but the energy use data has a significant amount of missing data. Since the energy use data was the most incomplete, we broke out the data by income level to see if there are any discrepancies in reporting data based on this attribute. 
 
+Starting with Low income of Energy Use we see the most common pattern for low-income energy usage is that all yearly observations are missing. This is not the case for the remaining three income brackets. This discrepancy shows that there are gaps in data collection in certain parts of the world, which will bias any findings that use these data.
 
-**Missing Data: Energy use (kg of oil equivalent per capita) - Low Income**
-```{r Energy use low-income}
+**Figure 3-1. Missing Energy Use (Low Income)**
+```{r echo=FALSE, fig.width=20}
+# Energy use low-income
 wide_energy_low <- filter(tidy_pop_energy, 
                       INDICATOR_NAME == "Energy use (kg of oil equivalent per capita)" & 
                           INCOMEGROUP == "Low income")
 wide_energy_low <- select(wide_energy_low, YEAR, COUNTRY_CODE, VALUE)
 wide_energy_low <- wide_energy_low %>% spread(YEAR, VALUE)
+wide_energy_low <- subset(wide_energy_low, select = -COUNTRY_CODE )
 
 visna(wide_energy_low, sort = 'r')
 ```
 
-**Missing Data: Energy use (kg of oil equivalent per capita) - Lower Middle Income**
-```{r Energy use lower-middle income}
+
+Moving to Middle income countries we see most bracket most countries have data between 1975 and 2010. For our main anlaysis we filtered for this time range to include as many countries as possible.
+
+**Figure 3-2. Missing Energy Use (Lower Middle Income)**
+```{r echo=FALSE}
+#Energy use lower-middle income
 wide_energy_low_mid <- filter(tidy_pop_energy, 
                       INDICATOR_NAME == "Energy use (kg of oil equivalent per capita)" & 
                           INCOMEGROUP == "Lower middle income")
 wide_energy_low_mid <- select(wide_energy_low_mid, YEAR, COUNTRY_CODE, VALUE)
 wide_energy_low_mid <- wide_energy_low_mid %>% spread(YEAR, VALUE)
+wide_energy_low_mid <- subset(wide_energy_low_mid, select = -COUNTRY_CODE )
+
 
 visna(wide_energy_low_mid, sort = 'r')
 
 ```
 
-**Missing Data: Energy use (kg of oil equivalent per capita) - Upper Middle Income**
-```{r Energy use Upper-middle income}
+**Figure 3-3. Missing Energy Use (Upper Middle Income)**
+```{r echo=FALSE}
+# Energy use Upper-middle income
 wide_energy_up_mid <- filter(tidy_pop_energy, 
                       INDICATOR_NAME == "Energy use (kg of oil equivalent per capita)" & 
                           INCOMEGROUP == "Upper middle income")
@@ -310,8 +320,9 @@ visna(wide_energy_up_mid, sort = 'r')
 
 ```
 
-**Missing Data: Energy use (kg of oil equivalent per capita) - High Income**
-```{r Energy use high income}
+**Figure 3-4. Missing Energy Use (High Income)**
+```{r echo=FALSE}
+# Energy use high income
 wide_energy_up <- filter(tidy_pop_energy, 
                       INDICATOR_NAME == "Energy use (kg of oil equivalent per capita)" & 
                           INCOMEGROUP == "High income")
@@ -322,8 +333,9 @@ visna(wide_energy_up, sort = 'r')
 
 ```
 
-**Missing Data: Total population**
-```{r total population}
+**Figure 3-1. Missing Energy Use (Total population)**
+```{r echo=FALSE}
+#total population
 wide_pop_total <- filter(tidy_pop_energy, 
                       INDICATOR_NAME == "Population, total")
 wide_pop_total <- select(wide_pop_total, YEAR, COUNTRY_CODE, VALUE)
@@ -331,8 +343,9 @@ wide_pop_total <- wide_pop_total %>% spread(YEAR, VALUE)
 visna(wide_pop_total, sort = 'r')
 ```
 
-**Missing Data: Population growth**
-```{r population growth}
+**Figure 3-1. Missing Energy Use (Population growth)**
+```{r echo=FALSE}
+#population growth
 wide_pop_growth <- filter(tidy_pop_energy, 
                       INDICATOR_NAME == "Population growth (annual %)")
 wide_pop_growth <- select(wide_pop_growth, YEAR, COUNTRY_CODE, VALUE)
