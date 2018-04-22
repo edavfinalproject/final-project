@@ -394,7 +394,7 @@ We broke the data into there separate apps to explore these distinct aspects of 
   2. **Country Comparison** - Presents countries side-by-side in a way where magnitudes of energy and population can be easily compared over time.
   3 **Energy vs. Population** - Presents energy vs population in a scatter plot to visualize correlations over time. 
   
-The idea to include a year slider was inspired by the following TED talk.
+The idea to include a year slider was inspired by the following TED talk by the late Hans Rosling.
 https://www.gapminder.org/videos/ted-us-state-department/ 
 
 The code below creates the Layout for the navigation bar.
@@ -510,6 +510,7 @@ fill_selection <- reactive({input$category})
 
 rank_range <- reactive({input$rank_slider})
 
+# Fix the bar colors by category so that they are persistent regardless of selection.
 bar_colors <- c(`East Asia & Pacific` = "#F8766D",
                 `Latin America & Caribbean` = "#C49A00",
                 `North America` = "#53B400",
