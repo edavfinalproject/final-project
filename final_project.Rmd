@@ -472,14 +472,14 @@ navbarPage("Interactive Component",
                           plotOutput("countryhist", width="100%", height = "400px"),
                         wellPanel(
                           selectInput(inputId = "tab1country", label = "Country:",
-                                      choices = as.vector(unique(tidy_pop_energy$COUNTRY_NAME)), 
+                                      choices = as.vector(unique(tidy_pop_energy$COUNTRY_NAME)),
                                       selected = as.vector(unique(tidy_pop_energy$COUNTRY_NAME))[207])
                         )
                     )
                 )
            ,
            tabPanel("Country Comparison",
-                    
+
                         verticalLayout(
                             plotOutput("ds_barplot", width = "100%"),
                             fluidRow(
@@ -497,17 +497,17 @@ navbarPage("Interactive Component",
                                          selected = "INDICATOR_NAME"), width = 3),
                             column(
                             sliderInput(inputId = "year",
-                                        label = "Year:", 
+                                        label = "Year:",
                                         value = 2010,
                                         min = 1961,
                                         animate = animationOptions(interval = 333),
                                         max = 2016,
                                         step = 1), width = 3),
-                            
-                                  # Copy the line below to make a slider range 
+
+                                  # Copy the line below to make a slider range
                             column(
-                              sliderInput(inputId = "rank_slider", 
-                                          label = "Percentage slice", 
+                              sliderInput(inputId = "rank_slider",
+                                          label = "Percentage slice",
                                           min = 0, max = 1, value = c(0, 1)),width = 3)
                             )
                         )
@@ -518,19 +518,19 @@ navbarPage("Interactive Component",
                         plotOutput("ds_scatter",  width = "100%"),
                         wellPanel(
                           sliderInput(inputId = "year_scatter",
-                                      label = "Year:", 
+                                      label = "Year:",
                                       value = min(tidy_pop_energy$YEAR, na.rm = TRUE),
                                       min = 1971,
                                       max = 2012,
                                       step = 1),
                           sliderInput(inputId = "pop_max",
-                                      label = "Max population:", 
+                                      label = "Max population:",
                                       value = 1500,
                                       min = 0,
                                       max = 1500,
                                       step = 100),
                           sliderInput(inputId = "energy_max",
-                                      label = "Max energy:", 
+                                      label = "Max energy:",
                                       value = 3000,
                                       min = 0,
                                       max = 3000,
@@ -544,7 +544,7 @@ navbarPage("Interactive Component",
                      fluidRow(
                        column(
                          sliderInput(inputId = "raceYear",
-                                     label = "Year:", 
+                                     label = "Year:",
                                      value = 1971,
                                      min = 1971,
                                      animate = animationOptions(interval = 333),
@@ -552,11 +552,11 @@ navbarPage("Interactive Component",
                                      step = 1),width=3),
                        column(
                          selectInput(inputId = "tab4country1", label = "Country 1:",
-                                     choices = as.vector(unique(tidy_pop_energy$COUNTRY_NAME)), 
+                                     choices = as.vector(unique(tidy_pop_energy$COUNTRY_NAME)),
                                      selected = as.vector(unique(tidy_pop_energy$COUNTRY_NAME))[207]), width=3),
                        column(
                          selectInput(inputId = "tab4country2", label = "Country 2:",
-                                     choices = as.vector(unique(tidy_pop_energy$COUNTRY_NAME)), 
+                                     choices = as.vector(unique(tidy_pop_energy$COUNTRY_NAME)),
                                      selected = as.vector(unique(tidy_pop_energy$COUNTRY_NAME))[42]), width=3)
                      )
                    ))
@@ -588,8 +588,8 @@ bar_colors <- c(`East Asia & Pacific` = "#F8766D",
                 `Lower middle income` = "#b2e2e2",
                 `Low income` = "#edf8fb",
                 `Population growth (annual %)` = "#999999",
-                `Total Energy use` = "#999999", 
-                `Population, total` = "#999999") 
+                `Total Energy use` = "#999999",
+                `Population, total` = "#999999")
 
 tidy_barplot <- tidy_pop_energy
 
@@ -598,7 +598,7 @@ tidy_barplot <- tidy_barplot %>% select(COUNTRY_NAME, YEAR, COUNTRY_CODE,
                                         INDICATOR_CODE, VALUE) %>%
      filter(INDICATOR_NAME != "Energy use (kg of oil equivalent per capita)")
 
-tidy_barplot_energy_tot <- scatter_data %>% 
+tidy_barplot_energy_tot <- scatter_data %>%
      select(COUNTRY_NAME, YEAR, COUNTRY_CODE,
             REGION, INCOMEGROUP, INDICATOR_NAME,
             INDICATOR_CODE, energy_tot) %>%
@@ -611,7 +611,7 @@ setnames(tidy_barplot_energy_tot, "energy_tot", "VALUE")
 
 tidy_barplot_energy_tot <- filter(tidy_barplot_energy_tot,
                                   !is.na(VALUE))
-     
+
 tidy_barplot <- rbind(tidy_barplot, tidy_barplot_energy_tot)
 
 
@@ -620,7 +620,7 @@ tidy_subset_barplot <- reactive({tidy_barplot %>%
         filter(INDICATOR_NAME == my_indicator() & YEAR == my_year()) %>%
         na.omit() %>%
         arrange(VALUE) %>%
-        mutate(INCOMEGROUP = factor(INCOMEGROUP, levels = c("High income", "Upper middle income", 
+        mutate(INCOMEGROUP = factor(INCOMEGROUP, levels = c("High income", "Upper middle income",
                                                             "Lower middle income", "Low income"))) %>%
         mutate(value_percent_rank = percent_rank(VALUE)) %>%
         mutate(value_percent_rank = value_percent_rank - .0000001) %>%
@@ -629,11 +629,11 @@ tidy_subset_barplot <- reactive({tidy_barplot %>%
 })
 
 output$ds_barplot <- renderPlot({
-    ggplot(data = tidy_subset_barplot(), 
+    ggplot(data = tidy_subset_barplot(),
            aes(x = reorder(COUNTRY_CODE, VALUE), y = VALUE,
                fill = get(fill_selection()))) +
         geom_col() + xlab("Country") + ylab(my_indicator()) +
-          scale_fill_manual(values = bar_colors, name = "Categories") 
+          scale_fill_manual(values = bar_colors, name = "Categories")
 
 })
 
@@ -647,7 +647,7 @@ scatter_data$energy_percap <- as.numeric(tidy_pop_energy$VALUE[tidy_pop_energy$I
 scatter_data$energy_tot <- (scatter_data$energy_percap * scatter_data$pop_tot) / 1000
 scatter_data <- scatter_data[complete.cases(scatter_data), ]
 
-# Most energy using countries 
+# Most energy using countries
 energy2012 <- scatter_data$energy_tot[scatter_data$YEAR == "2010"]
 energy2012[is.na(energy2012)] <- 0
 energy2012_total <- sum(energy2012)
@@ -666,53 +666,53 @@ tidy_subset <- reactive({scatter_data %>%
 # Make plot
 output$ds_scatter <- renderPlot({
     ggplot(data = tidy_subset(), aes(x=pop_tot, y=energy_tot, col=REGION)) +
-        geom_point(size=5) + labs(title="Population vs. Energy Use", 
-                            x="Population (millions)", 
-                            y="Energy use (teragrams of oil equivelent)") + 
+        geom_point(size=5) + labs(title="Population vs. Energy Use",
+                            x="Population (millions)",
+                            y="Energy use (teragrams of oil equivelent)") +
         coord_cartesian(xlim=c(0, pop_max()), ylim=c(0, energy_max())) +
         scale_x_continuous(labels = scales::comma) + scale_y_continuous(labels = scales::comma) +
         geom_text(aes(label=COUNTRY_NAME),hjust=-0.2, vjust=0)
-}) 
+})
 
 #ggplot(scatter_data, aes(pop_growth, energy_tot)) + geom_point(size=scatter_data$pop_tot) + labs(title="Population Growth vs. Energy Use")
 
 # Tab 1
-#create the dropdown 
+#create the dropdown
 tab1_countries <- reactive({input$tab1country})
 
 # Population Total
-tab1_total <- tidy_pop_energy_for_tab_1 
+tab1_total <- tidy_pop_energy_for_tab_1
 tab1_total_reactive <- reactive({filter(tab1_total, tab1_total$COUNTRY_NAME == tab1_countries())})
 
 # render graph
 output$countryhist <- renderPlot({
-    ggplot(data=tab1_total_reactive(), aes(x=YEAR, y=VALUE, ymin=0)) + 
+    ggplot(data=tab1_total_reactive(), aes(x=YEAR, y=VALUE, ymin=0)) +
     geom_point() + geom_line() +
     facet_wrap(~INDICATOR_NAME, ncol=2, scale="free") +
     labs(title="Indicators by Country", x="Year") +
     theme(strip.text = element_text(size=15), title = element_text(size=20, face='bold'))
 })
 
-# Tab 4: Country Races 
+# Tab 4: Country Races
 # Config sliders
 race_year_set <- reactive({input$raceYear})
 pop_max <- reactive({input$pop_max})
 energy_max <- reactive({input$energy_max})
 
 # Config data
-tab4_countries <- reactive({c(input$tab4country1, input$tab4country2)}) 
+tab4_countries <- reactive({c(input$tab4country1, input$tab4country2)})
 tab4_pop_max <- reactive({max(filter(scatter_data, COUNTRY_NAME %in% tab4_countries())$pop_tot)})
 tab4_energy_max <- reactive({max(filter(scatter_data, COUNTRY_NAME %in% tab4_countries())$energy_tot)})
 tab4_data <- reactive({filter(scatter_data, COUNTRY_NAME %in% tab4_countries()) %>% filter(YEAR > 1970 & YEAR <= race_year_set())})
 
 output$countryRace <- renderPlot({
     ggplot(data = tab4_data(), aes(x=pop_tot, y=energy_tot, col=COUNTRY_NAME)) +
-        geom_point(size=5) + labs(title="Population vs. Energy Use", 
-                            x="Population (millions)", 
-                            y="Energy use (teragrams of oil equivelent)") + 
+        geom_point(size=5) + labs(title="Population vs. Energy Use",
+                            x="Population (millions)",
+                            y="Energy use (teragrams of oil equivelent)") +
         coord_cartesian(xlim=c(0, tab4_pop_max()), ylim=c(0, tab4_energy_max())) +
         scale_x_continuous(labels = scales::comma) + scale_y_continuous(labels = scales::comma)
-}) 
+})
 ```
 
 #### Findings
