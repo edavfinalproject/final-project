@@ -197,7 +197,7 @@ tidy_pop_energy_for_tab_1 <- tidy_pop_energy_for_tab_1 %>%
   mutate(VALUE = as.numeric(VALUE))
 
 # CREATE DATAFRAME OF SUMMARY REGION STATS
-tidy_overview <- filter(tidy_pop_energy_for_tab_1, COUNTRY_NAME %in% c("World", "East Asia & Pacific", "Europe & Central Asia", "Latin America & Caribbean", "Middle East & North Africa", "North America", "South Asia", "Sub-Saharan Africa"))
+tidy_overview <- filter(tidy_pop_energy_for_tab_1, COUNTRY_NAME %in% c("East Asia & Pacific", "Europe & Central Asia", "Latin America & Caribbean", "Middle East & North Africa", "North America", "South Asia", "Sub-Saharan Africa"))
 tidy_overview <- tidy_overview %>% arrange(COUNTRY_NAME)
 
 # REMOVE NON-COUNTRIES FROM TAB 1 DATAFRAME
