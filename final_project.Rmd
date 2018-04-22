@@ -421,7 +421,7 @@ navbarPage("Interactive Component",
                                 column(
                             radioButtons(label = "Indicator", inputId = "indicator",
                                          choices = c("Population Growth" = "Population growth (annual %)",
-                                                     "Energy Use" = "Energy use (kg of oil equivalent per capita)",
+                                                     "Total Energy use" = "Total Energy use",
                                                      "Total Population" = "Population, total"),
                                          selected = "Population growth (annual %)"), width = 3),
                             column(
@@ -523,21 +523,26 @@ bar_colors <- c(`East Asia & Pacific` = "#F8766D",
                 `Lower middle income` = "#b2e2e2",
                 `Low income` = "#edf8fb",
                 `Population growth (annual %)` = "#999999",
-                `Energy use (kg of oil equivalent per capita)` = "#999999", 
-                `Population, total` = "#999999")
+                `Total Energy use` = "#999999", 
+                `Population, total` = "#999999") 
 
 tidy_barplot <- tidy_pop_energy
 
 tidy_barplot <- tidy_barplot %>% select(COUNTRY_NAME, YEAR, COUNTRY_CODE,
                                         REGION, INCOMEGROUP, INDICATOR_NAME,
-                                        INDICATOR_CODE, VALUE)
+                                        INDICATOR_CODE, VALUE) %>%
+     filter(INDICATOR_NAME != "Energy use (kg of oil equivalent per capita)")
 
 tidy_barplot_energy_tot <- scatter_data %>% 
      select(COUNTRY_NAME, YEAR, COUNTRY_CODE,
             REGION, INCOMEGROUP, INDICATOR_NAME,
-            INDICATOR_CODE, energy_tot)
+            INDICATOR_CODE, energy_tot) %>%
+     mutate(INDICATOR_NAME = "Total Energy use") %>%
+     mutate(INDICATOR_CODE = "EG.USE.TOTAL")
 
 setnames(tidy_barplot_energy_tot, "energy_tot", "VALUE")
+
+tidy_barplot_energy_tot <- tidy_barplot_energy_tot %>% mutate(VALUE = (VALUE * 1000000))
 
 tidy_barplot_energy_tot <- filter(tidy_barplot_energy_tot,
                                   !is.na(VALUE))
@@ -545,7 +550,8 @@ tidy_barplot_energy_tot <- filter(tidy_barplot_energy_tot,
 tidy_barplot <- rbind(tidy_barplot, tidy_barplot_energy_tot)
 
 
-tidy_subset_barplot <- reactive({tidy_pop_energy %>%
+# tidy_subset_barplot <- reactive({tidy_pop_energy %>%
+tidy_subset_barplot <- reactive({tidy_barplot %>%
         filter(INDICATOR_NAME == my_indicator() & YEAR == my_year()) %>%
         na.omit() %>%
         arrange(VALUE) %>%
@@ -562,7 +568,7 @@ output$ds_barplot <- renderPlot({
            aes(x = reorder(COUNTRY_CODE, VALUE), y = VALUE,
                fill = get(fill_selection()))) +
         geom_col() + xlab("Country") + ylab(my_indicator()) +
-          scale_fill_manual(values = bar_colors, name = "Categories")
+          scale_fill_manual(values = bar_colors, name = "Categories") 
 
 })
 
