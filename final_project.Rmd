@@ -39,7 +39,7 @@ Each of these datasets contain per country data from 1960 through 2016. Each of 
 
 The data was gathered and accessed using the World Bank's API, cleaned, and combined into one tidy dataframe. Making one tidy dataframe was a critical step which facilitated future collaboration within our team, allowing us all to have time to explore the data on our own. Furthermore, having this tidy dataframe helped ensure that the code for graphs would not change as the data format changed. Finally, it allowed us to easily make graphs designed for "tidy" data. This dataset was the linchpin which made this project possible, and thus naturally suggests future work on an R package, which is discussed later on in the Future Work section. 
 
-The code to pull the data and put it in a data frame are below. We explored two ways to access the data. Our initial method was to identify the URLs that link to the three datasets, then loop through those URLs to download, unzip, and read the data into R for processing. Due to the API's intermittent downtime, our next process for accessing the data was to use the [`WDI`](https://cran.r-project.org/web/packages/WDI/index.html) package. One advantage to using this package is that the data was already in long format. With the former method, we needed to convert the data frames from wide format.
+The code to pull the data and put it in a data frame are below. We explored two ways to access the data. Our initial method was to identify the URLs that link to the three datasets, then loop through those URLs to download, unzip, and read the data into R for processing. Due to the API's intermittent downtime, our next process for accessing the data was to use the [`WDI`](https://cran.r-project.org/web/packages/WDI/index.html) package. One advantage to using this package is that the data was already in long format. With the former method, we needed to convert the data frames from wide format. As a convenience, the data in CSV format is already stored in the same directory as the Rmd file, so it is not required to download the data again.
 
 When processing the data, we only kept the attributes we were interested in keeping, namely country name and code, year, region, and income group. The attribute names were cleaned up for consistency, and attributes were added to identify the indicator type (e.g. "Population growth (annual %)"). Next, the three data frames were unioned together into one tidy data frame. Lastly, we needed to remove rows that represented various collections of countries as identified by the World Bank (e.g. "Small states", "European Union"). While it would be interesting to see how these bins of countries interacted with the data, we needed to limit the scope of our exploration to geographic region and income group for the sake of brevity. 
 
@@ -53,27 +53,9 @@ for (p in needed_packages) {
      }
     library(p, character.only = TRUE)
 }
-
-
-# library(data.table)
-# library(tidyverse)
-# library(shiny)
 ```
 
 ```{r Read in files locally}
-# install.packages("rstudioapi", repos = "http://cran.us.r-project.org"); library(rstudioapi)
-
-# project_dir <- dirname(rstudioapi::getSourceEditorContext()$path)
-# project_files <- list.files(project_dir)
-# csv_files <- project_files[project_files %like% "csv$"]
-
-# for (i in csv_files) {
-#      file_path <- paste0(project_dir,"/",i)
-#      csv <- fread(file_path)
-#      new_header <- str_to_upper(gsub(pattern = " ", replacement = "_", x = names(csv)))
-#      setnames(csv, new_header)
-#      assign(i, csv)
-# }
 
 pop_growth_df <- fread("./API_SP.POP.GROW_DS2_en_csv_v2.csv")
 new_header <- str_to_upper(gsub(pattern = " ", replacement = "_", x = names(pop_growth_df)))
@@ -84,7 +66,7 @@ pop_growth_meta <- fread("./Metadata_Country_API_SP.POP.GROW_DS2_en_csv_v2.csv")
 new_header <- str_to_upper(gsub(pattern = " ", replacement = "_", x = names(pop_growth_meta)))
 setnames(pop_growth_meta, new_header)
 pop_growth_df <- merge(pop_growth_df, subset(pop_growth_meta, select=-c(4,5,6)), by = "COUNTRY_CODE")
-# 
+
 pop_df <- fread("./API_SP.POP.TOTL_DS2_en_csv_v2.csv")
 new_header <- str_to_upper(gsub(pattern = " ", replacement = "_", x = names(pop_df)))
 setnames(pop_df, new_header)
@@ -100,10 +82,7 @@ setnames(energy_df, new_header)
 energy_df_meta <- fread("./Metadata_Country_API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv")
 new_header <- str_to_upper(gsub(pattern = " ", replacement = "_", x = names(energy_df_meta)))
 setnames(energy_df_meta, new_header)
-
 energy_df <- merge(energy_df, subset(energy_df_meta, select=-c(4,5,6)), by = "COUNTRY_CODE")
-# 
-# tidy_pop_energy <- rbind(pop_growth_merged, pop_merged, energy_merged)
 ```
 
 
