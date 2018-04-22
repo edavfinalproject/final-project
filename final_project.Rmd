@@ -12,20 +12,24 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE,
                       message = FALSE)
 ```
 
-
 ### Introduction
 
-While the debate about whether human intervention has impacted the pace of climate change is all but settled (it has), the search for solutions to averting the most harmful effects of human activity on climate change is just beginning. Research has shown that one of the primary causes of climate change is the burning of fossil fuels, whose rate has been steadily growing, as shown in Figure 1. In *Prosperity Without Growth*, Tim Jackson argues that humankind cannot continue to realize advances in prosperity through the continued consumption of natural resources, pointing out that staying on the current trajectory of resource consumption is not an unsustainable endeavor [@prosperity-growth]. To the point, Jackson urges researchers and policymakers to explore sustainable avenues of global development.
+While the debate about whether human intervention has impacted the pace of climate change is all but settled (it has), the search for solutions to averting the most harmful effects of human activity on climate change is just beginning. Research has shown that one of the primary causes of climate change is the burning of fossil fuels, whose rate has been steadily growing, as shown in Figure 3-1. In *Prosperity Without Growth*, Tim Jackson argues that humankind cannot continue to realize advances in prosperity through the continued consumption of natural resources, pointing out that staying on the current trajectory of resource consumption is not an unsustainable endeavor [@prosperity-growth]. To the point, Jackson urges researchers and policymakers to explore sustainable avenues of global development.
 
-A common trope which is brought up in most discussions of sustainable development is the questions of population: many observers claim that population growth is a critical contributing factor to increased energy consumption, arguing that finding ways to curb population growth could curtail the consumption of natural resources and move us closer towards sustainable development. We are skeptical of this claim and think that it needs testing. Is it fair to place the blame for increased energy consumption on developing countries with high population growth, when many Western countries, especially the United States, are consuming far more energy per person? Are population and energy consumption even correlated? If so, does this correlation hold true at a global, regional, and country level? We believe exploratory data analysis is a fantastic technique to help answer these, and other questions regarding sustainable development and population growth. Therefore, **the primary goal of this project is to explore and define the characteristics of the relationship between energy use and population over time.** 
+A common trope which is brought up in most discussions of sustainable development is the questions of population: many observers claim that population growth is a critical contributing factor to increased energy consumption, arguing that finding ways to curb population growth is a top priority for curtailing the consumption of natural resources and move us closer towards sustainable development. 
+
+We are skeptical that this argument is oversimplified and needs further exploration. Is it fair to place the blame for increased energy consumption on developing countries with high population growth, when many Western countries, especially the United States, are consuming far more energy per person? Are population and energy consumption even correlated? If so, does this correlation hold true at a global, regional, and country level? We believe exploratory data analysis is a fantastic technique to help answer these, and other questions regarding sustainable development and population growth. Therefore, **the primary goal of this project is to explore and define the characteristics of the relationship between energy use and population over time.** 
 
 A secondary objective of this project (and our presentation to the class) is to showcase the important impact that Data Science can have on the field of sustainable development. While finance, advertising, marketing, sales, and tech for the sake of tech all have their place and time, we claim that there are a plethora of other fields which could benefit from the insights provided by Data Science tools and techniques.
 
-All team members contriubuted at various points to data collection, data cleaning, graph creation, and theoretical discussion. We divided responsibility for the interactive component:
+All team members contributed at various points to data collection, data cleaning, graph creation, and theoretical discussion. We divided responsibility for the interactive component:
 
 * David Schemitsch: "Country Comparison"
 * Isaac Wainstein: "Energy vs. Population"
 * Wyatt Ford: "Individual Countries" and "Country Races"
+
+For the sake of readability, we chose to show no code in our final report. However, all text and code can be seen in the .rmd file on github at the link below.
+https://github.com/edavfinalproject/final-project/blob/master/final_project.Rmd
 
 ### Description of Data
 
