@@ -94,6 +94,7 @@ energy_df <- energy_df %>% mutate(INDICATOR_NAME = "Energy use (kg of oil equiva
 # CREATE INITIAL TIDY DATAFRAME
 tidy_pop_energy <- rbind(pop_growth_df, pop_df, energy_df)
 tidy_pop_energy <- tidy_pop_energy %>% 
+     mutate(REGION = str_trim(REGION)) %>% #trailing whitespace in some regions
     mutate(YEAR = as.numeric(YEAR)) %>%
     mutate(VALUE = as.numeric(VALUE))
 
@@ -542,7 +543,7 @@ tidy_barplot_energy_tot <- scatter_data %>%
 
 setnames(tidy_barplot_energy_tot, "energy_tot", "VALUE")
 
-tidy_barplot_energy_tot <- tidy_barplot_energy_tot %>% mutate(VALUE = (VALUE * 1000000))
+# tidy_barplot_energy_tot <- tidy_barplot_energy_tot %>% mutate(VALUE = (VALUE * 1000000))
 
 tidy_barplot_energy_tot <- filter(tidy_barplot_energy_tot,
                                   !is.na(VALUE))
