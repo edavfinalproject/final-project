@@ -942,11 +942,10 @@ ggplot(data=indonesia_uk_data, aes(x=YEAR, y=energy_percap, col=COUNTRY_NAME)) +
 ```
 
 ### Conclusion
-Our biggest lesson learned was our hypothesis that the strong direct relationship between energy and population growth was not the full story was correct. Simply when breaking down by year the correlation was less visible. We hope this inspires other as our team has been to think deeply about how population and energy factor into our paths to sustainability.
+Our biggest lesson learned was our hypothesis that the strong direct relationship between energy and population growth was not the full story was correct. Simply when breaking down by country the correlation was less visible. We hope this inspires others, as our team has been, to think deeply about how population and energy factor into our paths to sustainability.
 
 Our team was inspired by depth of what could be explored with just the variable energy use, population, year, and country. Nonetheless there are numerous other factors in the relationship between population and energy use. These include economic, health, wealth, and many more. Including these factors in future analyses would be beneficial. Yet the numerous insights is also a challenge. There are many figures that can be made that are not insightful or can be misleading. 
 
-Our group quickly realized the tidy dataframe could inspire collaboration beyond our team. Future work could involve organizing all the data sources into an organized database with APIs for R, Python, and other languages for researches to use. Furthermore we could create an online environment for researchers to share their explorations of the data. We believe this collaboration could greatly enhance countries to successfully define their paths to sustainability. 
+Our group quickly realized the tidy dataframe could inspire collaboration beyond our team. Future work could involve organizing all the data sources into an organized database with APIs for R, Python, and other languages for researches to use. Furthermore, we could create an online environment for researchers to share their explorations of the data. We believe this collaboration could greatly enhance countries to successfully define their unique paths to sustainability. 
 
-# References
 
