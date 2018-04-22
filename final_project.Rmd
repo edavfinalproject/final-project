@@ -851,48 +851,39 @@ ggplot(data = scatter_data[scatter_data$COUNTRY_NAME == "Indonesia", ],
 
 ### Executive Summary (Presentation-style)
 
-Moving towards the 100% clean energy will require immense research into the relationship between energy and population in order for each country to successfully design and follow their paths to sustainability. In this executive summary we present our key findings from exploring this relationship for future researches to build open as they search for sustainable paths. We also hope this story encourages researches to use the interactive tools above to create their own stories about the relationship between population and energy use.
+Moving towards the 100% clean energy will require immense research into the relationship between energy and population in order for each country to successfully design and follow their paths to sustainability. In this executive summary we present our key findings from exploring this relationship for future researchers to build open as they search for sustainable paths. We also hope this story encourages researches to use the interactive tools above to create their own stories about the relationship between population and energy use.
 
 Figure 5-1 and 5-2 show steady growth of both energy and population. Figure 5-3 shows there is a strong relationship between these two variables.
+
 
 ```{r echo = FALSE}
 # Energy growth
 energy_agg <- aggregate(energy_tot ~ YEAR, scatter_data, sum)
 ggplot(energy_agg, aes(YEAR, energy_tot)) + geom_line() +
-  labs(title="Figure 5-1. Energy and Population Growth", 
-       x="YEAR", 
+  labs(title="Figure 5-1. Energy Growth", 
+       x="Year", 
        y="Energy use (teragrams of oil equivelent)") +
-  coord_cartesian(xlim=c(1975, 2010)) +
-  theme(axis.text.x=element_blank())
+  coord_cartesian(xlim=c(1975, 2010)) + 
+  scale_y_continuous(labels = scales::comma)
 
 # Population growth
 pop_agg <- aggregate(pop_tot ~ YEAR, scatter_data, sum)
 ggplot(pop_agg, aes(YEAR, pop_tot)) + geom_line() +
   labs(title="Figure 5-2. Population Growth", 
-       x="YEAR", 
+       x="Year", 
        y="Population (millions)") +
   coord_cartesian(xlim=c(1975, 2010)) +
-  theme(axis.text.x=element_blank())
-
-pop_energy_agg <- cbind(pop_agg, energy_agg)
-ggplot(data = pop_energy_agg, 
-       aes(x=pop_tot, y=energy_tot)) +
-  geom_point(size=5) + 
-  labs(title="Figure 5-3.. World Energy vs. Population",
-       x="Population (millions)",
-       y="Energy use (teragrams of oil equivelent)") + 
-  scale_x_continuous(labels = scales::comma) + scale_y_continuous(labels = scales::comma) +
-  theme(axis.text.x=element_blank())
+  scale_y_continuous(labels = scales::comma)
 
 ```
 
-However, we see there is a lot of information hidden when average over the entire world. Figure 5-3 below shows the relationship between energy use and population for each country in 2010.
+However, we see there is a lot of information hidden when average over the entire world. Figure 5-4 below shows the relationship between energy use and population for each country in 2010. 
 
-```{r echo = FALSE}
+```{r echo = FALSE, fig.width=20}
 ggplot(data = scatter_data[scatter_data$YEAR == 2010, ], 
        aes(x=pop_tot, y=energy_tot, col=REGION)) +
   geom_point(size=5) + 
-  labs(title="Figure 5-4. Energy vs. Population (2010)",
+  labs(title="Figure 5-3. Energy vs. Population (2010)",
        x="Population (millions)",
        y="Energy use (teragrams of oil equivelent)") + 
   coord_cartesian(xlim=c(0, 1500), ylim=c(0, 3000)) +
@@ -901,36 +892,13 @@ ggplot(data = scatter_data[scatter_data$YEAR == 2010, ],
 
 ```
 
-From the scatter we immediately see there are outliers. Figures 5-4 and 5-5 below show the unequal distribution of energy and population. For example, China and the US account for X% of the worlds energy use, and China and India account for X% of the worlds population.
-
-```{r echo = FALSE}
-
-ggplot(data = scatter_data[scatter_data$YEAR == 2010, ], 
-       aes(x = reorder(COUNTRY_CODE, energy_tot), y = energy_tot)) +
-  geom_col() +   
-  labs(title="Figure 5-5. Distribution of Energy (2010)",
-       x="Country",
-       y="Energy use (teragrams of oil equivelent)") + 
-  scale_y_continuous(labels = scales::comma)
-
-ggplot(data = scatter_data[scatter_data$YEAR == 2010, ], 
-       aes(x = reorder(COUNTRY_CODE, pop_tot), y = pop_tot)) +
-  geom_col() +   
-  labs(title="Figure 5-6. Distribution of Population (2010)",
-       x="Country",
-       y="Population (Millions)") + 
-  scale_y_continuous(labels = scales::comma)
-
-```
-
-
-We can see these countries took different path to be outliers.
-```{r echo = FALSE}
+From the scatter we immediately see there are outliers, specifically China, India, and the United States. The figure below shows these countries took different path to be outliers.
+```{r echo = FALSE, fig.width=20}
 # Make plot
 ggplot(data = scatter_data[scatter_data$COUNTRY_NAME %in% c("China", "United States", "India"), ], 
        aes(x=pop_tot, y=energy_tot, col=COUNTRY_NAME)) +
   geom_point(size=5) + 
-  labs(title="Figure 5-7. Paths of Energy Growth",
+  labs(title="Figure 5-4. Paths of Energy Growth",
        x="Population (millions)",
        y="Energy use (teragrams of oil equivelent)") + 
   coord_cartesian(xlim=c(0, 1500), ylim=c(0, 3000)) +
@@ -938,14 +906,14 @@ ggplot(data = scatter_data[scatter_data$COUNTRY_NAME %in% c("China", "United Sta
 
 ```
 
-We need to determine the right path for each country. Below we see the United Kingdom has decreasing energy use per capita while Indonesia is increasing. yet looking closely reveals that the United Kingdom has three times the energy use per capita as Indonesia. Hence, should we be trying to shrink the UK to Indonesia? Is it fair to let Indonesia to get to the level of the UK?  These are just some of the ethical questions we must face as we find sustainable paths for all countries.
+We need to determine the right path for each country, and since each country is starting from a different spot, there is not one path for all countries to follow. Below we see the United Kingdom has decreasing energy use per capita while Indonesia is increasing. Yet looking closely reveals that the United Kingdom has three times the energy use per capita as Indonesia. Hence, should we be trying to shrink the UK to Indonesia? Is it fair to let Indonesia to get to the level of the UK?  These are just some of the ethical questions we must face as we find the sustainable path for each country to follow.
 
 ```{r echo = FALSE}
 # United Kingdom
 ggplot(data = scatter_data[scatter_data$COUNTRY_NAME == "United Kingdom", ], 
        aes(x=YEAR, y=energy_percap)) +
   geom_line() + 
-  labs(title="Figure 5-8. Energy Use Per-Capita (United Kingdom)",
+  labs(title="Figure 5-5. Energy Use Per-Capita (United Kingdom)",
        x="Year",
        y="Energy use per capita (teragrams of oil equivelent)") + 
   scale_y_continuous(labels = scales::comma)
@@ -954,7 +922,7 @@ ggplot(data = scatter_data[scatter_data$COUNTRY_NAME == "United Kingdom", ],
 ggplot(data = scatter_data[scatter_data$COUNTRY_NAME == "Indonesia", ], 
        aes(x=YEAR, y=energy_percap)) +
   geom_line() + 
-  labs(title="Figure 5-9. Energy Use Per-Capita (Indonesia)",
+  labs(title="Figure 5-6. Energy Use Per-Capita (Indonesia)",
        x="Year",
        y="Energy use per capita (teragrams of oil equivelent)") + 
   scale_y_continuous(labels = scales::comma)
@@ -965,7 +933,7 @@ ggplot(data = scatter_data[scatter_data$COUNTRY_NAME == "Indonesia", ],
 indonesia_uk_data <- scatter_data %>% filter(COUNTRY_NAME %in% c("Indonesia", "United Kingdom"))
 ggplot(data=indonesia_uk_data, aes(x=YEAR, y=energy_percap, col=COUNTRY_NAME)) +
   geom_line() +
-  labs(title="Figure 5-10. Energy Use Per-Capita (Indonesia vs. United Kingdom)",
+  labs(title="Figure 5-7. Energy Use Per-Capita (Indonesia vs. United Kingdom)",
        x="Year",
        y="Energy use per capita (teragrams of oil equivalent)") +
   scale_y_continuous(labels=scales::comma) +
@@ -974,11 +942,10 @@ ggplot(data=indonesia_uk_data, aes(x=YEAR, y=energy_percap, col=COUNTRY_NAME)) +
 ```
 
 ### Conclusion
-Our biggest lesson learned was our hypothesis that the strong direct relationship between energy and population growth was not the full story was correct. Simply when breaking down by year the correlation was less visible. We hope this inspires other as our team has been to think deeply about how population and energy factor into our paths to sustainability.
+Our biggest lesson learned was our hypothesis that the strong direct relationship between energy and population growth was not the full story was correct. Simply when breaking down by country the correlation was less visible. We hope this inspires others, as our team has been, to think deeply about how population and energy factor into our paths to sustainability.
 
 Our team was inspired by depth of what could be explored with just the variable energy use, population, year, and country. Nonetheless there are numerous other factors in the relationship between population and energy use. These include economic, health, wealth, and many more. Including these factors in future analyses would be beneficial. Yet the numerous insights is also a challenge. There are many figures that can be made that are not insightful or can be misleading. 
 
-Our group quickly realized the tidy dataframe could inspire collaboration beyond our team. Future work could involve organizing all the data sources into an organized database with APIs for R, Python, and other languages for researches to use. Furthermore we could create an online environment for researchers to share their explorations of the data. We believe this collaboration could greatly enhance countries to successfully define their paths to sustainability. 
+Our group quickly realized the tidy dataframe could inspire collaboration beyond our team. Future work could involve organizing all the data sources into an organized database with APIs for R, Python, and other languages for researches to use. Furthermore, we could create an online environment for researchers to share their explorations of the data. We believe this collaboration could greatly enhance countries to successfully define their unique paths to sustainability. 
 
-# References
 
