@@ -31,19 +31,19 @@ Our team includes:
 
 ### Description of Data
 
-Our project uses three datasets below published by the [World Bank](https://data.worldbank.org/). Each of these datasets contain per country data from 1960 through 2016. 
+Our project uses three datasets below published by the [World Bank](https://data.worldbank.org/):  
 
   1. Population, total
   2. Population growth (annual %)
   3. Energy use (kg of oil equivalent per capita)
 
-In addition to these three dataset we added metadata of region and income group. We determined that including more data at this time would bring too much complexity for the scope of this project. However, we discuss additional metadata as part of the conclusion in the Future Work section.
+Each of these datasets contain per country data from 1960 through 2016. Each of the datasets contains 15,312 observations on eight variables: COUNTRY_NAME, VALUE, YEAR, COUNTRY_CODE, REGION, INCOMEGROUP, INDICATOR_NAME, INDICATOR_CODE. In order to focus the scope of this project and reduce unnecessary complexity, we decided to focus mainly on each indicator value, Country and year; even so, we did discuss some of the other metadata features (region and income group) as part of our conclusion in the Future Work section.
 
-The data was gathered and accessed using the World Bank's API, cleaned, and combined into one tidy dataframe. Making the tidy dataframe first was critical to collaboration. It allowed us all to have time to explore the data instead of waiting for a final dataset. Also, it made sure the code for the graphs would not change as the data format changed. Finally, it allowed us to easily make graphs with the data organized in the tidy format. Hence, having the dataset was large part of what made this project happen, and thus leads to future work of an R package discussed in the Future Work section.
+The data was gathered and accessed using the World Bank's API, cleaned, and combined into one tidy dataframe. Making one tidy dataframe was a critical step which facilitated future collaboration within our team, allowing us all to have time to explore the data on our own. Furthermore, having this tidy dataframe helped ensure that the code for graphs would not change as the data format changed. Finally, it allowed us to easily make graphs designed for "tidy" data. This dataset was the linchpin which made this project possible, and thus naturally suggests future work on an R package, which is discussed later on in the Future Work section. 
 
-The code to pull the data and put it in a data frame are below. We explored two ways to access the data. Our initial method was to identify the URLs that link to the three datasets, then loop through those URLs to download, unzip, and read the data into R for processing. Due to the API's intermittent downtime, our next process for accessing the data was to use the [`WDI`](https://cran.r-project.org/web/packages/WDI/index.html) package. One advantage to using this package is that the data were already in long format. With the former method, we needed to convert the data frames from wide format.
+The code to pull the data and put it in a data frame are below. We explored two ways to access the data. Our initial method was to identify the URLs that link to the three datasets, then loop through those URLs to download, unzip, and read the data into R for processing. Due to the API's intermittent downtime, our next process for accessing the data was to use the [`WDI`](https://cran.r-project.org/web/packages/WDI/index.html) package. One advantage to using this package is that the data was already in long format. With the former method, we needed to convert the data frames from wide format.
 
-When processing the data, we only kept the attributes we were interested in keeping, namely country name and code, year, region, and income group. The attribute names were cleaned up for consistency, and attributes were added to identify the indicator type (e.g. "Population growth (annual %)"). Next, the three data frames were unioned together into one tidy data frame. Lastly, we needed to remove rows that represented various collections of countries as identified by the World Bank (e.g. "Small states", "European Union"). While it would be interesting to see how these bins of countries interacted with the data, we needed to limit the scope of our exploration to geographic region and income group for the brevity's sake. 
+When processing the data, we only kept the attributes we were interested in keeping, namely country name and code, year, region, and income group. The attribute names were cleaned up for consistency, and attributes were added to identify the indicator type (e.g. "Population growth (annual %)"). Next, the three data frames were unioned together into one tidy data frame. Lastly, we needed to remove rows that represented various collections of countries as identified by the World Bank (e.g. "Small states", "European Union"). While it would be interesting to see how these bins of countries interacted with the data, we needed to limit the scope of our exploration to geographic region and income group for the sake of brevity. 
 
 ```{r Install and/or load required libraries}
 # Install and/or load required libraries
@@ -63,7 +63,6 @@ for (p in needed_packages) {
 
 ```{r download World Bank data via the WDI package}
  # Alternate way to download World Bank data via the WDI package
-
 meta_df <- data.frame(WDI_data$country)
 meta_df <- select(meta_df, iso3c, country, region, income)
 setnames(meta_df, c("COUNTRY_CODE", "COUNTRY_NAME", "REGION", "INCOME"))
@@ -76,7 +75,6 @@ setnames(pop_growth_df, c("COUNTRY_NAME", "VALUE", "YEAR",
 pop_growth_df <- pop_growth_df %>% mutate(INDICATOR_NAME = "Population growth (annual %)") %>%
     mutate(INDICATOR_CODE = "SP.POP.GROW")
 
-
 pop_df <- WDI(country = "all", indicator = "SP.POP.TOTL", 
                      start = 1960, end = 2017, extra = TRUE)
 pop_df <- select(pop_df, country, SP.POP.TOTL, year, iso3c, region, income)
@@ -84,8 +82,6 @@ setnames(pop_df, c("COUNTRY_NAME", "VALUE", "YEAR",
                    "COUNTRY_CODE", "REGION", "INCOMEGROUP"))
 pop_df <- pop_df %>% mutate(INDICATOR_NAME = "Population, total") %>%
     mutate(INDICATOR_CODE = "SP.POP.TOTL")
-
-
 
 energy_df <- WDI(country = "all", indicator = "EG.USE.PCAP.KG.OE", 
                      start = 1960, end = 2017, extra = TRUE)
@@ -95,37 +91,40 @@ setnames(energy_df, c("COUNTRY_NAME", "VALUE", "YEAR",
 energy_df <- energy_df %>% mutate(INDICATOR_NAME = "Energy use (kg of oil equivalent per capita)") %>%
     mutate(INDICATOR_CODE = "EG.USE.PCAP.KG.OE")
 
+# CREATE INITIAL TIDY DATAFRAME
 tidy_pop_energy <- rbind(pop_growth_df, pop_df, energy_df)
-
 tidy_pop_energy <- tidy_pop_energy %>% 
     mutate(YEAR = as.numeric(YEAR)) %>%
     mutate(VALUE = as.numeric(VALUE))
 
+# LIST OF COUNTRIES WHICH ARE NOT ACTUALLY COUNTRIES
 not_country = c("Arab World", "Central Europe and the Baltics", "Early-demographic dividend", "Europe & Central Asia (excluding high income)", "Euro area", "Fragile and conflict affected situations", "Heavily indebted poor countries (HIPC)", "IBRD only","IDA total", "Not classified", "Latin America & Caribbean (excluding high income)", "Latin America & Caribbean", "Low income", "Low & middle income", "Late-demographic dividend", "Middle income", "North America", "Post-demographic dividend", "Small states", "East Asia & Pacific (IDA & IBRD countries)", "Latin America & the Caribbean (IDA & IBRD countries)", "Middle East & North Africa (IDA & IBRD countries)", "South Asia (IDA & IBRD)", "World", "Upper middle income", "Sub-Saharan Africa (IDA & IBRD countries)", "Europe & Central Asia (IDA & IBRD countries)", "Sub-Saharan Africa", "Sub-Saharan Africa (excluding high income)", "Pacific island small states", "Pre-demographic dividend", "Other small states", "OECD members", "Middle East & North Africa (excluding high income)", "Middle East & North Africa", "Lower middle income", "Least developed countries: UN classification", "IDA only", "IDA blend", "IDA & IBRD total", "High income", "European Union", "Europe & Central Asia", "East Asia & Pacific", "East Asia & Pacific (excluding high income)", "Caribbean small states", "South Asia")
 
+# FILTER SO ONLY COUNTRIES ARE IN TIDY FRAME, SORT ALPHABETICALLY
 tidy_pop_energy <- filter(tidy_pop_energy, !COUNTRY_NAME %in% not_country)
 tidy_pop_energy <- tidy_pop_energy %>% arrange(COUNTRY_NAME)
 
-#Adding in energy total (for Tab1 Graphs)
-# Divide population by 1000000 for scaling
+# ADDING IN ENERGY TOTAL (FOR TAB 1)
+# DIVIDE POPULATION BY 1 MILLION FOR SCALING; RENAME INDICATOR
 pop_df <- pop_df %>% mutate(VALUE = VALUE/1000000) %>% 
   mutate(INDICATOR_NAME = c("Population (millions)"))
-# Divide Energy per capita by 1000; rename to reflect new scale
+# DIVIDE ENERGY PER CAPITA BY 1000; RENAME INDICATOR
 energy_df <- energy_df %>% mutate(VALUE = VALUE/1000) %>%
   mutate(INDICATOR_NAME = c("Energy use per capita (teragrams of oil equivalent)"))
-
-# Create energy_total column
+# CREATE ENERGY TOTAL COLUMN
 energy_total_df <- energy_df %>% mutate(VALUE = VALUE * pop_df$VALUE) %>% mutate(INDICATOR_NAME = c("Energy use total (teragrams of oil equivalent)"))
 
+# ADD ENERGY TOTAL TO DATAFRAME (FOR TAB !)
 tidy_pop_energy_for_tab_1 <- rbind(pop_growth_df, pop_df, energy_df, energy_total_df)
 tidy_pop_energy_for_tab_1 <- tidy_pop_energy_for_tab_1 %>%
   mutate(YEAR = as.numeric(YEAR)) %>%
   mutate(VALUE = as.numeric(VALUE))
 
-# Overview stats
+# CREATE DATAFRAME OF SUMMARY REGION STATS
 tidy_overview <- filter(tidy_pop_energy_for_tab_1, COUNTRY_NAME %in% c("World", "East Asia & Pacific", "Europe & Central Asia", "Latin America & Caribbean", "Middle East & North Africa", "North America", "South Asia", "Sub-Saharan Africa"))
 tidy_overview <- tidy_overview %>% arrange(COUNTRY_NAME)
 
+# REMOVE NON-COUNTRIES FROM TAB 1 DATAFRAME
 tidy_pop_energy_for_tab_1 <- filter(tidy_pop_energy_for_tab_1, !COUNTRY_NAME %in% not_country)
 tidy_pop_energy_for_tab_1 <- tidy_pop_energy_for_tab_1 %>% arrange(COUNTRY_NAME)
 ```
@@ -211,11 +210,7 @@ tidy_pop_energy_for_tab_1 <- tidy_pop_energy_for_tab_1 %>% arrange(COUNTRY_NAME)
 ```
 
 
-
-
-
 ### Analysis of Data Quality
-
 
 There is a lot of missing data before 1971 and after 2012.
 
