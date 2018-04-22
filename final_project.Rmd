@@ -51,7 +51,7 @@ needed_packages <- c("data.table", "tidyverse", "shiny", "WDI", "extracat")
 
 for (p in needed_packages) {
      if (!(p %in% installed.packages())){
-          install.packages(p)
+          install.packages(p, repos = "http://cran.us.r-project.org")
      }
     library(p, character.only = TRUE)
 }
@@ -63,43 +63,105 @@ for (p in needed_packages) {
 ```
 
 ```{r Read in files locally}
-install.packages("rstudioapi"); library(rstudioapi)
+# install.packages("rstudioapi", repos = "http://cran.us.r-project.org"); library(rstudioapi)
 
+# project_dir <- dirname(rstudioapi::getSourceEditorContext()$path)
+# project_files <- list.files(project_dir)
+# csv_files <- project_files[project_files %like% "csv$"]
+
+# for (i in csv_files) {
+#      file_path <- paste0(project_dir,"/",i)
+#      csv <- fread(file_path)
+#      new_header <- str_to_upper(gsub(pattern = " ", replacement = "_", x = names(csv)))
+#      setnames(csv, new_header)
+#      assign(i, csv)
+# }
+
+pop_growth_df <- fread("./API_SP.POP.GROW_DS2_en_csv_v2.csv")
+new_header <- str_to_upper(gsub(pattern = " ", replacement = "_", x = names(pop_growth_df)))
+setnames(pop_growth_df, new_header)
+
+rm(API_SP.POP.GROW_DS2_en_csv_v2.csv)
+pop_growth_meta <- fread("./Metadata_Country_API_SP.POP.GROW_DS2_en_csv_v2.csv")
+new_header <- str_to_upper(gsub(pattern = " ", replacement = "_", x = names(pop_growth_meta)))
+setnames(pop_growth_meta, new_header)
+pop_growth_df <- merge(pop_growth_df, subset(pop_growth_meta, select=-c(4,5,6)), by = "COUNTRY_CODE")
+# 
+pop_df <- fread("./API_SP.POP.TOTL_DS2_en_csv_v2.csv")
+new_header <- str_to_upper(gsub(pattern = " ", replacement = "_", x = names(pop_df)))
+setnames(pop_df, new_header)
+pop_df$V64 <- NULL
+pop_meta <- fread("./Metadata_Country_API_SP.POP.TOTL_DS2_en_csv_v2.csv")
+new_header <- str_to_upper(gsub(pattern = " ", replacement = "_", x = names(pop_meta)))
+setnames(pop_meta, new_header)
+pop_df <- merge(pop_df, subset(pop_meta, select=-c(4,5,6)), by = "COUNTRY_CODE")
+
+energy_df <- fread("./API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv")
+new_header <- str_to_upper(gsub(pattern = " ", replacement = "_", x = names(energy_df)))
+setnames(energy_df, new_header)
+energy_df_meta <- fread("./Metadata_Country_API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv")
+new_header <- str_to_upper(gsub(pattern = " ", replacement = "_", x = names(energy_df_meta)))
+setnames(energy_df_meta, new_header)
+
+energy_df <- merge(energy_df, subset(energy_df_meta, select=-c(4,5,6)), by = "COUNTRY_CODE")
+# 
+# tidy_pop_energy <- rbind(pop_growth_merged, pop_merged, energy_merged)
 ```
 
 
 ```{r download World Bank data via the WDI package}
  # Alternate way to download World Bank data via the WDI package
-meta_df <- data.frame(WDI_data$country)
-meta_df <- select(meta_df, iso3c, country, region, income)
-setnames(meta_df, c("COUNTRY_CODE", "COUNTRY_NAME", "REGION", "INCOME"))
 
-pop_growth_df <- WDI(country = "all", indicator = "SP.POP.GROW", 
-                     start = 1960, end = 2017, extra = TRUE)
-pop_growth_df <- select(pop_growth_df, country, SP.POP.GROW, year, iso3c, region, income)
-setnames(pop_growth_df, c("COUNTRY_NAME", "VALUE", "YEAR", 
-                          "COUNTRY_CODE", "REGION", "INCOMEGROUP"))
-pop_growth_df <- pop_growth_df %>% mutate(INDICATOR_NAME = "Population growth (annual %)") %>%
-    mutate(INDICATOR_CODE = "SP.POP.GROW")
+# meta_df <- data.frame(WDI_data$country)
+# meta_df <- select(meta_df, iso3c, country, region, income)
+# setnames(meta_df, c("COUNTRY_CODE", "COUNTRY_NAME", "REGION", "INCOME"))
+# 
+# pop_growth_df <- WDI(country = "all", indicator = "SP.POP.GROW", 
+#                      start = 1960, end = 2017, extra = TRUE)
+# pop_growth_df <- select(pop_growth_df, country, SP.POP.GROW, year, iso3c, region, income)
+# setnames(pop_growth_df, c("COUNTRY_NAME", "VALUE", "YEAR", 
+#                           "COUNTRY_CODE", "REGION", "INCOMEGROUP"))
+# pop_growth_df <- pop_growth_df %>% mutate(INDICATOR_NAME = "Population growth (annual %)") %>%
+#     mutate(INDICATOR_CODE = "SP.POP.GROW")
+# 
+# pop_df <- WDI(country = "all", indicator = "SP.POP.TOTL", 
+#                      start = 1960, end = 2017, extra = TRUE)
+# pop_df <- select(pop_df, country, SP.POP.TOTL, year, iso3c, region, income)
+# setnames(pop_df, c("COUNTRY_NAME", "VALUE", "YEAR", 
+#                    "COUNTRY_CODE", "REGION", "INCOMEGROUP"))
+# pop_df <- pop_df %>% mutate(INDICATOR_NAME = "Population, total") %>%
+#     mutate(INDICATOR_CODE = "SP.POP.TOTL")
+# 
+# energy_df <- WDI(country = "all", indicator = "EG.USE.PCAP.KG.OE", 
+#                      start = 1960, end = 2017, extra = TRUE)
+# energy_df <- select(energy_df, country, EG.USE.PCAP.KG.OE, year, iso3c, region, income)
+# setnames(energy_df, c("COUNTRY_NAME", "VALUE", "YEAR", 
+#                       "COUNTRY_CODE", "REGION", "INCOMEGROUP"))
+# energy_df <- energy_df %>% mutate(INDICATOR_NAME = "Energy use (kg of oil equivalent per capita)") %>%
+#     mutate(INDICATOR_CODE = "EG.USE.PCAP.KG.OE")
 
-pop_df <- WDI(country = "all", indicator = "SP.POP.TOTL", 
-                     start = 1960, end = 2017, extra = TRUE)
-pop_df <- select(pop_df, country, SP.POP.TOTL, year, iso3c, region, income)
-setnames(pop_df, c("COUNTRY_NAME", "VALUE", "YEAR", 
-                   "COUNTRY_CODE", "REGION", "INCOMEGROUP"))
-pop_df <- pop_df %>% mutate(INDICATOR_NAME = "Population, total") %>%
-    mutate(INDICATOR_CODE = "SP.POP.TOTL")
-
-energy_df <- WDI(country = "all", indicator = "EG.USE.PCAP.KG.OE", 
-                     start = 1960, end = 2017, extra = TRUE)
-energy_df <- select(energy_df, country, EG.USE.PCAP.KG.OE, year, iso3c, region, income)
-setnames(energy_df, c("COUNTRY_NAME", "VALUE", "YEAR", 
-                      "COUNTRY_CODE", "REGION", "INCOMEGROUP"))
-energy_df <- energy_df %>% mutate(INDICATOR_NAME = "Energy use (kg of oil equivalent per capita)") %>%
-    mutate(INDICATOR_CODE = "EG.USE.PCAP.KG.OE")
+pop_df <- pop_df %>%
+    gather(key = "YEAR", value = "VALUE", -COUNTRY_CODE, -COUNTRY_NAME,
+           -INDICATOR_NAME, -INDICATOR_CODE, -REGION, -INCOMEGROUP) %>%
+    mutate(YEAR = as.numeric(YEAR)) %>%
+    mutate(VALUE = as.numeric(VALUE))
+energy_df <- energy_df %>%
+    gather(key = "YEAR", value = "VALUE", -COUNTRY_CODE, -COUNTRY_NAME,
+           -INDICATOR_NAME, -INDICATOR_CODE, -REGION, -INCOMEGROUP) %>%
+    mutate(YEAR = as.numeric(YEAR)) %>%
+    mutate(VALUE = as.numeric(VALUE))
+pop_growth_df <- pop_growth_df %>%
+    gather(key = "YEAR", value = "VALUE", -COUNTRY_CODE, -COUNTRY_NAME,
+           -INDICATOR_NAME, -INDICATOR_CODE, -REGION, -INCOMEGROUP) %>%
+    mutate(YEAR = as.numeric(YEAR)) %>%
+    mutate(VALUE = as.numeric(VALUE))
 
 # CREATE INITIAL TIDY DATAFRAME
-tidy_pop_energy <- rbind(pop_growth_df, pop_df, energy_df)
+tidy_pop_energy <- rbind(pop_growth_df, pop_df, energy_df, fill = TRUE)
+tidy_pop_energy$V63 <- NULL
+
+
+
 tidy_pop_energy <- tidy_pop_energy %>% 
      mutate(REGION = str_trim(REGION)) %>% #trailing whitespace in some regions
     mutate(YEAR = as.numeric(YEAR)) %>%
