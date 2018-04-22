@@ -771,7 +771,7 @@ ggplot(data = scatter_data[scatter_data$YEAR == 2010, ],
 	       	
 
 #### Distribution across countires
-We immediately notice from Figure 4-# there is large inequality of energy use. China and USA are the two outliers accounting for nearly 40% of the energy use from those countries alone. The top 10 countries account for 65% and the top 50 account for 93%. This indicates our energy use is high concentrated.
+We immediately notice from Figure 4-7 there is large inequality of energy use. China and USA are the two outliers accounting for nearly 40% of the energy use from those countries alone. The top 10 countries account for 65% and the top 50 account for 93%. This indicates the world's energy use is highly concentrated.
 
 ```{r echo = FALSE}
 
