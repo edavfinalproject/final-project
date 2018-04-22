@@ -497,7 +497,7 @@ navbarPage("Interactive Component",
                         wellPanel(
                           selectInput(inputId = "tab1country", label = "Country:",
                                       choices = as.vector(unique(tidy_pop_energy$COUNTRY_NAME)),
-                                      selected = as.vector(unique(tidy_pop_energy$COUNTRY_NAME))[207])
+                                      selected = as.vector(unique(tidy_pop_energy$COUNTRY_NAME))[208])
                         )
                     )
                 )
@@ -577,7 +577,7 @@ navbarPage("Interactive Component",
                        column(
                          selectInput(inputId = "tab4country1", label = "Country 1:",
                                      choices = as.vector(unique(tidy_pop_energy$COUNTRY_NAME)),
-                                     selected = as.vector(unique(tidy_pop_energy$COUNTRY_NAME))[207]), width=3),
+                                     selected = as.vector(unique(tidy_pop_energy$COUNTRY_NAME))[208]), width=3),
                        column(
                          selectInput(inputId = "tab4country2", label = "Country 2:",
                                      choices = as.vector(unique(tidy_pop_energy$COUNTRY_NAME)),
