@@ -14,15 +14,15 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE,
 
 ### Introduction
 
-The debate about whether human intervention is causing climate change is ending, but the search for how to avert its most harmful affects is just beginning. One of the primary casues of climate change is our burning of Fossil Fuels, which has been steadily growithing as showing in figure 1.
+The debate about whether human intervention is causing climate change is ending, but the search for how to avert its most harmful affects is just beginning. One of the primary causes of climate change is our burning of Fossil Fuels, which has been steadily growing as showing in figure 1.
 
-In the important book "Prosperity Without Growth" the Author Tim Jackson we must find a way to grow our prosperity, without continuing to use more and more resources. Keeping on the same trajectory is ultimitely unsustainable in that it will have catestrophic affects to our climate, or the resources will simply run out.
+In the important book "Prosperity Without Growth" the Author Tim Jackson we must find a way to grow our prosperity, without continuing to use more and more resources. Keeping on the same trajectory is ultimately unsustainable in that it will have catastrophic affects to our climate, or the resources will simply run out.
 
-Many propoponts will say the problem is population. If we can find a way to stop population growth we could stop the growth of energy and become a more sustainable society. 
+Many proponents will say the problem is population. If we can find a way to stop population growth we could stop the growth of energy and become a more sustainable society. 
 
-However, our team thinks this claim needs testing. Is it fair to blame the developing countries with high population growth when many western countires, especially the USA, are consuming far more energy per person? Does the correlation of population and energy shown above still hold true when all countries are not included? We believe exploratory data analysis is a fantastic tool to help answer these questions, and therefore **the primary goal of this project is to explore and define the characteristics of the relationship between energy use and population over time.** 
+However, our team thinks this claim needs testing. Is it fair to blame the developing countries with high population growth when many western countries, especially the USA, are consuming far more energy per person? Does the correlation of population and energy shown above still hold true when all countries are not included? We believe exploratory data analysis is a fantastic tool to help answer these questions, and therefore **the primary goal of this project is to explore and define the characteristics of the relationship between energy use and population over time.** 
 
-A secondary purpose of the project and presentaiton to the class is to showcase and important field that needs Data Science. In a field dominated by finance, advertising, marketing, sales, and tech for the sake of tech, we claim there is more to what a Data Scientist can do.
+A secondary purpose of the project and presentation to the class is to showcase and important field that needs Data Science. In a field dominated by finance, advertising, marketing, sales, and tech for the sake of tech, we claim there is more to what a Data Scientist can do.
 
 
 # TODO: List team members and a description of how each contributed to the project.
@@ -41,11 +41,11 @@ Our project uses three datasets below published by the [World Bank](https://data
   2. Population growth (annual %)
   3. Energy use (kg of oil equivalent per capita)
 
-In addition to these three dataset we added metadata of region and income group. We determined that including more data at this time would bring too much complexity for the scope of this project. However, we discuss additoinal metadata as part of the conclusion in the Future Work section.
+In addition to these three dataset we added metadata of region and income group. We determined that including more data at this time would bring too much complexity for the scope of this project. However, we discuss additional metadata as part of the conclusion in the Future Work section.
 
 The data was gathered and accessed using the World Bank's API, cleaned, and combined into one tidy dataframe. Making the tidy dataframe first was critical to collaboration. It allowed us all to have time to explore the data instead of waiting for a final dataset. Also, it made sure the code for the graphs would not change as the data format changed. Finally, it allowed us to easily make graphs with the data organized in the tidy format. Hence, having the dataset was large part of what made this project happen, and thus leads to future work of an R package discussed in the Future Work section.
 
-The code to pull the data and put it in a data frame are below. We explored two ways to access the data. Our initial method was to identify the URLs that link to the three datasets, then loop through those URLs to download, unzip, and read the data into R for processing. Due to the API's intermittant downtime, our next process for accessing the data was to use the [`WDI`](https://cran.r-project.org/web/packages/WDI/index.html) package. One advantage to using this package is that the data were already in long format. With the former method, we needed to convert the data frames from wide format.
+The code to pull the data and put it in a data frame are below. We explored two ways to access the data. Our initial method was to identify the URLs that link to the three datasets, then loop through those URLs to download, unzip, and read the data into R for processing. Due to the API's intermittent downtime, our next process for accessing the data was to use the [`WDI`](https://cran.r-project.org/web/packages/WDI/index.html) package. One advantage to using this package is that the data were already in long format. With the former method, we needed to convert the data frames from wide format.
 
 When processing the data, we only kept the attributes we were interested in keeping, namely country name and code, year, region, and income group. The attribute names were cleaned up for consistency, and attributes were added to identify the indicator type (e.g. "Population growth (annual %)"). Next, the three data frames were unioned together into one tidy data frame. Lastly, we needed to remove rows that represented various collections of countries as identified by the World Bank (e.g. "Small states", "European Union"). While it would be interesting to see how these bins of countries interacted with the data, we needed to limit the scope of our exploration to geographic region and income group for the brevity's sake. 
 
@@ -224,12 +224,12 @@ tidy_pop_energy_for_tab_1 <- tidy_pop_energy_for_tab_1 %>% arrange(COUNTRY_NAME)
 There is a lot of missing data before 1971 and after 2012.
 
 - line graph with three lines one for each indicator. Y is percent of missing values. X axis is year.
-- histogram of percent of missing data. Each datapoint is a country
+- histogram of percent of missing data. Each data point is a country
 - see what David wrote
 
 
 We represented missing data by using the `visna` function from the `extracat` package.
-The `visna` graphs show the the population data is nearly complete, but the energy use data has a significant amount of missing data. Since the energy use data was the most incomplete, we broke out the data by income level to see if there are any discrepencies in reporting data based on this attribute. In fact, the most common pattern for low-income energy usage is that all yearly observations ar missing. This is not the case for the remaining three income brackets. This discrepancy shows that there are gaps in data collection in certain parts of the world, which will bias any findings that use these data.
+The `visna` graphs show the the population data is nearly complete, but the energy use data has a significant amount of missing data. Since the energy use data was the most incomplete, we broke out the data by income level to see if there are any discrepancies in reporting data based on this attribute. In fact, the most common pattern for low-income energy usage is that all yearly observations are missing. This is not the case for the remaining three income brackets. This discrepancy shows that there are gaps in data collection in certain parts of the world, which will bias any findings that use these data.
 
 
 ```{r Energy use low-income}
@@ -357,17 +357,17 @@ Discuss how data is limited to after 1960, and even then for "Energy Use" it's o
 
 Talk about how in the meta files, there is a Special Notes column for descriptions on how the data was modified or revised. This might indicate the data isn't entirely accurate.
 
-We explored using additional data from the World Bank, namely energy consumption by type as a percentage of total energy consumption. These data show what percentage of energy consumption is from nuclear, non-nuclear renewables, oil, natural gas, and coal. The data take the same format as the data we did use in this project. The initial intention behind using these consumption percentage data was to see if there are any connections between population growth, total energy use, and consumption habits. For example, one hypothethical correlation might be between quickly growing populations and heavy reliance on coal. However, we ultimately decided against using the consumption data in our final analysis.
+We explored using additional data from the World Bank, namely energy consumption by type as a percentage of total energy consumption. These data show what percentage of energy consumption is from nuclear, non-nuclear renewable, oil, natural gas, and coal. The data take the same format as the data we did use in this project. The initial intention behind using these consumption percentage data was to see if there are any connections between population growth, total energy use, and consumption habits. For example, one hypothetical correlation might be between quickly growing populations and heavy reliance on coal. However, we ultimately decided against using the consumption data in our final analysis.
     
 ### Main Analysis (Exploratory Data Analysis)
 
-The main analysis section has been split into the following subsecitons.
-  1. **Overview** - High level representaiton of the relaitonship between energy and population over time.
+The main analysis section has been split into the following subsections.
+  1. **Overview** - High level representation of the relationship between energy and population over time.
   2. **Interactive component** - Tools for observing numerous facets of the data.
-  3. **Findings** - Key insights and challanges the team faced. 
+  3. **Findings** - Key insights and challenges the team faced. 
 
 #### Overview
-As shown in Figure 1-4, energy use is consistently growing. As today the The International Energy Angency reports  that 13.2% of energy in the world comes from renewable sources. (https://www.iea.org/about/faqs/renewableenergy/). Therefore, to replace our energy consumption with 100% clean, renewable source we need to increase our current capacity by 7.5 times. However, we learn from Figure 1-4 that energy consumption has growth approximitely 2.5 times from 1975 to 2010 at a growth rate of 2.6%. If the growth rate stayed the same the energy use in 2100 would be over 8 times what it is today. Thefore, to go 100% clean energy by 2100 would require increasing clean energy capcity by 64 times. 
+As shown in Figure 1-4, energy use is consistently growing. As today the The International Energy Agency reports  that 13.2% of energy in the world comes from renewable sources. (https://www.iea.org/about/faqs/renewableenergy/). Therefore, to replace our energy consumption with 100% clean, renewable source we need to increase our current capacity by 7.5 times. However, we learn from Figure 1-4 that energy consumption has growth approximately 2.5 times from 1975 to 2010 at a growth rate of 2.6%. If the growth rate stayed the same the energy use in 2100 would be over 8 times what it is today. Therefore, to go 100% clean energy by 2100 would require increasing clean energy capacity by 64 times. 
 
 ```{r echo = FALSE}
 # Reform data
@@ -396,7 +396,7 @@ ggplot(energy_agg, aes(YEAR, energy_tot)) + geom_line() +
 
 ```
 
-Therefore, for society to go 100% clean energy we need to slow our energy growth as well. One approach to slowing energy growth is to slow population as well. Figure 4-2 shows that population also consistently growing, while energy use per-capita (Figure 4-3) has only shown moderate growth. The slow growth of energy per-captia shows that our improvements in energy efficiency are keeping up with our demand for more power. Hence, if we could just stop population growth we stop energy growth. 
+Therefore, for society to go 100% clean energy we need to slow our energy growth as well. One approach to slowing energy growth is to slow population as well. Figure 4-2 shows that population also consistently growing, while energy use per-capita (Figure 4-3) has only shown moderate growth. The slow growth of energy per-capita shows that our improvements in energy efficiency are keeping up with our demand for more power. Hence, if we could just stop population growth we stop energy growth. 
 
 ```{r echo = FALSE}
 # POPULATION GROWTH
@@ -419,18 +419,18 @@ ggplot(energy_capita_agg, aes(YEAR, weighted)) + geom_line() +
   coord_cartesian(xlim=c(1975, 2010))
 ```
 
-Yet when we look at figures such as 3-# and 3-# (the scatter plot in data quality section) we learn that when we split by country the smooth coorelation immediately goes away. In the remainder of the main analysis we provide interactive tools explore the relationship between energy growth and populaiton, and then present our main findings from using the tools we made.
+Yet when we look at figures such as 3-# and 3-# (the scatter plot in data quality section) we learn that when we split by country the smooth correlation immediately goes away. In the remainder of the main analysis we provide interactive tools explore the relationship between energy growth and population, and then present our main findings from using the tools we made.
 
 #### Interactive component
 As we started to determine what graphs we should shown in this analysis, we quickly realized there were so many insightful ways we could split the data the report would either be too long or skipping key insights. Therefore, we chose to do interactive R Shiny apps for the main part of our analysis. This allowed our team to easily explore the data, while also allowing users to explore in ways we had not yet thought of. 
 
 We broke the data into there separate apps to explore these distinct aspects of the data. We often found ourselves jumping back and forth, and encourage users to do the same, as each story of the data does not need to go in chronological order. The three apps are listed below.
 
-  1. **Individual Country** - Deep divy into how population and energy has changed over time for one country.
+  1. **Individual Country** - Deep dive into how population and energy has changed over time for one country.
   2. **Country Comparison** - Presents countries side-by-side in a way where magnitudes of energy and population can be easily compared over time.
   3 **Energy vs. Population** - Presents energy vs population in a scatter plot to visualize correlations over time. 
   
-The idea to include a year slider was inspired by the follwoing TED talk.
+The idea to include a year slider was inspired by the following TED talk.
 https://www.gapminder.org/videos/ted-us-state-department/ 
 
 The code below creates the Layout for the navigation bar.
@@ -698,7 +698,7 @@ output$countryRace <- renderPlot({
 In these section we present our findings from our exploration of the data and the interactive tools.
 
 ##### Weak correlation
-The stead growth of population and energy lead us to believe there was likely a strong correlation. However, Figure 4-# and 4-# indicate that although there is a direct relationship, the correlation is not strong. Therefore, there is lots of variation in the relationship between energy and popualtion amound contries. 
+The stead growth of population and energy lead us to believe there was likely a strong correlation. However, Figure 4-# and 4-# indicate that although there is a direct relationship, the correlation is not strong. Therefore, there is lots of variation in the relationship between energy and population among countries. 
 
 ```{r}
 # No zoom
@@ -726,7 +726,7 @@ ggplot(data = scatter_data[scatter_data$YEAR == 2010, ],
 ```
 	       	
 #### Distribution across countires
-We immediately notice from Figure 4-# there is large inequality of energy use. China and USA are the two outliers accounting for nearly 40% of the energy use from those countries alone. The top 10 countires account for 65% and the top 50 account for 93%. This indicates our energy use is high concentrated.
+We immediately notice from Figure 4-# there is large inequality of energy use. China and USA are the two outliers accounting for nearly 40% of the energy use from those countries alone. The top 10 countries account for 65% and the top 50 account for 93%. This indicates our energy use is high concentrated.
 
 ```{r}
 
@@ -742,7 +742,7 @@ ggplot(data = scatter_data[scatter_data$YEAR == 2010, ],
 ```
 
 
-The population has high ineqality as well, yet the two outlying countries are now India and China. These two countries account for 38% of the total population. The top 10 account for 61% of the population and top 50 account for 91% of the populaiton. Again, we learn the that although there are houndres of countires, the overal story described in the Overview section is being driven by a small number of countries.
+The population has high inequality as well, yet the two outlying countries are now India and China. These two countries account for 38% of the total population. The top 10 account for 61% of the population and top 50 account for 91% of the population. Again, we learn the that although there are hundreds of countries, the overall story described in the Overview section is being driven by a small number of countries.
 
 ```{r}
 
@@ -759,7 +759,7 @@ ggplot(data = scatter_data[scatter_data$YEAR == 2010, ],
 
      	
 #### Different paths
-When we look at the three standout contries (United States, China, India) we distinct paths to high energy use. The United States grew its energy use without large increases in populaiton. Conversely, China first grew its populaiton and then later the rate of population growth slowed and the energy use per capita grew. India seems on a similar path as China, with its population growth about to slow and energy use per captia about to rise. Further research into what causes these various paths could help countries design more sustainable trajectories. 
+When we look at the three standout countries (United States, China, India) we distinct paths to high energy use. The United States grew its energy use without large increases in population. Conversely, China first grew its population and then later the rate of population growth slowed and the energy use per capita grew. India seems on a similar path as China, with its population growth about to slow and energy use per capita about to rise. Further research into what causes these various paths could help countries design more sustainable trajectories. 
 
 ```{r}
 # Make plot
@@ -775,7 +775,7 @@ ggplot(data = scatter_data[scatter_data$COUNTRY_NAME %in% c("China", "United Sta
 ```
 
 #### Ethics of change
-Countires such as the United Kingdom are seing the energy use per capita shrink. Conversely, we a less developed country such as Indonesia has rapid stead growth in energy use per captia. THis may lead us to believe that United Kingdom is on a good path, while the tregectory of Indonesia needs to change. However, the United Kindom's current energy use per-capita is three times higher than Indonisia. Hence, is it fair to say they do not deserve to growth their country to the same level? This is one of many ethica delemmas that we must face as we find sustainable paths for all countires.
+Countries such as the United Kingdom are seeing the energy use per capita shrink. Conversely, we a less developed country such as Indonesia has rapid stead growth in energy use per capita. This may lead us to believe that United Kingdom is on a good path, while the trajectory of Indonesia needs to change. However, the United Kingdom's current energy use per-capita is three times higher than Indonesia. Hence, is it fair to say they do not deserve to growth their country to the same level? This is one of many ethical dilemmas that we must face as we find sustainable paths for all countries.
 
 ```{r}
 # United Kingdom
@@ -801,15 +801,15 @@ ggplot(data = scatter_data[scatter_data$COUNTRY_NAME == "Indonesia", ],
 
 #### Challanges
 - Plotting many counties at same time
-- Narrowing down the endless possability of graphs. Making sure the graph is meaningful
+- Narrowing down the endless possibility of graphs. Making sure the graph is meaningful
 
 
 ### Executive Summary (Presentation-style)
 
-Moving towards the 100% clean energy will require immense research into the relationship between energy and population in order for each country to succesfully design and follow their paths to sustainability. In this executive summary we present our key findings from exploring this relationship for future researches to build open as they search for sustainable paths. We also hope this story encourages researches to use the interactive tools above to create their own stories about the relationship between populaiton and energy use.
+Moving towards the 100% clean energy will require immense research into the relationship between energy and population in order for each country to successfully design and follow their paths to sustainability. In this executive summary we present our key findings from exploring this relationship for future researches to build open as they search for sustainable paths. We also hope this story encourages researches to use the interactive tools above to create their own stories about the relationship between population and energy use.
 <<<<<<< HEAD
 
-Figure 5-1 and 5-2 show steady growth of both energy and population. Figure 5-3 shows there is a strong relaship between these two variables.
+Figure 5-1 and 5-2 show steady growth of both energy and population. Figure 5-3 shows there is a strong relationship between these two variables.
 
 ```{r}
 # Energy growth
@@ -854,7 +854,7 @@ ggplot(data = scatter_data[scatter_data$YEAR == 2010, ],
 
 ```
 
-From the scatter we immediately see there are ouliers. Figures 5-4 and 5-5 below show the inequal distribution of energy and populaiton. For example, China and the US account for X% of the worlds energy use, and CHina and India account for X% of the worlds population.
+From the scatter we immediately see there are outliers. Figures 5-4 and 5-5 below show the unequal distribution of energy and population. For example, China and the US account for X% of the worlds energy use, and China and India account for X% of the worlds population.
 
 ```{r}
 
@@ -892,7 +892,7 @@ ggplot(data = scatter_data[scatter_data$COUNTRY_NAME %in% c("China", "United Sta
 
 ```
 
-We need to determien the right path for each country. Below we see the United Kindom has decreasing energy use per captia while Indonesia is increasing. yet looking closely reveals that the United Kindom has three times the enrgy use per captia as Indonisia. Hence, should we be trying to shrink the UK to Indoneia? Is it fiar tolet Indonesia to get to the level fo teh UK?  These are just some of the ethical quesitons we must face as we find sustainable paths for all countires.
+We need to determine the right path for each country. Below we see the United Kingdom has decreasing energy use per capita while Indonesia is increasing. yet looking closely reveals that the United Kingdom has three times the energy use per capita as Indonesia. Hence, should we be trying to shrink the UK to Indonesia? Is it fair to let Indonesia to get to the level of the UK?  These are just some of the ethical questions we must face as we find sustainable paths for all countries.
 
 ```{r}
 # United Kingdom
@@ -906,7 +906,7 @@ ggplot(data = scatter_data[scatter_data$COUNTRY_NAME == "United Kingdom", ],
 ```
 =======
 
-Figure 5-1 and 5-2 show steady growth of both energy and population. Figure 5-3 shows there is a strong relaship between these two variables.
+Figure 5-1 and 5-2 show steady growth of both energy and population. Figure 5-3 shows there is a strong relationship between these two variables.
 
 ```{r}
 # Energy growth
@@ -954,7 +954,7 @@ ggplot(data = scatter_data[scatter_data$YEAR == 2010, ],
 
 ```
 
-From the scatter we immediately see there are ouliers. Figures 5-4 and 5-5 below show the inequal distribution of energy and populaiton. For example, China and the US account for X% of the worlds energy use, and CHina and India account for X% of the worlds population.
+From the scatter we immediately see there are outliers. Figures 5-4 and 5-5 below show the unequal distribution of energy and population. For example, China and the US account for X% of the worlds energy use, and China and India account for X% of the worlds population.
 
 ```{r}
 
@@ -991,7 +991,7 @@ ggplot(data = scatter_data[scatter_data$COUNTRY_NAME %in% c("China", "United Sta
 
 ```
 
-We need to determien the right path for each country. Below we see the United Kindom has decreasing energy use per captia while Indonesia is increasing. yet looking closely reveals that the United Kindom has three times the enrgy use per captia as Indonisia. Hence, should we be trying to shrink the UK to Indoneia? Is it fiar tolet Indonesia to get to the level fo teh UK?  These are just some of the ethical quesitons we must face as we find sustainable paths for all countires.
+We need to determine the right path for each country. Below we see the United Kingdom has decreasing energy use per capita while Indonesia is increasing. yet looking closely reveals that the United Kingdom has three times the energy use per capita as Indonesia. Hence, should we be trying to shrink the UK to Indonesia? Is it fair to let Indonesia to get to the level of the UK?  These are just some of the ethical questions we must face as we find sustainable paths for all countries.
 
 ```{r}
 # United Kingdom
@@ -1015,11 +1015,11 @@ ggplot(data = scatter_data[scatter_data$COUNTRY_NAME == "Indonesia", ],
 ```
 
 ### Conclusion
-Our biggest lession learned was our hypothesis that the strong direct relationship between energy and popualtion growth was not the full story was correct. Simply when breaking down by year the correlation was less visible. We hope this inspires other as our team has been to think deeply about how popualiton and energy factor into our paths to sustainability.
+Our biggest lesson learned was our hypothesis that the strong direct relationship between energy and population growth was not the full story was correct. Simply when breaking down by year the correlation was less visible. We hope this inspires other as our team has been to think deeply about how population and energy factor into our paths to sustainability.
 
-Our team was inspired by depth of what could be explored with just the variable energy use, population, year, and country. Nonetheless there are numerous other factors in the relationship between population and energy use. These include economic, health, wealth, and many more. Including these factors in future analyses would be beneficial. Yet the numerous insights is also a challange. There are many figures that can be made that are not insightful or can be misleading. 
+Our team was inspired by depth of what could be explored with just the variable energy use, population, year, and country. Nonetheless there are numerous other factors in the relationship between population and energy use. These include economic, health, wealth, and many more. Including these factors in future analyses would be beneficial. Yet the numerous insights is also a challenge. There are many figures that can be made that are not insightful or can be misleading. 
 
-Our group quickly relized the tidy dataframe could inspire collaboration beyond our team. Future work could involve orgianzing all the data soruces into an organized database with APIs for R, Python, and othe languages for researches to use. Furthermore we could create an online environment for researchs to share their explorations of the data. We believe this collaboration could greatly enhance countries to successfully define their paths to sustainability. 
+Our group quickly realized the tidy dataframe could inspire collaboration beyond our team. Future work could involve organizing all the data sources into an organized database with APIs for R, Python, and other languages for researches to use. Furthermore we could create an online environment for researchers to share their explorations of the data. We believe this collaboration could greatly enhance countries to successfully define their paths to sustainability. 
 
 
 
