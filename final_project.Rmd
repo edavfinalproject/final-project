@@ -39,15 +39,16 @@ Our project uses three datasets below published by the [World Bank](https://data
   2. Population growth (annual %)
   3. Energy use (kg of oil equivalent per capita)
 
-Each of these datasets contain per country data from 1960 through 2016. Each of the datasets contains 15,312 observations on eight variables: COUNTRY_NAME, VALUE, YEAR, COUNTRY_CODE, REGION, INCOMEGROUP, INDICATOR_NAME, INDICATOR_CODE. In order to focus the scope of this project and reduce unnecessary complexity, we decided to focus mainly on each indicator value, Country and year; even so, we did discuss some of the other metadata features (region and income group) as part of our conclusion in the Future Work section.
+Each of these datasets contain per country data from 1960 through 2016. The datasets contain 15,312 observations on eight variables: COUNTRY_NAME, VALUE, YEAR, COUNTRY_CODE, REGION, INCOMEGROUP, INDICATOR_NAME, INDICATOR_CODE. In order to focus the scope of this project and reduce unnecessary complexity, we decided to focus mainly on each indicator value, Country and year; even so, we still discuss some of the other metadata features (region and income group) as part of our conclusion in the Future Work section.
 
-The data was gathered and accessed using the World Bank's API, cleaned, and combined into one tidy dataframe. Making one tidy dataframe was a critical step which facilitated future collaboration within our team, allowing us all to have time to explore the data on our own. Furthermore, having this tidy dataframe helped ensure that the code for graphs would not change as the data format changed. Finally, it allowed us to easily make graphs designed for "tidy" data. This dataset was the linchpin which made this project possible, and thus naturally suggests future work on an R package, which is discussed later on in the Future Work section. 
+The data was gathered and accessed using the World Bank's API, cleaned, and combined into one tidy dataframe. Making one tidy dataframe was a critical step which facilitated future collaboration within our team, allowing us all to have time to explore the data on our own. Furthermore, having this tidy dataframe helped ensure that the code for graphs would not change as the data format changed. Finally, it allowed us to easily make graphs designed for "tidy" data. This dataset was the linchpin which made this project possible, and thus naturally suggests future work on an R package, which is also discussed later on in the Future Work section. 
 
-The code to pull the data and put it in a data frame are below. We explored two ways to access the data. Our initial method was to identify the URLs that link to the three datasets, then loop through those URLs to download, unzip, and read the data into R for processing. Due to the API's intermittent downtime, our next process for accessing the data was to use the [`WDI`](https://cran.r-project.org/web/packages/WDI/index.html) package. One advantage to using this package is that the data was already in long format. With the former method, we needed to convert the data frames from wide format. As a convenience, the data in CSV format is already stored in the same directory as the Rmd file, so it is not required to download the data again.
+The code to pull the data and put it in a data frame can be found in the .rmd file on github. We explored two ways to access the data. Our initial method was to identify the URLs that link to the three datasets, then loop through those URLs to download, unzip, and read the data into R for processing. Due to the API's intermittent downtime, our next process for accessing the data was to use the [`WDI`](https://cran.r-project.org/web/packages/WDI/index.html) package. One advantage to using this package is that the data was already in long format. With the former method, we needed to convert the data frames from wide format. As a convenience, the data in CSV format is already stored in the same directory as the Rmd file, so it is not required to download the data again.
 
-When processing the data, we only kept the attributes we were interested in exploring, namely country name and code, year, region, and income group. The attribute names were cleaned up for consistency, and attributes were added to identify the indicator type (e.g. "Population growth (annual %)"). Next, the three data frames were unioned together into one tidy data frame. Lastly, we needed to remove rows that represented various collections of countries as identified by the World Bank (e.g. "Small states", "European Union"). While it would be interesting to see how these bins of countries interacted with the data, we needed to limit the scope of our exploration to geographic region and income group for the sake of brevity. 
+When processing the data, we only kept the attributes we were interested in exploring, namely country name and code, year, region, and income group. The attribute names were cleaned up for consistency, and attributes were added to identify the indicator type (e.g. "Population growth (annual %)"). Next, the three data frames were unioned together into one tidy data frame. Lastly, we needed to remove rows that represented various collections of countries as identified by the World Bank (e.g. "Small states", "European Union"). While it would be interesting to see how these bins of countries interacted with the data, we needed to limit the scope of our exploration to geographic region and income group for the sake of brevity.
 
-```{r Install and/or load required libraries}
+
+```{r echo=FALSE}
 # Install and/or load required libraries
 needed_packages <- c("data.table", "tidyverse", "shiny", "WDI", "extracat")
 
@@ -59,8 +60,8 @@ for (p in needed_packages) {
 }
 ```
 
-```{r Read in files locally}
-
+```{r echo=FALSE}
+# Read in files locally
 pop_growth_df <- fread("./API_SP.POP.GROW_DS2_en_csv_v2.csv")
 new_header <- str_to_upper(gsub(pattern = " ", replacement = "_", x = names(pop_growth_df)))
 setnames(pop_growth_df, new_header)
@@ -90,7 +91,7 @@ energy_df <- merge(energy_df, subset(energy_df_meta, select=-c(4,5,6)), by = "CO
 ```
 
 
-```{r Alternate way to download World Bank data via the WDI package}
+```{r echo=FALSE}
  # Alternate way to download World Bank data via the WDI package
 
 # meta_df <- data.frame(WDI_data$country)
@@ -123,8 +124,8 @@ energy_df <- merge(energy_df, subset(energy_df_meta, select=-c(4,5,6)), by = "CO
 ```
 
 
-```{r Manipulate local files}
-
+```{r echo=FALSE}
+# Manipulate local files
 # Tidy each of the three data frames
 pop_df <- pop_df %>%
     gather(key = "YEAR", value = "VALUE", -COUNTRY_CODE, -COUNTRY_NAME,
@@ -187,7 +188,7 @@ tidy_pop_energy_for_tab_1 <- tidy_pop_energy_for_tab_1 %>% arrange(COUNTRY_NAME)
 ```
 
 
-```{r Download, unzip, and read in data stored as CSV files, results="hide"}
+```{r echo=FALSE}
 # 
 # ### Download, unzip, and read in data stored as CSV files
 # 
@@ -226,7 +227,7 @@ tidy_pop_energy_for_tab_1 <- tidy_pop_energy_for_tab_1 %>% arrange(COUNTRY_NAME)
 
 
 
-```{r, eval=FALSE}
+```{r echo=FALSE}
 # Simplify data.frame names
 
 # Read in local files here
@@ -269,15 +270,10 @@ tidy_pop_energy_for_tab_1 <- tidy_pop_energy_for_tab_1 %>% arrange(COUNTRY_NAME)
 
 ### Analysis of Data Quality
 
-There is a lot of missing data before 1971 and after 2012.
-
-- line graph with three lines one for each indicator. Y is percent of missing values. X axis is year.
-- histogram of percent of missing data. Each data point is a country
-- see what David wrote
-
-
 We represented missing data by using the `visna` function from the `extracat` package.
-The `visna` graphs show the the population data is nearly complete, but the energy use data has a significant amount of missing data. Since the energy use data was the most incomplete, we broke out the data by income level to see if there are any discrepancies in reporting data based on this attribute. In fact, the most common pattern for low-income energy usage is that all yearly observations are missing. This is not the case for the remaining three income brackets. This discrepancy shows that there are gaps in data collection in certain parts of the world, which will bias any findings that use these data.
+
+The `visna` graphs show the population data is nearly complete, but the energy use data has a significant amount of missing data. Since the energy use data was the most incomplete, we broke out the data by income level to see if there are any discrepancies in reporting data based on this attribute. In fact, the most common pattern for low-income energy usage is that all yearly observations are missing. This is not the case for the remaining three income brackets. This discrepancy shows that there are gaps in data collection in certain parts of the world, which will bias any findings that use these data.
+
 
 **Missing Data: Energy use (kg of oil equivalent per capita) - Low Income**
 ```{r Energy use low-income}
