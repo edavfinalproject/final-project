@@ -485,8 +485,7 @@ We broke the data into separate tabs and views to explore these distinct aspects
   3. **Energy vs. Population** - Presents energy vs population in a scatter plot to visualize correlations over time. Population can be easily compared over time.
   4. **Country Races** - Compares the path of energy and population over time for two countries. 
 
-The idea to include a year slider was inspired by [a TED talk by the late Hans Rosling](https://www.gapminder.org/videos/ted-us-state-department/).
-
+The idea to include a year slider was inspired by [a TED talk by the late Hans Rosling](https://www.gapminder.org/videos/ted-us-state-department/). In order to make the data widely accessible, we have published this R Shiny app on the Internet at the following location: https://ds3300.shinyapps.io/world_bank/.
 
 ```{r echo = FALSE}
 # Shiny Layour
