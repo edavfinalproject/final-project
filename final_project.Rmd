@@ -470,7 +470,7 @@ ggplot(data=tidy_overview, aes(x=YEAR, y=VALUE, col=COUNTRY_NAME, ymin=0)) +
   geom_line() +
   facet_wrap(~INDICATOR_NAME, ncol=1, scale="free") +
   labs(title="Figure 4-4. Indicators by Region", 
-       y="", x="Year", fill = "Region")
+       y="", x="Year", color="Region")
 ```
 
 In the remainder of the main analysis we provide interactive tools explore the relationship between energy growth and population, and then present our main findings from using the tools we made.
