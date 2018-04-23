@@ -759,8 +759,7 @@ ggplot(data = scatter_data[scatter_data$YEAR == 2010, ],
        y="Energy use (teragrams of oil equivelent)") + 
   coord_cartesian(xlim=c(0, 1500), ylim=c(0, 3000)) +
   scale_x_continuous(labels = scales::comma) + scale_y_continuous(labels = scales::comma) +
-  geom_text(aes(label=COUNTRY_NAME), hjust=-0.2, vjust=0) +
-     theme(text = element_text(36)) + labs(fill = "Region")
+  geom_text(aes(label=COUNTRY_NAME), hjust=-0.2, vjust=0) + labs(fill = "Region")
 
 # zoom
 ggplot(data = scatter_data[scatter_data$YEAR == 2010, ], 
