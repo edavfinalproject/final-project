@@ -759,8 +759,7 @@ ggplot(data = scatter_data[scatter_data$YEAR == 2010, ],
        y="Energy use (teragrams of oil equivelent)") + 
   coord_cartesian(xlim=c(0, 1500), ylim=c(0, 3000)) +
   scale_x_continuous(labels = scales::comma) + scale_y_continuous(labels = scales::comma) +
-  geom_text(aes(label=COUNTRY_NAME), hjust=-0.2, vjust=0) +
-     theme(text = element_text(36)) + labs(fill = "Region")
+  geom_text(aes(label=COUNTRY_NAME), hjust=-0.2, vjust=0) + labs(fill = "Region")
 
 # zoom
 ggplot(data = scatter_data[scatter_data$YEAR == 2010, ], 
@@ -851,9 +850,10 @@ ggplot(data = scatter_data[scatter_data$COUNTRY_NAME == "Indonesia", ],
 
 
 #### Challanges
-- Narrowing down the endless possibility of graphs. Making sure the graph is meaningful
 
-We needed to address several challenges over the course of this project, both technical and conceptual. The fact that there are many observations (i.e. nations) in addition to a temporal component made it difficult to display all of the information visually at once. Rather than plotting all observations, we often needed to display the data as binned by regional totals (Fig. 4-4) or global totals (Fig 4.1 to 4.3). In other cases, we chose to display all observations for a given year simultaneously (Fig. 4-6) to show that it is difficult to make any strong causal inferences from the data/
+We needed to address several challenges over the course of this project, both technical and conceptual. The fact that there are many observations (i.e. nations) in addition to a temporal component made it difficult to display all of the information visually at once. Rather than plotting all observations, we often needed to display the data as binned by regional totals (Fig. 4-4) or global totals (Fig 4.1 to 4.3). In other cases, we chose to display all observations for a given year simultaneously (Fig. 4-6) to show that it is difficult to make any strong causal inferences from the data.
+
+The World Bank has an impressive amount of data freely available for researchers on a large number of topics. After reviewing the data available to us, we quickly realized that we would need to be sparing in the number of indicators we chose to explore. As mentioned earlier, we began to look into other World Bank datasets related to energy, but we decided to limit our investigation. Given that they all are formatted similarily, it would have been very easy to incorporate several additional datasets into our study and become bogged down in the immense number of visualization possibilities.
 
 ### Executive Summary (Presentation-style)
 
