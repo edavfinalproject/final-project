@@ -467,10 +467,10 @@ ggplot(energy_capita_agg, aes(YEAR, weighted)) + geom_line() +
 ggplot(data=tidy_overview, aes(x=YEAR, y=VALUE, col=COUNTRY_NAME, ymin=0)) +
   geom_line() +
   facet_wrap(~INDICATOR_NAME, ncol=1, scale="free") +
-  labs(title="Figure 4-4. Indicators by Region", x="Year")
+  labs(title="Figure 4-4. Indicators by Region", x="Year", fill = "Region")
 ```
 
-Yet when we look at figures such as 3-# and 3-# (the scatter plot in data quality section) we learn that when we split by country the smooth correlation immediately goes away. In the remainder of the main analysis we provide interactive tools explore the relationship between energy growth and population, and then present our main findings from using the tools we made.
+Yet when we look at figures such as 3-7 and 3-8 we learn that when we split by country the smooth correlation immediately goes away. In the remainder of the main analysis we provide interactive tools explore the relationship between energy growth and population, and then present our main findings from using the tools we made.
 
 #### Interactive component
 
