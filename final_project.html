@@ -277,40 +277,6 @@ tidy_overview &lt;- tidy_overview %&gt;% arrange(COUNTRY_NAME)
 # REMOVE NON-COUNTRIES FROM TAB 1 DATAFRAME
 tidy_pop_energy_for_tab_1 &lt;- filter(tidy_pop_energy_for_tab_1, !COUNTRY_NAME %in% not_country)
 tidy_pop_energy_for_tab_1 &lt;- tidy_pop_energy_for_tab_1 %&gt;% arrange(COUNTRY_NAME)</code></pre>
-<pre class="r"><code># 
-# ### Download, unzip, and read in data stored as CSV files
-# 
-# #TODO Tidy the data
-# 
-# # Links for data sources
-# pop_growth_zip &lt;- &quot;http://api.worldbank.org/v2/en/indicator/SP.POP.GROW?downloadformat=csv&quot;
-# pop_zip &lt;- &quot;http://api.worldbank.org/v2/en/indicator/SP.POP.TOTL?downloadformat=csv&quot;
-# energy_zip &lt;- &quot;http://api.worldbank.org/v2/en/indicator/EG.USE.PCAP.KG.OE?downloadformat=csv&quot;
-# 
-# # Download and unzip data sources
-# zip_list &lt;- c(pop_growth_zip, pop_zip, energy_zip)
-# 
-# for (i in zip_list){
-#     
-#     td = tempdir()
-#     tf = tempfile(tmpdir=td, fileext=&quot;.zip&quot;)
-#     
-#     download.file(i, tf, mode = &quot;wb&quot;)
-#     zip_folder &lt;- unzip(tf, list = TRUE)
-#     
-#     for (j in seq_along(zip_folder$Name)) {
-#         
-#         file_name = unzip(tf, list = TRUE)$Name[j]
-#         unzip(tf, files = file_name, exdir = td, overwrite = TRUE)
-#         file_path &lt;- file.path(td, file_name)
-#         csv &lt;- fread(file_path)
-#         new_header &lt;- str_to_upper(gsub(pattern = &quot; &quot;, replacement = &quot;_&quot;, x = names(csv)))
-#         setnames(csv, new_header)
-#         assign(file_name, csv)
-#         
-#     }
-#     
-# }</code></pre>
 </div>
 <div id="analysis-of-data-quality" class="section level3">
 <h3>Analysis of Data Quality</h3>

@@ -187,46 +187,6 @@ tidy_pop_energy_for_tab_1 <- filter(tidy_pop_energy_for_tab_1, !COUNTRY_NAME %in
 tidy_pop_energy_for_tab_1 <- tidy_pop_energy_for_tab_1 %>% arrange(COUNTRY_NAME)
 ```
 
-
-```{r echo=TRUE}
-# 
-# ### Download, unzip, and read in data stored as CSV files
-# 
-# #TODO Tidy the data
-# 
-# # Links for data sources
-# pop_growth_zip <- "http://api.worldbank.org/v2/en/indicator/SP.POP.GROW?downloadformat=csv"
-# pop_zip <- "http://api.worldbank.org/v2/en/indicator/SP.POP.TOTL?downloadformat=csv"
-# energy_zip <- "http://api.worldbank.org/v2/en/indicator/EG.USE.PCAP.KG.OE?downloadformat=csv"
-# 
-# # Download and unzip data sources
-# zip_list <- c(pop_growth_zip, pop_zip, energy_zip)
-# 
-# for (i in zip_list){
-#     
-#     td = tempdir()
-#     tf = tempfile(tmpdir=td, fileext=".zip")
-#     
-#     download.file(i, tf, mode = "wb")
-#     zip_folder <- unzip(tf, list = TRUE)
-#     
-#     for (j in seq_along(zip_folder$Name)) {
-#         
-#         file_name = unzip(tf, list = TRUE)$Name[j]
-#         unzip(tf, files = file_name, exdir = td, overwrite = TRUE)
-#         file_path <- file.path(td, file_name)
-#         csv <- fread(file_path)
-#         new_header <- str_to_upper(gsub(pattern = " ", replacement = "_", x = names(csv)))
-#         setnames(csv, new_header)
-#         assign(file_name, csv)
-#         
-#     }
-#     
-# }
-```
-
-
-
 ### Analysis of Data Quality
 
 We represented missing data by using the `visna` function from the `extracat` package.
