@@ -464,7 +464,7 @@ ggplot(energy_capita_agg, aes(YEAR, weighted)) + geom_line() +
 
 Yet when we look at figures such as 3-7 and 3-8 we learn that when we split by country the smooth correlation immediately goes away. 
 
-```{r echo = FALSE, fig.height=10, fig.width=10}
+```{r echo = FALSE, fig.height=10}
 # REGIONAL INFO - NEED TO ADD TEXT EXPLAINING THIS
 ggplot(data=tidy_overview, aes(x=YEAR, y=VALUE, col=COUNTRY_NAME, ymin=0)) +
   geom_line() +
