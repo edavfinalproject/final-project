@@ -469,7 +469,8 @@ Yet when we look at figures such as 3-7 and 3-8 we learn that when we split by c
 ggplot(data=tidy_overview, aes(x=YEAR, y=VALUE, col=COUNTRY_NAME, ymin=0)) +
   geom_line() +
   facet_wrap(~INDICATOR_NAME, ncol=1, scale="free") +
-  labs(title="Figure 4-4. Indicators by Region", x="Year", fill = "Region")
+  labs(title="Figure 4-4. Indicators by Region", 
+       y="", x="Year", fill = "Region")
 ```
 
 In the remainder of the main analysis we provide interactive tools explore the relationship between energy growth and population, and then present our main findings from using the tools we made.
@@ -724,9 +725,12 @@ energy_max <- reactive({input$energy_max})
 
 # Config data
 tab4_countries <- reactive({c(input$tab4country1, input$tab4country2)})
-tab4_pop_max <- reactive({max(filter(scatter_data, COUNTRY_NAME %in% tab4_countries())$pop_tot)})
-tab4_energy_max <- reactive({max(filter(scatter_data, COUNTRY_NAME %in% tab4_countries())$energy_tot)})
-tab4_data <- reactive({filter(scatter_data, COUNTRY_NAME %in% tab4_countries()) %>% filter(YEAR > 1970 & YEAR <= race_year_set())})
+tab4_pop_max <- reactive({max(filter(scatter_data, COUNTRY_NAME %in%
+                                          tab4_countries())$pop_tot)})
+tab4_energy_max <- reactive({max(filter(scatter_data, COUNTRY_NAME %in% 
+                                             tab4_countries())$energy_tot)})
+tab4_data <- reactive({filter(scatter_data, COUNTRY_NAME %in% tab4_countries()) %>% 
+          filter(YEAR > 1970 & YEAR <= race_year_set())})
 
 output$countryRace <- renderPlot({
     ggplot(data = tab4_data(), aes(x=pop_tot, y=energy_tot, col=COUNTRY_NAME)) +
@@ -745,7 +749,7 @@ In these section we present our findings from our exploration of the data and th
 ##### Weak correlation
 The steady growth of population and energy lead us to believe there was likely a strong correlation. However, the scatter plots below indicate that although there is a direct relationship, the correlation is not strong. Therefore, there is lots of variation in the relationship between energy and population among countries.
 
-```{r echo = FALSE, fig.width=20}
+```{r echo = FALSE, fig.width=10}
 # No zoom
 ggplot(data = scatter_data[scatter_data$YEAR == 2010, ], 
        aes(x=pop_tot, y=energy_tot, col=REGION)) +
@@ -755,7 +759,8 @@ ggplot(data = scatter_data[scatter_data$YEAR == 2010, ],
        y="Energy use (teragrams of oil equivelent)") + 
   coord_cartesian(xlim=c(0, 1500), ylim=c(0, 3000)) +
   scale_x_continuous(labels = scales::comma) + scale_y_continuous(labels = scales::comma) +
-  geom_text(aes(label=COUNTRY_NAME), hjust=-0.2, vjust=0)
+  geom_text(aes(label=COUNTRY_NAME), hjust=-0.2, vjust=0) +
+     theme(text = element_text(36)) + labs(fill = "Region")
 
 # zoom
 ggplot(data = scatter_data[scatter_data$YEAR == 2010, ], 
@@ -766,7 +771,7 @@ ggplot(data = scatter_data[scatter_data$YEAR == 2010, ],
        y="Energy use (teragrams of oil equivelent)") + 
   coord_cartesian(xlim=c(0, 75), ylim=c(0, 100)) +
   scale_x_continuous(labels = scales::comma) + scale_y_continuous(labels = scales::comma) +
-  geom_text(aes(label=COUNTRY_NAME), hjust=-0.2, vjust=0)
+  geom_text(aes(label=COUNTRY_NAME), hjust=-0.2, vjust=0) + labs(fill = "Region")
 
 ```
 	       	
@@ -774,7 +779,7 @@ ggplot(data = scatter_data[scatter_data$YEAR == 2010, ],
 #### Distribution across countires
 We immediately notice from Figure 4-7 there is large inequality of energy use. China and USA are the two outliers accounting for nearly 40% of the energy use from those countries alone. The top 10 countries account for 65% and the top 50 account for 93%. This indicates the world's energy use is highly concentrated.
 
-```{r echo = FALSE, fig.width=20}
+```{r echo = FALSE, fig.width=10}
 
 ggplot(data = scatter_data[scatter_data$YEAR == 2010, ], 
        aes(x = reorder(COUNTRY_CODE, energy_tot), y = energy_tot)) +
@@ -790,7 +795,7 @@ ggplot(data = scatter_data[scatter_data$YEAR == 2010, ],
 
 The population has high inequality as well, yet the two outlying countries are now India and China. These two countries account for 38% of the total population. The top 10 account for 61% of the population and top 50 account for 91% of the population. Again, we learn the that although there are hundreds of countries, the overall story described in the Overview section is being driven by a small number of countries.
 
-```{r echo = FALSE, fig.width=20}
+```{r echo = FALSE, fig.width=10}
 
 ggplot(data = scatter_data[scatter_data$YEAR == 2010, ], 
        aes(x = reorder(COUNTRY_CODE, pop_tot), y = pop_tot)) +
@@ -807,7 +812,7 @@ ggplot(data = scatter_data[scatter_data$YEAR == 2010, ],
 #### Different paths
 When we look at the three standout countries (United States, China, India) we distinct paths to high energy use. The United States grew its energy use without large increases in population. Conversely, China first grew its population and then later the rate of population growth slowed and the energy use per capita grew. India seems on a similar path as China, with its population growth about to slow and energy use per capita about to rise. Further research into what causes these various paths could help countries design more sustainable trajectories. 
 
-```{r echo = FALSE, fig.width=20}
+```{r echo = FALSE, fig.width=10}
 # Make plot
 ggplot(data = scatter_data[scatter_data$COUNTRY_NAME %in% c("China", "United States", "India"), ], 
        aes(x=pop_tot, y=energy_tot, col=COUNTRY_NAME)) +
@@ -823,7 +828,7 @@ ggplot(data = scatter_data[scatter_data$COUNTRY_NAME %in% c("China", "United Sta
 #### Ethics of change
 Countries such as the United Kingdom are seeing the energy use per capita shrink. Conversely, we a less developed country such as Indonesia has rapid stead growth in energy use per capita. This may lead us to believe that United Kingdom is on a good path, while the trajectory of Indonesia needs to change. However, the United Kingdom's current energy use per-capita is three times higher than Indonesia. Hence, is it fair to say they do not deserve to growth their country to the same level? This is one of many ethical dilemmas that we must face as we find the right path to sustainability for each country.
 
-```{r echo = FALSE, fig.width=20}
+```{r echo = FALSE, fig.width=10}
 # United Kingdom
 ggplot(data = scatter_data[scatter_data$COUNTRY_NAME == "United Kingdom", ], 
        aes(x=YEAR, y=(energy_percap/1000))) +
@@ -846,9 +851,9 @@ ggplot(data = scatter_data[scatter_data$COUNTRY_NAME == "Indonesia", ],
 
 
 #### Challanges
-- Plotting many counties at same time
 - Narrowing down the endless possibility of graphs. Making sure the graph is meaningful
 
+We needed to address several challenges over the course of this project, both technical and conceptual. The fact that there are many observations (i.e. nations) in addition to a temporal component made it difficult to display all of the information visually at once. Rather than plotting all observations, we often needed to display the data as binned by regional totals (Fig. 4-4) or global totals (Fig 4.1 to 4.3). In other cases, we chose to display all observations for a given year simultaneously (Fig. 4-6) to show that it is difficult to make any strong causal inferences from the data/
 
 ### Executive Summary (Presentation-style)
 
