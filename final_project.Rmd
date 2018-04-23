@@ -14,9 +14,9 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE,
 
 ### Introduction
 
-While the debate about whether human intervention has impacted the pace of climate change is all but settled (it has), the search for solutions to averting the most harmful effects of human activity on climate change is just beginning. Research has shown that one of the primary causes of climate change is the burning of fossil fuels, whose rate has been steadily growing, as shown in Figure 3-1. In *Prosperity Without Growth*, Tim Jackson argues that humankind cannot continue to realize advances in prosperity through the continued consumption of natural resources, pointing out that staying on the current trajectory of resource consumption is not an unsustainable endeavor [@prosperity-growth]. To the point, Jackson urges researchers and policymakers to explore sustainable avenues of global development.
+While the debate about whether human intervention has impacted the pace of climate change is all but settled (it has), the search for solutions to averting the most harmful effects of human activity on climate change is just beginning. Research has shown that one of the primary causes of climate change is the burning of fossil fuels, whose rate has been steadily growing, as shown in Figure 3-1. In *Prosperity Without Growth*, Tim Jackson argues that humankind cannot continue to realize advances in prosperity through the continued consumption of natural resources, pointing out that staying on the current trajectory of resource consumption is an unsustainable endeavor [@prosperity-growth]. To the point, Jackson urges researchers and policymakers to explore sustainable avenues of global development.
 
-A common trope which is brought up in most discussions of sustainable development is the questions of population: many observers claim that population growth is a critical contributing factor to increased energy consumption, arguing that finding ways to curb population growth is a top priority for curtailing the consumption of natural resources and move us closer towards sustainable development. 
+A common trope which is brought up in most discussions of sustainable development is the question of population: many observers claim that population growth is a critical contributing factor to increased energy consumption, arguing that finding ways to curb population growth is a top priority for curtailing the consumption of natural resources and move us closer towards sustainable development. 
 
 We are skeptical that this argument is oversimplified and needs further exploration. Is it fair to place the blame for increased energy consumption on developing countries with high population growth, when many Western countries, especially the United States, are consuming far more energy per person? Are population and energy consumption even correlated? If so, does this correlation hold true at a global, regional, and country level? We believe exploratory data analysis is a fantastic technique to help answer these, and other questions regarding sustainable development and population growth. Therefore, **the primary goal of this project is to explore and define the characteristics of the relationship between energy use and population over time.** 
 
@@ -28,8 +28,8 @@ All team members contributed at various points to data collection, data cleaning
 * Isaac Wainstein: "Energy vs. Population"
 * Wyatt Ford: "Individual Countries" and "Country Races"
 
-For the sake of readability, we chose to show no code in our final report. However, all text and code can be seen in the .rmd file on github at the link below.
-https://github.com/edavfinalproject/final-project/blob/master/final_project.Rmd
+For the sake of readability, we chose to show no code in our final report. However, all text and code can be seen in the .rmd file on github at
+https://github.com/edavfinalproject/final-project/blob/master/final_project.Rmd.
 
 ### Description of Data
 
@@ -39,7 +39,7 @@ Our project uses three datasets below published by the [World Bank](https://data
   2. Population growth (annual %)
   3. Energy use (kg of oil equivalent per capita)
 
-Each of these datasets contain per country data from 1960 through 2016. The datasets contain 15,312 observations on eight variables: COUNTRY_NAME, VALUE, YEAR, COUNTRY_CODE, REGION, INCOMEGROUP, INDICATOR_NAME, INDICATOR_CODE. In order to focus the scope of this project and reduce unnecessary complexity, we decided to focus mainly on each indicator value, Country and year; even so, we still discuss some of the other metadata features (region and income group) as part of our conclusion in the Future Work section.
+Each of these datasets contain per country data from 1960 through 2016. The datasets each contain 15,312 observations on eight variables: COUNTRY_NAME, VALUE, YEAR, COUNTRY_CODE, REGION, INCOMEGROUP, INDICATOR_NAME, INDICATOR_CODE. In order to focus the scope of this project and reduce unnecessary complexity, we decided to focus mainly on each indicator value, Country and year; even so, we still discuss some of the other metadata features (region and income group) as part of our conclusion in the Future Work section.
 
 The data was gathered and accessed using the World Bank's API, cleaned, and combined into one tidy dataframe. Making one tidy dataframe was a critical step which facilitated future collaboration within our team, allowing us all to have time to explore the data on our own. Furthermore, having this tidy dataframe helped ensure that the code for graphs would not change as the data format changed. Finally, it allowed us to easily make graphs designed for "tidy" data. This dataset was the linchpin which made this project possible, and thus naturally suggests future work on an R package, which is also discussed later on in the Future Work section. 
 
@@ -274,7 +274,7 @@ We represented missing data by using the `visna` function from the `extracat` pa
 
 The `visna` graphs show the population data is nearly complete, but the energy use data has a significant amount of missing data. Since the energy use data was the most incomplete, we broke out the data by income level to see if there are any discrepancies in reporting data based on this attribute. 
 
-Starting with Low income of Energy Use we see the most common pattern for low-income energy usage is that all yearly observations are missing. This is not the case for the remaining three income brackets. This discrepancy shows that there are gaps in data collection in certain parts of the world, which will bias any findings that use these data.
+Starting with low income of Energy Use we see the most common pattern for low-income energy usage is that all yearly observations are missing. This is not the case for the remaining three income brackets. This discrepancy shows that there are gaps in data collection in certain parts of the world, which will bias any findings that use these data.
 
 **Figure 3-1. Missing Energy Use (Low Income)**
 ```{r echo=FALSE, fig.width=20}
@@ -290,7 +290,7 @@ visna(wide_energy_low, sort = 'r')
 ```
 
 
-Moving to Middle income countries we see most bracket most countries have data between 1975 and 2010. For our main anlysis we filtered for this time range to include as many countries as possible.
+Moving to middle income countries we see most countries have data between 1975 and 2010. For our main analysis we filtered for this time range to include as many countries as possible.
 
 **Figure 3-2. Missing Energy Use (Lower Middle Income)**
 ```{r echo=FALSE, fig.width=20}
@@ -339,7 +339,7 @@ visna(wide_energy_up, sort = 'r')
 
 ```
 
-Population data was much more robust. Almost all countries had total population had population growth data from 1960 to 2016.
+Population data was much more robust. Almost all countries had total population and population growth data from 1960 to 2016.
 
 **Figure 3-5. Missing Energy Use (Total population)**
 ```{r echo=FALSE, fig.width=20}
@@ -449,7 +449,7 @@ ggplot(pop_agg, aes(YEAR, pop_tot)) + geom_line() +
   scale_y_continuous(labels = scales::comma)
 ```
 
-Over this same period, however, global per capita energy consumption (Figure 4-3) has growth over three times. Since the energy use per capita has growth faster than population, this suggests that populaiton is not the main factor contributing to energy growth.
+Over this same period, however, global per capita energy consumption (Figure 4-3) has growth over three times. Since the energy use per capita has growth faster than population, this suggests that population is not the main factor contributing to energy growth.
 
 ```{r echo = FALSE}
 # Per capita
@@ -462,7 +462,9 @@ ggplot(energy_capita_agg, aes(YEAR, weighted)) + geom_line() +
   coord_cartesian(xlim=c(1975, 2010), ylim=c(0,30))
 ```
 
-```{r echo = FALSE, fig.height=10}
+Yet when we look at figures such as 3-7 and 3-8 we learn that when we split by country the smooth correlation immediately goes away. 
+
+```{r echo = FALSE, fig.height=10, fig.width=10}
 # REGIONAL INFO - NEED TO ADD TEXT EXPLAINING THIS
 ggplot(data=tidy_overview, aes(x=YEAR, y=VALUE, col=COUNTRY_NAME, ymin=0)) +
   geom_line() +
@@ -470,7 +472,7 @@ ggplot(data=tidy_overview, aes(x=YEAR, y=VALUE, col=COUNTRY_NAME, ymin=0)) +
   labs(title="Figure 4-4. Indicators by Region", x="Year", fill = "Region")
 ```
 
-Yet when we look at figures such as 3-7 and 3-8 we learn that when we split by country the smooth correlation immediately goes away. In the remainder of the main analysis we provide interactive tools explore the relationship between energy growth and population, and then present our main findings from using the tools we made.
+In the remainder of the main analysis we provide interactive tools explore the relationship between energy growth and population, and then present our main findings from using the tools we made.
 
 #### Interactive component
 
@@ -484,8 +486,7 @@ We broke the data into separate apps to explore these distinct aspects of the da
   population can be easily compared over time.
   4**Country Races** - Compares the path of energy and population over time for two countries. 
 
-The idea to include a year slider was inspired by the following TED talk by the late Hans Rosling.
-https://www.gapminder.org/videos/ted-us-state-department/ 
+The idea to include a year slider was inspired by [a TED talk by the late Hans Rosling](https://www.gapminder.org/videos/ted-us-state-department/).
 
 
 ```{r echo = FALSE}
@@ -948,4 +949,5 @@ Our team was inspired by depth of what could be explored with just the variable 
 
 Our group quickly realized the tidy dataframe could inspire collaboration beyond our team. Future work could involve organizing all the data sources into an organized database with APIs for R, Python, and other languages for researches to use. Furthermore, we could create an online environment for researchers to share their explorations of the data. We believe this collaboration could greatly enhance countries to successfully define their unique paths to sustainability. 
 
+### References
 
