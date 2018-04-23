@@ -227,47 +227,6 @@ tidy_pop_energy_for_tab_1 <- tidy_pop_energy_for_tab_1 %>% arrange(COUNTRY_NAME)
 
 
 
-```{r echo=TRUE}
-# Simplify data.frame names
-
-# Read in local files here
-
-# pop_growth_df <-  API_SP.POP.GROW_DS2_en_csv_v2.csv
-# rm(API_SP.POP.GROW_DS2_en_csv_v2.csv)
-# pop_growth_meta <- Metadata_Country_API_SP.POP.GROW_DS2_en_csv_v2.csv
-# rm(Metadata_Country_API_SP.POP.GROW_DS2_en_csv_v2.csv)
-# pop_growth_merged <- merge(pop_growth_df, subset(pop_growth_meta, select=-c(4,5,6)), by = "COUNTRY_CODE")
-# 
-# pop_df <- API_SP.POP.TOTL_DS2_en_csv_v2.csv
-# rm(API_SP.POP.GROW_DS2_en_csv_v2.csv)
-# pop_meta <- Metadata_Country_API_SP.POP.TOTL_DS2_en_csv_v2.csv
-# rm(Metadata_Country_API_SP.POP.GROW_DS2_en_csv_v2.csv)
-# pop_merged <- merge(pop_df, subset(pop_meta, select=-c(4,5,6)), by = "COUNTRY_CODE")
-# 
-# energy_df <- API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv
-# rm(API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv)
-# energy_df_meta <- Metadata_Country_API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv
-# # rm(API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv)
-# energy_merged <- merge(energy_df, subset(energy_df_meta, select=-c(4,5,6)), by = "COUNTRY_CODE")
-# 
-# tidy_pop_energy <- rbind(pop_growth_merged, pop_merged, energy_merged)
-# 
-# tidy_pop_energy <- tidy_pop_energy %>% 
-#     gather(key = "YEAR", value = "VALUE", -COUNTRY_CODE, -COUNTRY_NAME,
-#            -INDICATOR_NAME, -INDICATOR_CODE, -REGION, -INCOMEGROUP) %>%
-#     mutate(YEAR = as.numeric(YEAR)) %>%
-#     mutate(VALUE = as.numeric(VALUE))
-# 
-# # Filter out rows where the country is not actually a country.
-# 
-# not_country = c("Arab World", "Central Europe and the Baltics", "Early-demographic dividend", "Europe & Central Asia (excluding high income)", "Euro area", "Fragile and conflict affected situations", "Heavily indebted poor countries (HIPC)", "IBRD only","IDA total", "Not classified", "Latin America & Caribbean (excluding high income)", "Latin America & Caribbean", "Low income", "Low & middle income", "Late-demographic dividend", "Middle income", "North America", "Post-demographic dividend", "Small states", "East Asia & Pacific (IDA & IBRD countries)", "Latin America & the Caribbean (IDA & IBRD countries)", "Middle East & North Africa (IDA & IBRD countries)", "South Asia (IDA & IBRD)", "World", "Upper middle income", "Sub-Saharan Africa (IDA & IBRD countries)", "Europe & Central Asia (IDA & IBRD countries)", "Sub-Saharan Africa", "Sub-Saharan Africa (excluding high income)", "Pacific island small states", "Pre-demographic dividend", "Other small states", "OECD members", "Middle East & North Africa (excluding high income)", "Middle East & North Africa", "Lower middle income", "Least developed countries: UN classification", "IDA only", "IDA blend", "IDA & IBRD total", "High income", "European Union", "Europe & Central Asia", "East Asia & Pacific", "East Asia & Pacific (excluding high income)", "Caribbean small states", "South Asia")
-# 
-# tidy_pop_energy <- filter(tidy_pop_energy, !COUNTRY_NAME %in% not_country)
-# # Sort dataframe by country name
-# tidy_pop_energy <- tidy_pop_energy %>% arrange(COUNTRY_NAME)
-```
-
-
 ### Analysis of Data Quality
 
 We represented missing data by using the `visna` function from the `extracat` package.

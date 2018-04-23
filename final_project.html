@@ -311,43 +311,6 @@ tidy_pop_energy_for_tab_1 &lt;- tidy_pop_energy_for_tab_1 %&gt;% arrange(COUNTRY
 #     }
 #     
 # }</code></pre>
-<pre class="r"><code># Simplify data.frame names
-
-# Read in local files here
-
-# pop_growth_df &lt;-  API_SP.POP.GROW_DS2_en_csv_v2.csv
-# rm(API_SP.POP.GROW_DS2_en_csv_v2.csv)
-# pop_growth_meta &lt;- Metadata_Country_API_SP.POP.GROW_DS2_en_csv_v2.csv
-# rm(Metadata_Country_API_SP.POP.GROW_DS2_en_csv_v2.csv)
-# pop_growth_merged &lt;- merge(pop_growth_df, subset(pop_growth_meta, select=-c(4,5,6)), by = &quot;COUNTRY_CODE&quot;)
-# 
-# pop_df &lt;- API_SP.POP.TOTL_DS2_en_csv_v2.csv
-# rm(API_SP.POP.GROW_DS2_en_csv_v2.csv)
-# pop_meta &lt;- Metadata_Country_API_SP.POP.TOTL_DS2_en_csv_v2.csv
-# rm(Metadata_Country_API_SP.POP.GROW_DS2_en_csv_v2.csv)
-# pop_merged &lt;- merge(pop_df, subset(pop_meta, select=-c(4,5,6)), by = &quot;COUNTRY_CODE&quot;)
-# 
-# energy_df &lt;- API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv
-# rm(API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv)
-# energy_df_meta &lt;- Metadata_Country_API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv
-# # rm(API_EG.USE.PCAP.KG.OE_DS2_en_csv_v2.csv)
-# energy_merged &lt;- merge(energy_df, subset(energy_df_meta, select=-c(4,5,6)), by = &quot;COUNTRY_CODE&quot;)
-# 
-# tidy_pop_energy &lt;- rbind(pop_growth_merged, pop_merged, energy_merged)
-# 
-# tidy_pop_energy &lt;- tidy_pop_energy %&gt;% 
-#     gather(key = &quot;YEAR&quot;, value = &quot;VALUE&quot;, -COUNTRY_CODE, -COUNTRY_NAME,
-#            -INDICATOR_NAME, -INDICATOR_CODE, -REGION, -INCOMEGROUP) %&gt;%
-#     mutate(YEAR = as.numeric(YEAR)) %&gt;%
-#     mutate(VALUE = as.numeric(VALUE))
-# 
-# # Filter out rows where the country is not actually a country.
-# 
-# not_country = c(&quot;Arab World&quot;, &quot;Central Europe and the Baltics&quot;, &quot;Early-demographic dividend&quot;, &quot;Europe &amp; Central Asia (excluding high income)&quot;, &quot;Euro area&quot;, &quot;Fragile and conflict affected situations&quot;, &quot;Heavily indebted poor countries (HIPC)&quot;, &quot;IBRD only&quot;,&quot;IDA total&quot;, &quot;Not classified&quot;, &quot;Latin America &amp; Caribbean (excluding high income)&quot;, &quot;Latin America &amp; Caribbean&quot;, &quot;Low income&quot;, &quot;Low &amp; middle income&quot;, &quot;Late-demographic dividend&quot;, &quot;Middle income&quot;, &quot;North America&quot;, &quot;Post-demographic dividend&quot;, &quot;Small states&quot;, &quot;East Asia &amp; Pacific (IDA &amp; IBRD countries)&quot;, &quot;Latin America &amp; the Caribbean (IDA &amp; IBRD countries)&quot;, &quot;Middle East &amp; North Africa (IDA &amp; IBRD countries)&quot;, &quot;South Asia (IDA &amp; IBRD)&quot;, &quot;World&quot;, &quot;Upper middle income&quot;, &quot;Sub-Saharan Africa (IDA &amp; IBRD countries)&quot;, &quot;Europe &amp; Central Asia (IDA &amp; IBRD countries)&quot;, &quot;Sub-Saharan Africa&quot;, &quot;Sub-Saharan Africa (excluding high income)&quot;, &quot;Pacific island small states&quot;, &quot;Pre-demographic dividend&quot;, &quot;Other small states&quot;, &quot;OECD members&quot;, &quot;Middle East &amp; North Africa (excluding high income)&quot;, &quot;Middle East &amp; North Africa&quot;, &quot;Lower middle income&quot;, &quot;Least developed countries: UN classification&quot;, &quot;IDA only&quot;, &quot;IDA blend&quot;, &quot;IDA &amp; IBRD total&quot;, &quot;High income&quot;, &quot;European Union&quot;, &quot;Europe &amp; Central Asia&quot;, &quot;East Asia &amp; Pacific&quot;, &quot;East Asia &amp; Pacific (excluding high income)&quot;, &quot;Caribbean small states&quot;, &quot;South Asia&quot;)
-# 
-# tidy_pop_energy &lt;- filter(tidy_pop_energy, !COUNTRY_NAME %in% not_country)
-# # Sort dataframe by country name
-# tidy_pop_energy &lt;- tidy_pop_energy %&gt;% arrange(COUNTRY_NAME)</code></pre>
 </div>
 <div id="analysis-of-data-quality" class="section level3">
 <h3>Analysis of Data Quality</h3>
