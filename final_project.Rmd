@@ -28,7 +28,7 @@ All team members contributed at various points to data collection, data cleaning
 * Isaac Wainstein: "Energy vs. Population"
 * Wyatt Ford: "Individual Countries" and "Country Races"
 
-For the sake of readability, we chose to show no code in our final report. However, all text and code can be seen in the .rmd file on github at
+For transparency, all of our findings are completely reproducible. All text and code can be seen in the .rmd file on github at
 https://github.com/edavfinalproject/final-project/blob/master/final_project.Rmd.
 
 ### Description of Data
@@ -395,7 +395,7 @@ In the remainder of the main analysis we provide interactive tools explore the r
 
 #### Interactive component
 
-As we started to determine what graphs we should show in this analysis, we quickly realized there were so many insightful ways we could split the data, meaning that the report would either be too long or end up skipping many key insights. Therefore, we chose to make an interactive R Shiny apps for the main part of our analysis. The R Shiny app that we created accomplishes two objectives: not only did it allowed our team to easily explore the data, but it also allows users to explore the data in ways that we might not have thought of, allowing them to draw their own conclusions.
+As we started to determine what graphs we should show in this analysis, we quickly realized there were so many insightful ways we could split the data, meaning that the report would either be too long or end up skipping many key insights. Therefore, we chose to make interactive R Shiny apps for the main part of our analysis. The R Shiny app that we created accomplishes two objectives: not only did it allowed our team to easily explore the data, but it also allows users to explore the data in ways that we might not have thought of, allowing them to draw their own conclusions.
 
 We broke the data into separate tabs and views to explore these distinct aspects of the data. We often found ourselves jumping back and forth between views, and encourage users to do the same, as each story of the data does not need to go in chronological order. The four apps are listed below.
 
@@ -490,7 +490,7 @@ ggplot(data = scatter_data[scatter_data$COUNTRY_NAME %in% c("China", "United Sta
 ```
 
 #### Ethics of change
-Countries such as the United Kingdom are seeing the energy use per capita shrink. Conversely, a less developed country such as Indonesia has rapid, steady growth in energy use per capita. This may lead us to believe that United Kingdom is on a "good"" path, while the trajectory of Indonesia needs to change. However, the United Kingdom's current energy use per-capita is three times higher than Indonesia. Hence, is it fair to say they do not deserve to growth their country to the same level? This is one of many ethical dilemmas that we must face as we find the right path to sustainability for each country.
+Countries such as the United Kingdom are seeing the energy use per capita shrink. Conversely, a less developed country such as Indonesia has rapid, steady growth in energy use per capita. This may lead us to believe that United Kingdom is on a "good"" path, while the trajectory of Indonesia needs to change. However, the United Kingdom's current energy use per-capita is three times higher than Indonesia. Hence, is it fair to say they do not deserve to grow their country to the same level? This is one of many ethical dilemmas that we must face as we find the right path to sustainability for each country.
 
 ```{r echo=TRUE, fig.width=10}
 # United Kingdom
@@ -517,7 +517,7 @@ ggplot(data = scatter_data[scatter_data$COUNTRY_NAME == "Indonesia", ],
 #### Challanges
 We needed to address several challenges over the course of this project, both technical and conceptual. The fact that there are many observations (i.e. nations) in addition to a temporal component made it difficult to display all of the information visually at once. Rather than plotting all observations, we often needed to display the data as binned by regional totals (Fig. 4-4) or global totals (Fig 4.1 to 4.3). In other cases, we chose to display all observations for a given year simultaneously (Fig. 4-6) to show that it is difficult to make any strong causal inferences from the data.
 
-The World Bank has an impressive amount of data freely available for researchers on a large number of topics. After reviewing the data available to us, we quickly realized that we would need to be sparing in the number of indicators we chose to explore. As mentioned earlier, we began to look into other World Bank datasets related to energy, but we decided to limit our investigation. Given that they all are formatted similarily, it would have been very easy to incorporate several additional datasets into our study and become bogged down in the immense number of visualization possibilities.
+The World Bank has an impressive amount of data freely available for researchers on a large number of topics. After reviewing the data available to us, we quickly realized that we would need to be sparing in the number of indicators we chose to explore. For example, we began to look into other World Bank datasets related to energy, but we decided to limit our investigation. Given that they all are formatted similarily, it would have been very easy to incorporate several additional datasets into our study and become bogged down in the immense number of visualization possibilities.
 
 ### Executive Summary (Presentation-style)
 Moving towards the 100% clean energy will require immense research into the relationship between energy and population in order for each country to successfully design and follow their paths to sustainability. In this executive summary we present our key findings from exploring this relationship for future researchers to build open as they search for sustainable paths. We also hope this story encourages researches to use the interactive tools above to create their own stories about the relationship between population and energy use.
