@@ -196,7 +196,7 @@ The `visna` graphs show the population data is nearly complete, but the energy u
 Starting with low income of Energy Use we see the most common pattern for low-income energy usage is that all yearly observations are missing. This is not the case for the remaining three income brackets. This discrepancy shows that there are gaps in data collection in certain parts of the world, which will bias any findings that use these data.
 
 **Figure 3-1. Missing Energy Use (Low Income)**
-```{r echo=TRUE, fig.width=20}
+```{r echo=TRUE, fig.width=10}
 # Energy use low-income
 wide_energy_low <- filter(tidy_pop_energy, 
                       INDICATOR_NAME == "Energy use (kg of oil equivalent per capita)" & 
@@ -212,7 +212,7 @@ visna(wide_energy_low, sort = 'r')
 Moving to middle income countries we see most countries have data between 1975 and 2010. For our main analysis we filtered for this time range to include as many countries as possible.
 
 **Figure 3-2. Missing Energy Use (Lower Middle Income)**
-```{r echo=TRUE, fig.width=20}
+```{r echo=TRUE, fig.width=10}
 #Energy use lower-middle income
 wide_energy_low_mid <- filter(tidy_pop_energy, 
                       INDICATOR_NAME == "Energy use (kg of oil equivalent per capita)" & 
@@ -229,7 +229,7 @@ visna(wide_energy_low_mid, sort = 'r')
 The upper-middle income countries show a similar pattern to middle income in that most countries have data between 1975 and 2010. This further strengthens our decision of filtering data for this time range.
 
 **Figure 3-3. Missing Energy Use (Upper Middle Income)**
-```{r echo=TRUE, fig.width=20}
+```{r echo=TRUE, fig.width=10}
 # Energy use Upper-middle income
 wide_energy_up_mid <- filter(tidy_pop_energy, 
                       INDICATOR_NAME == "Energy use (kg of oil equivalent per capita)" & 
@@ -245,7 +245,7 @@ visna(wide_energy_up_mid, sort = 'r')
 There are multiple high income countries with a full dataset from 1960 to 2016, yet there are nearly as many countries with no data at all.
 
 **Figure 3-4. Missing Energy Use (High Income)**
-```{r echo=TRUE, fig.width=20}
+```{r echo=TRUE, fig.width=10}
 # Energy use high income
 wide_energy_up <- filter(tidy_pop_energy, 
                       INDICATOR_NAME == "Energy use (kg of oil equivalent per capita)" & 
@@ -261,7 +261,7 @@ visna(wide_energy_up, sort = 'r')
 Population data was much more robust. Almost all countries had total population and population growth data from 1960 to 2016.
 
 **Figure 3-5. Missing Energy Use (Total population)**
-```{r echo=TRUE, fig.width=20}
+```{r echo=TRUE, fig.width=10}
 #total population
 wide_pop_total <- filter(tidy_pop_energy, 
                       INDICATOR_NAME == "Population, total")
@@ -273,7 +273,7 @@ visna(wide_pop_total, sort = 'r')
 ```
 
 **Figure 3-6. Missing Energy Use (Population growth)**
-```{r echo=TRUE, fig.width=20}
+```{r echo=TRUE, fig.width=10}
 #population growth
 wide_pop_growth <- filter(tidy_pop_energy, 
                       INDICATOR_NAME == "Population growth (annual %)")
@@ -397,7 +397,7 @@ In the remainder of the main analysis we provide interactive tools explore the r
 
 As we started to determine what graphs we should show in this analysis, we quickly realized there were so many insightful ways we could split the data, meaning that the report would either be too long or end up skipping many key insights. Therefore, we chose to make an interactive R Shiny apps for the main part of our analysis. The R Shiny app that we created accomplishes two objectives: not only did it allowed our team to easily explore the data, but it also allows users to explore the data in ways that we might not have thought of, allowing them to draw their own conclusions.
 
-We broke the data into separate tabs and views to explore these distinct aspects of the data. We often found ourselves jumping back and forth between views, and encourage users to do the same, as each story of the data does not need to go in chronological order. The three apps are listed below.
+We broke the data into separate tabs and views to explore these distinct aspects of the data. We often found ourselves jumping back and forth between views, and encourage users to do the same, as each story of the data does not need to go in chronological order. The four apps are listed below.
 
   1. **Individual Country** - Deep dive into how population and energy has changed over time for one country. This view also allows the viewer to quickly see where missing data exists.
   2. **Country Comparison** - Presents countries side-by-side in a way where magnitudes of energy and population can be easily compared over time.
@@ -548,7 +548,7 @@ ggplot(pop_agg, aes(YEAR, pop_tot)) + geom_line() +
 
 However, we see there is a lot of information hidden when averaged over the entire world. Figure 5-4 below shows the relationship between energy use and population for each country in 2010. 
 
-```{r echo=TRUE, fig.width=20}
+```{r echo=TRUE, fig.width=10}
 ggplot(data = scatter_data[scatter_data$YEAR == 2010, ], 
        aes(x=pop_tot, y=energy_tot, col=REGION)) +
   geom_point(size=5) + 
@@ -562,7 +562,7 @@ ggplot(data = scatter_data[scatter_data$YEAR == 2010, ],
 ```
 
 From the scatter we immediately see there are outliers, specifically China, India, and the United States. The figure below shows these countries took different path to be outliers.
-```{r echo=TRUE, fig.width=20}
+```{r echo=TRUE, fig.width=10}
 # Make plot
 ggplot(data = scatter_data[scatter_data$COUNTRY_NAME %in% c("China", "United States", "India"), ], 
        aes(x=pop_tot, y=energy_tot, col=COUNTRY_NAME)) +
