@@ -305,14 +305,14 @@ pop_energy_year <-
 
 ggplot(pop_energy_year, aes(POP_GROWTH_RATE, ENERGY_USE)) + 
     geom_point(alpha = .1) + geom_density_2d() + 
-     xlab("Population Growth Rate") + ylab("Energy use per-capita (teragrams of oil equivelent)") +
+     xlab("Population Growth Rate") + ylab("Energy use per-capita (kilograms of oil equivelent)") +
      ggtitle("Figure 3-7. Population Growth Rate vs. Energy Use", subtitle = "One observation = values for each country-year combination")
 
 ggplot(pop_energy_year %>% filter(ENERGY_USE <= 10 & POP_GROWTH_RATE <= 100),
        aes(POP_GROWTH_RATE, ENERGY_USE)) + 
     geom_point(alpha = .1) + geom_density_2d() +
-     xlab("Population Growth Rate") + ylab("Energy use (teragrams of oil equivelent)") +
-     ggtitle("Figure 3-8. Population Growth Rate vs. Energy Use", subtitle = "One observation = values for each country-year combination")
+     xlab("Population Growth Rate") + ylab("Energy use per-capita (kilograms of oil equivelent)") +
+     ggtitle("Figure 3-8. Population Growth Rate vs. Energy Use - Outliers Removed", subtitle = "One observation = values for each country-year combination")
 ```
 
 
