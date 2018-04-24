@@ -368,7 +368,7 @@ ggplot(pop_agg, aes(YEAR, pop_tot)) + geom_line() +
   scale_y_continuous(labels = scales::comma)
 ```
 
-Over this same period, however, global per capita energy consumption (Figure 4-3) has growth 42%. This figure alone suggests that population is not the only major factor in play.
+Over this same period, however, global per capita energy consumption (Figure 4-3) has growth of 42%. This figure alone suggests that population is not the only major factor in play.
 
 ```{r echo=TRUE}
 # Per capita
