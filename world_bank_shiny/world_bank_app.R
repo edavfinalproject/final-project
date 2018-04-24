@@ -165,9 +165,11 @@ ui <- fluidPage(
                                                     min = 1961,
                                                     animate = animationOptions(interval = 333),
                                                     max = 2016,
-                                                    step = 1), width = 3),
+                                                    step = 1), 
+                                        helpText("Click the play button to animate"),
+                                        width = 3),
                                    
-                                   # Copy the line below to make a slider range
+                                  
                                    column(
                                         sliderInput(inputId = "rank_slider",
                                                     label = "Percentage slice",
@@ -212,7 +214,9 @@ ui <- fluidPage(
                                                     min = 1971,
                                                     animate = animationOptions(interval = 333),
                                                     max = 2012,
-                                                    step = 1),width=3),
+                                                    step = 1),
+                                        helpText("Click the play button to animate"),
+                                        width=3),
                                    column(
                                         selectInput(inputId = "tab4country1", label = "Country 1:",
                                                     choices = as.vector(unique(tidy_pop_energy$COUNTRY_NAME)),
