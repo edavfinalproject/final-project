@@ -39,11 +39,11 @@ Our project uses three datasets below published by the [World Bank](https://data
   2. Population growth (annual %)
   3. Energy use (kg of oil equivalent per capita)
 
-Each of these datasets contain per country data from 1960 through 2016. The datasets each contain 15,312 observations on eight variables: COUNTRY_NAME, VALUE, YEAR, COUNTRY_CODE, REGION, INCOMEGROUP, INDICATOR_NAME, INDICATOR_CODE. In order to focus the scope of this project and reduce unnecessary complexity, we decided to focus mainly on each indicator value, Country and year; even so, we still discuss some of the other metadata features (region and income group) as part of our conclusion in the Future Work section.
+Each of these datasets contain per country data from 1960 through 2016. The datasets each contain 15,312 observations on eight variables: COUNTRY_NAME, VALUE, YEAR, COUNTRY_CODE, REGION, INCOMEGROUP, INDICATOR_NAME, INDICATOR_CODE. In order to focus the scope of this project and reduce unnecessary complexity, we decided to focus mainly on each indicator value, country and year; even so, we still discuss some of the other metadata features (region and income group) as part of our conclusion in the Future Work section.
 
 The data was gathered and accessed using the World Bank's API, cleaned, and combined into one tidy dataframe. Making one tidy dataframe was a critical step which facilitated future collaboration within our team, allowing us all to have time to explore the data on our own. Furthermore, having this tidy dataframe helped ensure that the code for graphs would not change as the data format changed. Finally, it allowed us to easily make graphs designed for "tidy" data. This dataset was the linchpin which made this project possible, and thus naturally suggests future work on an R package, which is also discussed later on in the Future Work section. 
 
-The code to pull the data and put it in a data frame can be found in the .rmd file on github. We explored two ways to access the data. Our initial method was to identify the URLs that link to the three datasets, then loop through those URLs to download, unzip, and read the data into R for processing. Due to the API's intermittent downtime, our next process for accessing the data was to use the [`WDI`](https://cran.r-project.org/web/packages/WDI/index.html) package. One advantage to using this package is that the data was already in long format. With the former method, we needed to convert the data frames from wide format. As a convenience, the data in CSV format is already stored in the same directory as the Rmd file, so it is not required to download the data again.
+The code to pull the data and put it in a data frame can be found in the .rmd file on github. We explored two ways to access the data. Our initial method was to identify the URLs that link to the three datasets, then loop through those URLs to download, unzip, and read the data into R for processing. Due to the API's intermittent downtime, our next process for accessing the data was to use the [`WDI`](https://cran.r-project.org/web/packages/WDI/index.html) package. One advantage to using this package is that the data was already in long format. With the former method, we needed to convert the data frames from wide format. As a convenience, the data in CSV format is already stored in the same directory as the Rmd file, so it is not necessary to download the data again.
 
 When processing the data, we only kept the attributes we were interested in exploring, namely country name and code, year, region, and income group. The attribute names were cleaned up for consistency, and attributes were added to identify the indicator type (e.g. "Population growth (annual %)"). Next, the three data frames were unioned together into one tidy data frame. Lastly, we needed to remove rows that represented various collections of countries as identified by the World Bank (e.g. "Small states", "European Union"). While it would be interesting to see how these bins of countries interacted with the data, we needed to limit the scope of our exploration to geographic region and income group for the sake of brevity.
 
@@ -395,7 +395,7 @@ In the remainder of the main analysis we provide interactive tools explore the r
 
 #### Interactive component
 
-As we started to determine what graphs we should show in this analysis, we quickly realized there were so many insightful ways we could split the data, meaning that the report would either be too long or end up skipping many key insights. Therefore, we chose to make interactive R Shiny apps for the main part of our analysis. The R Shiny app that we created accomplishes two objectives: not only did it allowed our team to easily explore the data, but it also allows users to explore the data in ways that we might not have thought of, allowing them to draw their own conclusions.
+As we started to determine what graphs we should show in this analysis, we quickly realized there were so many insightful ways we could split the data, meaning that the report would either be too long or end up skipping many key insights. Therefore, we chose to make interactive R Shiny apps for the main part of our analysis. The R Shiny apps that we created accomplishes two objectives: not only did it allowed our team to easily explore the data, but it also allows users to explore the data in ways that we might not have thought of, allowing them to draw their own conclusions.
 
 We broke the data into separate tabs and views to explore these distinct aspects of the data. We often found ourselves jumping back and forth between views, and encourage users to do the same, as each story of the data does not need to go in chronological order. The four apps are listed below.
 
@@ -404,7 +404,7 @@ We broke the data into separate tabs and views to explore these distinct aspects
   3. **Energy vs. Population** - Presents energy vs population in a scatter plot to visualize correlations over time. Population can be easily compared over time.
   4. **Country Races** - Compares the path of energy and population over time for two countries. 
 
-The idea to include a year slider was inspired by [a TED talk by the late Hans Rosling](https://www.gapminder.org/videos/ted-us-state-department/). In order to make the data widely accessible, we have published this R Shiny app on the Internet at the following location: https://ds3300.shinyapps.io/world_bank_shiny/.
+The idea to include a year slider was inspired by [a TED talk by the late Hans Rosling](https://www.gapminder.org/videos/ted-us-state-department/). In order to make the data widely accessible, we have published these R Shiny apps on the Internet at the following location: https://ds3300.shinyapps.io/world_bank_shiny/.
 
 
 #### Findings
@@ -474,7 +474,7 @@ ggplot(data = scatter_data[scatter_data$YEAR == 2010, ],
 
      	
 #### Different paths
-When we look at the three standout countries (United States, China, India) we observe three distinct paths to high energy use. The United States grew its energy use without large increases in population. Conversely, China first grew its population and then later the rate of population growth slowed and the energy use per capita grew. India seems on a similar path as China, with its population growth about to slow and energy use per capita about to rise. Further research into what causes these various paths could help countries design more sustainable trajectories. 
+When we look at the three standout countries (United States, China, India) we observe three distinct paths to high energy use. The United States grew its energy use without large increases in population. Conversely, China first grew its population and then later the rate of population growth slowed and the energy use grew. India seems on a similar path as China, with its population growth about to slow and energy use about to rise. Further research into what causes these various paths could help countries design more sustainable trajectories. 
 
 ```{r echo=TRUE, fig.width=10}
 # Make plot
@@ -490,7 +490,7 @@ ggplot(data = scatter_data[scatter_data$COUNTRY_NAME %in% c("China", "United Sta
 ```
 
 #### Ethics of change
-Countries such as the United Kingdom are seeing the energy use per capita shrink. Conversely, a less developed country such as Indonesia has rapid, steady growth in energy use per capita. This may lead us to believe that United Kingdom is on a "good"" path, while the trajectory of Indonesia needs to change. However, the United Kingdom's current energy use per-capita is three times higher than Indonesia. Hence, is it fair to say they do not deserve to grow their country to the same level? This is one of many ethical dilemmas that we must face as we find the right path to sustainability for each country.
+Countries such as the United Kingdom are seeing the energy use per capita shrink. Conversely, a less developed country such as Indonesia has rapid, steady growth in energy use per capita. This may lead us to believe that United Kingdom is on a "good" path, while the trajectory of Indonesia needs to change. However, the United Kingdom's current energy use per-capita is three times higher than Indonesia. Hence, is it fair to say they do not deserve to grow their country to the same level? This is one of many ethical dilemmas that we must face as we find the right path to sustainability for each country.
 
 ```{r echo=TRUE, fig.width=10}
 # United Kingdom
@@ -506,7 +506,7 @@ ggplot(data = scatter_data[scatter_data$COUNTRY_NAME == "United Kingdom", ],
 ggplot(data = scatter_data[scatter_data$COUNTRY_NAME == "Indonesia", ], 
        aes(x=YEAR, y=(energy_percap/1000))) +
   geom_line() + 
-  labs(title="Figure 4-#. Energy Use Per-Capita (Indonesia)",
+  labs(title="Figure 4-11. Energy Use Per-Capita (Indonesia)",
        x="Year",
        y="Energy use per capita (teragrams of oil equivelent)") + 
   scale_y_continuous(labels = scales::comma)
@@ -609,7 +609,7 @@ ggplot(data=indonesia_uk_data, aes(x=YEAR, y=energy_percap, col=COUNTRY_NAME)) +
 ```
 
 ### Conclusion
-Our biggest lesson learned was our hypothesis that the strong direct relationship between energy and population growth was not the full story was correct. Simply when breaking down by country the correlation was less visible. We hope this inspires others, as our team has been, to think deeply about how population and energy factor into our paths to sustainability.
+Our biggest lesson learned was that our hypothesis -- that the strong direct relationship between energy and population growth was not the full story -- was correct. When broken down by country, the correlation was simply less visible. We hope this inspires others, as our team has been, to think deeply about how population and energy factor into our paths to sustainability.
 
 Our team was inspired by depth of what could be explored with just the variable energy use, population, year, and country. Nonetheless there are numerous other factors in the relationship between population and energy use. These include economic, health, wealth, and many more. Including these factors in future analyses would be beneficial. Yet the numerous insights is also a challenge. There are many figures that can be made that are not insightful or can be misleading. 
 
